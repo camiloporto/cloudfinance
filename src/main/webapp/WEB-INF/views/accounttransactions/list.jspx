@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_br_com_camiloporto_cloudfinance_model_AccountTransaction" items="${accounttransactions}" z="gHRRZRqnk8wEpppO9GFMhrUwS78=">
+        <table:table data="${accounttransactions}" id="l_br_com_camiloporto_cloudfinance_model_AccountTransaction" path="/accounttransactions" z="a7+RqfoC8ah/qwdAo/rBNQry6jU=">
+            <table:column id="c_br_com_camiloporto_cloudfinance_model_AccountTransaction_origin" property="origin" z="I8B3HpYy9P10rcr3JeOyDfdVyMI="/>
+            <table:column id="c_br_com_camiloporto_cloudfinance_model_AccountTransaction_destin" property="destin" z="UNv5ynM/1U2nrrd/GxfOh0dzUh4="/>
+        </table:table>
+    </page:list>
+</div>
