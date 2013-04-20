@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:menu="urn:jsptagdir:/WEB-INF/tags/menu" id="menu" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <menu:menu id="_menu" z="nZaf43BjUg1iM0v70HJVEsXDopc=">
+        <menu:category id="c_account" z="/ObionklNVMvfxU5oSj2hEUJNu0=">
+            <menu:item id="i_account_new" messageCode="global_menu_new" url="/accounts?form" z="7ISq6pJsfrDJexgk1yAmzNiIcp8="/>
+            <menu:item id="i_account_list" messageCode="global_menu_list" url="/accounts?page=1&amp;size=${empty param.size ? 10 : param.size}" z="VeXZsM9n5bR9ZvhjdYhrVsG24uw="/>
+        </menu:category>
+        <menu:category id="c_accounttransaction" z="oN5aixjXZKv3W9TjvIburV+UJ80=">
+            <menu:item id="i_accounttransaction_new" messageCode="global_menu_new" url="/accounttransactions?form" z="ifTH8YTo2CipKdyd4UHtxeM/w8c="/>
+            <menu:item id="i_accounttransaction_list" messageCode="global_menu_list" url="/accounttransactions?page=1&amp;size=${empty param.size ? 10 : param.size}" z="+R8ylTtG0rMeQx14Rr/tki8aaKE="/>
+        </menu:category>
+        <menu:category id="c_accountsystem" z="rfekB7EqHg/SDJJpjL7p0c2sWHk=">
+            <menu:item id="i_accountsystem_new" messageCode="global_menu_new" url="/accountsystems?form" z="kGSB9YHkQz+QTuFwp7d53zLzDyY="/>
+            <menu:item id="i_accountsystem_list" messageCode="global_menu_list" url="/accountsystems?page=1&amp;size=${empty param.size ? 10 : param.size}" z="3ZF0Hh9p00r+ym+aVTPKEVkVooc="/>
+        </menu:category>
+    </menu:menu>
+</div>

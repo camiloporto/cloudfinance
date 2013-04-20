@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_br_com_camiloporto_cloudfinance_model_AccountSystem" object="${accountsystem}" path="/accountsystems" z="BlpwmgFA2g79d3wyBJekgJwIMAE=">
+        <field:display field="rootAccount" id="s_br_com_camiloporto_cloudfinance_model_AccountSystem_rootAccount" object="${accountsystem}" z="EHDr+va6MY5A3QDIHaw64J9tZXo="/>
+        <field:display field="userProfile" id="s_br_com_camiloporto_cloudfinance_model_AccountSystem_userProfile" object="${accountsystem}" z="LBwVGwFa6tFmYxAU+JrCEnrk7k0="/>
+    </page:show>
+</div>

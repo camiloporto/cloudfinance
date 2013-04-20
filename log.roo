@@ -34,3 +34,19 @@ service --interface ~.service.AccountManager --entity ~.model.Account --class ~.
 service --interface ~.service.TransactionManager --entity ~.model.AccountTransaction --class ~.service.impl.TransactionManagerImpl
 exit
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-04-19 22:37:34
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-04-19 22:41:02
+web mvc setup
+hint
+web mvc scaffold --class ~.web.AccountController --backingType ~.model.Account
+web mvc scaffold --class ~.web.TransactionController --backingType ~.model.AccountTransaction
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-04-19 22:46:26
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-04-19 22:54:26
+focus --class ~.model.Account
+field reference --fieldName parentAccount --type ~.model.Account --fetch EAGER 
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-04-19 22:55:22
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-04-19 22:57:29
+web mvc scaffold --class ~.web.AccountSystemController --backingType ~.model.AccountSystem
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-04-19 22:58:25
