@@ -23,4 +23,12 @@ privileged aspect Account_Roo_JavaBean {
         this.description = description;
     }
     
+    public Account Account.getParentAccount() {
+        return this.parentAccount;
+    }
+    
+    public void Account.setParentAccount(Account parentAccount) {
+        this.parentAccount = parentAccount;
+    }
+    
 }
