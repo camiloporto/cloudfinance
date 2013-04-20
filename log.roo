@@ -1,0 +1,36 @@
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-04-19 22:14:12
+project --topLevelPackage br.com.camiloporto.cloudfinance
+jpa setup --provider HIBERNATE --database POSTGRES
+entity jpa --class ~.model.Account --activeRecord false --serializable 
+entity jpa --class ~.model.AccountEntry --activeRecord false --serializable 
+// [failed] entity jpa --class ~.model.Transaction --activeRecord false --serializable 
+entity jpa --class ~.model.AccountTransaction --activeRecord false --serializable 
+focus --class ~.model.Account
+field string --fieldName name --notNull 
+field string --fieldName description
+focus --class ~.model.AccountEntry
+field reference --fieldName account --type ~.model.Account --notNull --fetch EAGER 
+// [failed] field number --type java.math.BigDecimal --fieldName value --notNull 
+// [failed] field number --type java.math.BigDecimal --fieldName value --notNull --column entryValue
+field number --type java.math.BigDecimal --fieldName entryValue --notNull
+field string --fieldName comment --notNull 
+focus --class ~.model.AccountTransaction
+field reference --type ~.model.AccountEntry --fieldName origin --notNull 
+field reference --type ~.model.AccountEntry --fieldName destin --notNull 
+entity jpa --class ~.model.AccountSystem --serializable --activeRecord false
+entity jpa --class ~.model.Profile --serializable --activeRecord false
+focus --class ~.model.AccountSystem
+field reference --type ~.model.Account --fieldName rootAccount --notNull 
+field reference --type ~.model.Profile --fieldName userProfile --notNull 
+focus --class ~.model.Profile
+field string --fieldName userId --notNull 
+field string --fieldName pass --notNull 
+repository jpa --interface ~.repository.AccountRepository --entity ~.model.Account
+repository jpa --interface ~.repository.AccountEntryRepository --entity ~.model.AccountEntry
+repository jpa --interface ~.repository.AccountTransactionRepository --entity ~.model.AccountTransaction
+repository jpa --interface ~.repository.AccountSystemRepository --entity ~.model.AccountSystem
+repository jpa --interface ~.repository.ProfileRepository --entity ~.model.Profile
+service --interface ~.service.AccountManager --entity ~.model.Account --class ~.service.impl.AccountManagerImpl
+service --interface ~.service.TransactionManager --entity ~.model.AccountTransaction --class ~.service.impl.TransactionManagerImpl
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-04-19 22:37:34
