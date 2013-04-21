@@ -6,7 +6,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<c:url var="styleFolder" value="/styles"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="${styleFolder}/bootstrap.min.css">
 <title>Bufunfa - Controlando suas finanças pessoais</title>
 </head>
 <body>
