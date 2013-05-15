@@ -8,7 +8,8 @@
 <head>
 	<c:url var="styleFolder" value="/styles"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<%-- 	<link rel="stylesheet" type="text/css" href="${styleFolder}/bootstrap.min.css"> --%>
+	<link rel="stylesheet" type="text/css" href="${styleFolder}/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="${styleFolder}/bootstrap-responsive.min.css">
 
 	<link rel="stylesheet" type="text/css" href="${styleFolder}/320px.css" media="screen and (min-width:320px)">
 	<link rel="stylesheet" type="text/css" href="${styleFolder}/template.css" media="screen and (min-width:480px)">
