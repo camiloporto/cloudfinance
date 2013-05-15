@@ -1,16 +1,13 @@
 .header {
-	position : relative;
-	background: blue;
+	background: green;
 }
 	.header form {
 		width : 57%;
-		position : absolute;
+/* 		position : absolute; */
 		top : 0;
 		right : 0;
-		background: red;
 	}
 	.header label, input {
-		float : left;
+/* 		float : left; */
 		margin-left : 1%;
 	}
-	
