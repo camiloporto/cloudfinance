@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-@ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "webmvc-config.xml"})
+@ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
 @ActiveProfiles("unit-test")
 public class AccountSystemControllerTest extends AbstractTestNGSpringContextTests {
