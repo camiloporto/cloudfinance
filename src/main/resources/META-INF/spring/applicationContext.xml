@@ -68,4 +68,7 @@
         <property name="persistenceUnitName" value="persistenceUnit"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    <beans profile="unit-test">
+    	<context:property-placeholder location="classpath*:META-INF/spring/*test.properties" order="1"/>
+    </beans>
 </beans>
