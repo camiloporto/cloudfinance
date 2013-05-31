@@ -19,8 +19,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.com.camiloporto.cloudfinance.model.AccountSystem;
-import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
+import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.repository.ProfileRepository;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -33,7 +33,7 @@ public class AccountSystemControllerTest extends AbstractTestNGSpringContextTest
     private WebApplicationContext wac;
 	
 	@Autowired
-	private AccountSystemRepository accountSystemRepository;
+	private ProfileRepository profileRepository;
 
     private MockMvc mockMvc;
 
@@ -49,10 +49,11 @@ public class AccountSystemControllerTest extends AbstractTestNGSpringContextTest
 		final String userConfirmPass ="1234";
 		
 		ResultActions response = mockMvc.perform(post("/user/signup")
-			.param("username", userName)
+			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
 		);
+		
 		
 		response
 			.andExpect(status().isOk())
@@ -61,9 +62,9 @@ public class AccountSystemControllerTest extends AbstractTestNGSpringContextTest
 			.andExpect(jsonPath("$.userId").exists());
 		
 		String jsonResponse = response.andReturn().getResponse().getContentAsString();
-		Long userId = JsonPath.read(jsonResponse, "$.userId");
+		Integer userId = JsonPath.read(jsonResponse, "$.userId");
 		Assert.assertNotNull("userId was not generated", userId);
-		AccountSystem as = accountSystemRepository.findOne(userId);
-		Assert.assertNotNull("accountSystem not created in database", as);
+		Profile profile = profileRepository.findOne(new Long(userId));
+		Assert.assertNotNull("profile not created in database", profile);
 	}
 }

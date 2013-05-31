@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @RequestMapping("/user")
@@ -18,7 +19,20 @@ public class AccountSystemController {
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AbstractOperationResponse signUp(String userName, String pass, String confirmPass) {
-		//FIXME implementar logica aqui e no negocio
-		return new UserOperationResponse(true);
+		Profile newProfile = new Profile();
+		newProfile.setPass(pass);
+		newProfile.setUserId(userName);
+		
+		Profile saved;
+		UserOperationResponse response = new UserOperationResponse(true);
+		try {
+			saved = userProfileManager.signUp(newProfile);
+			response.setUserId(saved.getId());
+		} catch (Throwable e) {
+			response.setSuccess(false);
+			e.printStackTrace();
+		}
+		
+		return response;
 	}
 }
