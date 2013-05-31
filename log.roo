@@ -59,3 +59,9 @@ perform tests
 exit
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 11:22:49
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-17 15:32:01
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 15:39:14
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-17 16:42:52
+service --interface ~.service.AccountSystemManager --class ~.service.impl.AccountSystemManagerImpl --entity ~.model.AccountSystem
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 17:11:05
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-31 09:48:51
