@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
+import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
@@ -57,12 +58,13 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		response
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.userId").exists());
+		
+		new WebResponseChecker(response)
+			.assertOperationSuccess();
 		
 		String jsonResponse = response.andReturn().getResponse().getContentAsString();
 		Integer userId = JsonPath.read(jsonResponse, "$.userId");
-		Assert.assertNotNull("userId was not generated", userId);
 		Profile profile = profileRepository.findOne(new Long(userId));
 		Assert.assertNotNull("profile not created in database", profile);
 	}
@@ -86,17 +88,33 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 				.param("confirmPass", userConfirmPass)
 			);
 		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST");
+	}
+	
+	@Test
+	public void shouldInformErrorIfEmailIsEmptyOnSignUp() throws Exception {
+		final String userName ="";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		
+		ResultActions response = mockMvc.perform(post("/user/signup")
+			.param("userName", userName)
+			.param("pass", userPass)
+			.param("confirmPass", userConfirmPass)
+		);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.success").value(false))
-			.andExpect(jsonPath("$.errors").exists());
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 		
-		String jsonResponse = response.andReturn().getResponse().getContentAsString();
-		String errorMessage = JsonPath.read(jsonResponse, "$.errors[0]");
-		Assert.assertNotNull("errors was not generated", errorMessage);
-		org.testng.Assert.assertEquals(errorMessage, "br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST", "error message not as expected");
-		
+		new WebResponseChecker(response)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED");
 	}
 }

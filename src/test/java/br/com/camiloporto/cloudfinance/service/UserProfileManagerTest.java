@@ -11,8 +11,6 @@ import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.checkers.ProfileChecker;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
-//@ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml"})
-//@ActiveProfiles("unit-test")
 public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
@@ -62,7 +60,52 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 				.assertContainsMessageTemplate(
 						"br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST"
 				);
-			
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowsConstraintViolationIfEmailIsEmpty() {
+		final String email = "";
+		final String pass = "1234";
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(email)
+			.comSenha(pass)
+			.create();
+		try {
+			userProfileManager.signUp(p);
+			Assert.fail("did not throw expected exception");
+		} catch (Exception e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(
+						"br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED"
+				);
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowsConstraintViolationIfEmailIsNull() {
+		final String email = null;
+		final String pass = "1234";
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(email)
+			.comSenha(pass)
+			.create();
+		try {
+			userProfileManager.signUp(p);
+			Assert.fail("did not throw expected exception");
+		} catch (Exception e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(
+						"br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED"
+				);
 		}
 		
 	}
