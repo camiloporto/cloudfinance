@@ -44,7 +44,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
     
 	@Test
 	public void shouldInsertNewAccountSystemWhenUserSignUp() throws Exception {
-		final String userName ="camilo@gmail.com";
+		final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
 		
@@ -71,7 +71,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	
 	@Test
 	public void shouldInformErrorIfEmailAlreadyExistsOnSignUp() throws Exception {
-		final String userName ="camilo@gmail.com";
+		final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
 		
@@ -116,5 +116,26 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		new WebResponseChecker(response)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED");
+	}
+	
+	@Test
+	public void shouldInformErrorIfPasswordIsEmptyOnSignUp() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="";
+		final String userConfirmPass ="";
+		
+		ResultActions response = mockMvc.perform(post("/user/signup")
+			.param("userName", userName)
+			.param("pass", userPass)
+			.param("confirmPass", userConfirmPass)
+		);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED");
 	}
 }

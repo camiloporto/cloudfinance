@@ -23,7 +23,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void deveCadastrarPerfilDeUsuario() {
-		final String camiloporto = "camiloporto@gmail.com";
+		final String camiloporto = "some@email.com";
 		final String senha = "1234";
 		
 		Profile p = new ProfileBuilder()
@@ -41,7 +41,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void deveLancarConstraintViolationSeEmailJaExistir() {
-		final String camiloporto = "camiloporto@gmail.com";
+		final String camiloporto = "some@email.com";
 		final String senha = "1234";
 		Profile p = new ProfileBuilder()
 			.newProfile()
@@ -105,6 +105,52 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
 						"br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED"
+				);
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowsConstraintViolationIfPasswordIsNull() {
+		final String email = "some@email.com";
+		final String pass = null;
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(email)
+			.comSenha(pass)
+			.create();
+		try {
+			userProfileManager.signUp(p);
+			Assert.fail("did not throw expected exception");
+		} catch (Exception e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(
+						"br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED"
+				);
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowsConstraintViolationIfPasswordIsEmpty() {
+		final String email = "some@email.com";
+		final String pass = "";
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(email)
+			.comSenha(pass)
+			.create();
+		try {
+			userProfileManager.signUp(p);
+			Assert.fail("did not throw expected exception");
+		} catch (Exception e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(
+						"br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED"
 				);
 		}
 		
