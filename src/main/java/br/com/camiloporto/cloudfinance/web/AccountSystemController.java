@@ -1,12 +1,43 @@
 package br.com.camiloporto.cloudfinance.web;
 
-import br.com.camiloporto.cloudfinance.model.AccountSystem;
-import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping("/accountsystems")
+import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.service.UserProfileManager;
+
+@RequestMapping("/user")
 @Controller
-@RooWebScaffold(path = "accountsystems", formBackingObject = AccountSystem.class)
 public class AccountSystemController {
+	
+	@Autowired
+	private UserProfileManager userProfileManager;
+	
+	@RequestMapping(value = "/signup", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AbstractOperationResponse signUp(String userName, String pass, String confirmPass) {
+		Profile newProfile = new Profile();
+		newProfile.setPass(pass);
+		newProfile.setUserId(userName);
+		
+		Profile saved;
+		UserOperationResponse response = new UserOperationResponse(true);
+		try {
+			saved = userProfileManager.signUp(newProfile);
+			response.setUserId(saved.getId());
+		} catch (ConstraintViolationException e) {
+			response = new UserOperationResponse(e);
+			
+		} catch (Throwable e) {
+			response.setSuccess(false);
+			e.printStackTrace();
+		}
+		
+		return response;
+	}
 }

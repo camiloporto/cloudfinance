@@ -14,11 +14,25 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooSerializable
 public class Account {
 
-    @NotNull
+	public static final String ASSET_NAME = "br.com.camiloporto.cloudfinance.model.Account.ASSET_NAME";
+
+	public static final String LIABILITY_NAME = "br.com.camiloporto.cloudfinance.model.Account.LIABILITY_NAME";
+
+	public static final String INCOME_NAME = "br.com.camiloporto.cloudfinance.model.Account.INCOME_NAME";
+
+	public static final String OUTGOING_NAME = "br.com.camiloporto.cloudfinance.model.Account.OUTGOING_NAME";
+
+	@NotNull
     private String name;
 
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private br.com.camiloporto.cloudfinance.model.Account parentAccount;
+    
+    public Account(String name, Account father) {
+		this.name = name;
+		parentAccount = father;
+    	
+	}
 }

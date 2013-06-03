@@ -50,3 +50,25 @@ exit
 web mvc scaffold --class ~.web.AccountSystemController --backingType ~.model.AccountSystem
 exit
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-04-19 22:58:25
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-16 17:19:13
+test stub --class ~.model.Account
+perform tests
+test integration --entity ~.model.Account
+perform tests
+perform tests
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 11:22:49
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-17 15:32:01
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 15:39:14
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-17 16:42:52
+service --interface ~.service.AccountSystemManager --class ~.service.impl.AccountSystemManagerImpl --entity ~.model.AccountSystem
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 17:11:05
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-31 09:48:51
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-31 17:46:24
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-06-03 13:26:48
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-06-03 13:49:22
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-06-03 13:56:28
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-06-03 14:29:03
