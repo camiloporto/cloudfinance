@@ -153,6 +153,42 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 						"br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED"
 				);
 		}
+	}
+	
+	@Test
+	public void shouldFindProfileByCredentials() {
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
 		
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
+		
+		userProfileManager.signUp(p);
+		
+		Profile logged = userProfileManager.login(camiloporto, senha);
+		
+		new ProfileChecker(logged)
+			.assertUserNameEquals(camiloporto)
+			.assertPasswordIsEmpty();
+	}
+	
+	@Test
+	public void shouldReturnNullIfDoNotFoundByCredentials() {
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
+		
+		userProfileManager.signUp(p);
+		
+		Profile logged = userProfileManager.login(camiloporto, "WRONG_PASS");
+		Assert.assertNull(logged, "should return null");
 	}
 }

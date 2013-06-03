@@ -9,4 +9,6 @@ public interface UserProfileManager {
 	
 	public Profile signUp(Profile newProfile);
 
+	public Profile login(String userName, String pass);
+
 }

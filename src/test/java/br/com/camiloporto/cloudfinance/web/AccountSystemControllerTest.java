@@ -3,10 +3,12 @@ package br.com.camiloporto.cloudfinance.web;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import junit.framework.Assert;
+
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,10 +16,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
+import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
@@ -36,10 +40,12 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 
     private MockMvc mockMvc;
+    private MockHttpSession mockSession;
 
     @BeforeMethod
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
     
 	@Test
@@ -60,13 +66,13 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.userId").exists());
 		
-		new WebResponseChecker(response)
+		new WebResponseChecker(response, mockSession)
 			.assertOperationSuccess();
 		
 		String jsonResponse = response.andReturn().getResponse().getContentAsString();
 		Integer userId = JsonPath.read(jsonResponse, "$.userId");
 		Profile profile = profileRepository.findOne(new Long(userId));
-		Assert.assertNotNull("profile not created in database", profile);
+		Assert.assertNotNull(profile, "profile not created in database");
 	}
 	
 	@Test
@@ -92,7 +98,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 		
-		new WebResponseChecker(response)
+		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST");
 	}
@@ -113,7 +119,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 		
-		new WebResponseChecker(response)
+		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED");
 	}
@@ -125,6 +131,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		final String userConfirmPass ="";
 		
 		ResultActions response = mockMvc.perform(post("/user/signup")
+			.session(mockSession)
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
@@ -134,8 +141,56 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 		
-		new WebResponseChecker(response)
+		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED");
+	}
+	
+	@Test
+	public void shouldAuthenticateRegisteredUser() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationSuccess()
+			.assertUserIsInSession(userName);
+		
+	}
+	
+	@Test
+	public void shouldFailAuthenticationWithWrongPassword() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", "WRONG_PASS")
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertUserNotInSession();
+		
 	}
 }
