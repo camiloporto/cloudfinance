@@ -65,3 +65,7 @@ exit
 service --interface ~.service.AccountSystemManager --class ~.service.impl.AccountSystemManagerImpl --entity ~.model.AccountSystem
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-17 17:11:05
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-05-31 09:48:51
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-05-31 17:46:24
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-06-03 13:26:48
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-06-03 13:49:22

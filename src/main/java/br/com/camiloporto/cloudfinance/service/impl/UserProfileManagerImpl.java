@@ -19,8 +19,14 @@ public class UserProfileManagerImpl implements UserProfileManager {
 	
 	@Override
 	public Profile signUp(Profile newProfile) {
+		checkSignUpConstraints(newProfile);
 		Profile saved = profileRepository.save(newProfile);
 		accountManager.createAccountSystemFor(saved);
 		return saved;
+	}
+	
+	private void checkSignUpConstraints(Profile profile) {
+		new UserProfileManagerConstraint(profile)
+			.validateForGroups(UserProfileManagerConstraint.SIGNUP_RULES.class);
 	}
 }

@@ -15,4 +15,12 @@ privileged aspect AbstractOperationResponse_Roo_JavaBean {
         this.success = success;
     }
     
+    public String[] AbstractOperationResponse.getErrors() {
+        return this.errors;
+    }
+    
+    public void AbstractOperationResponse.setErrors(String[] errors) {
+        this.errors = errors;
+    }
+    
 }

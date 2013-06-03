@@ -7,9 +7,7 @@ import junit.framework.Assert;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -19,21 +17,22 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.model.Profile;
-import br.com.camiloporto.cloudfinance.repository.ProfileRepository;
 
 import com.jayway.jsonpath.JsonPath;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
-@ActiveProfiles("unit-test")
-public class AccountSystemControllerTest extends AbstractTestNGSpringContextTests {
+public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
     private WebApplicationContext wac;
 	
-	@Autowired
-	private ProfileRepository profileRepository;
+	@BeforeMethod
+	public void clearUserData() {
+		cleanUserData();
+	}
 
     private MockMvc mockMvc;
 
@@ -66,5 +65,38 @@ public class AccountSystemControllerTest extends AbstractTestNGSpringContextTest
 		Assert.assertNotNull("userId was not generated", userId);
 		Profile profile = profileRepository.findOne(new Long(userId));
 		Assert.assertNotNull("profile not created in database", profile);
+	}
+	
+	@Test
+	public void shouldInformErrorIfEmailAlreadyExistsOnSignUp() throws Exception {
+		final String userName ="camilo@gmail.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		
+		mockMvc.perform(post("/user/signup")
+			.param("userName", userName)
+			.param("pass", userPass)
+			.param("confirmPass", userConfirmPass)
+		);
+		
+		//second request for signup
+		ResultActions response = mockMvc.perform(post("/user/signup")
+				.param("userName", userName)
+				.param("pass", userPass)
+				.param("confirmPass", userConfirmPass)
+			);
+		
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.errors").exists());
+		
+		String jsonResponse = response.andReturn().getResponse().getContentAsString();
+		String errorMessage = JsonPath.read(jsonResponse, "$.errors[0]");
+		Assert.assertNotNull("errors was not generated", errorMessage);
+		org.testng.Assert.assertEquals(errorMessage, "br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST", "error message not as expected");
+		
 	}
 }
