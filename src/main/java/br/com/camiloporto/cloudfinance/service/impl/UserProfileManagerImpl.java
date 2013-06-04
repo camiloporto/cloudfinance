@@ -25,6 +25,18 @@ public class UserProfileManagerImpl implements UserProfileManager {
 		return saved;
 	}
 	
+	public Profile login(String userName, String pass) {
+		Profile profile = profileRepository.findByUserIdAndPass(userName, pass);
+		if(profile != null) {
+			clearPassword(profile);
+		}
+		return profile;
+	}
+	
+	private void clearPassword(Profile profile) {
+		profile.setPass(null);
+	}
+
 	private void checkSignUpConstraints(Profile profile) {
 		new UserProfileManagerConstraint(profile)
 			.validateForGroups(UserProfileManagerConstraint.SIGNUP_RULES.class);

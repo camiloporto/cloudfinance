@@ -5,15 +5,18 @@ import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @RequestMapping("/user")
 @Controller
+@SessionAttributes("logged")
 public class AccountSystemController {
 	
 	@Autowired
@@ -39,5 +42,15 @@ public class AccountSystemController {
 		}
 		
 		return response;
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AbstractOperationResponse login(String userName, String pass, ModelMap map) {
+		Profile logged = userProfileManager.login(userName, pass);
+		if(logged != null) {
+			map.addAttribute("logged", logged);
+			return new UserOperationResponse(true);
+		}
+		return new UserOperationResponse(false);
 	}
 }

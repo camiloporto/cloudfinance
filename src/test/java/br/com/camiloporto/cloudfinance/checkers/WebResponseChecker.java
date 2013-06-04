@@ -6,17 +6,22 @@ import java.io.UnsupportedEncodingException;
 
 import net.minidev.json.JSONArray;
 
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testng.Assert;
+
+import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
 
 public class WebResponseChecker {
 
 	private ResultActions response;
+	private MockHttpSession mockSession;
 	
-	public WebResponseChecker(ResultActions response) {
+	public WebResponseChecker(ResultActions response, MockHttpSession mockSession) {
 		this.response = response;
+		this.mockSession = mockSession;
 	}
 
 	public WebResponseChecker assertOperationFail() throws Exception {
@@ -35,6 +40,17 @@ public class WebResponseChecker {
 	public WebResponseChecker assertOperationSuccess() throws Exception {
 		response.andExpect(jsonPath("$.success").value(true));
 		return this;
+	}
+
+	public WebResponseChecker assertUserIsInSession(String userName) throws Exception {
+		Profile logged = (Profile) mockSession.getAttribute("logged");
+		Assert.assertEquals(logged.getUserId(), userName, "userName is not in session");
+		return this;
+	}
+
+	public void assertUserNotInSession() {
+		Profile logged = (Profile) mockSession.getAttribute("logged");
+		Assert.assertNull(logged, "user should not be in session");
 	}
 
 }

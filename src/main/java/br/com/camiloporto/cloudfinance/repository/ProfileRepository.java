@@ -6,5 +6,7 @@ import org.springframework.roo.addon.layers.repository.jpa.RooJpaRepository;
 @RooJpaRepository(domainType = Profile.class)
 public interface ProfileRepository {
 
-	Object findByUserId(String userId);
+	Profile findByUserId(String userId);
+
+	Profile findByUserIdAndPass(String userName, String pass);
 }

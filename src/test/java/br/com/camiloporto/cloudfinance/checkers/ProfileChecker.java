@@ -58,4 +58,14 @@ public class ProfileChecker {
 		Assert.assertNotNull(profile.getId(), "id not assigned");
 	}
 
+	public ProfileChecker assertUserNameEquals(String userName) {
+		Assert.assertEquals(profile.getUserId(), userName, "userName not equals");
+		return this;
+	}
+
+	public ProfileChecker assertPasswordIsEmpty() {
+		Assert.assertNull(profile.getPass(), "password was not cleared");
+		return this;
+	}
+
 }
