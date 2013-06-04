@@ -1,5 +1,8 @@
 package br.com.camiloporto.cloudfinance.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.camiloporto.cloudfinance.model.Account;
@@ -13,6 +16,22 @@ public class AccountManagerImpl implements AccountManager {
 	@Autowired
 	private AccountSystemRepository accountSystemRepository;
 	
+	@Override
+	public List<Account> findRootAccounts(Profile profile) {
+		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(profile);
+		List<Account> roots = createRootAccountList(accountSystems);
+		return roots;
+	}
+	
+	private List<Account> createRootAccountList(
+			List<AccountSystem> accountSystems) {
+		List<Account> result = new ArrayList<Account>();
+		for (AccountSystem as : accountSystems) {
+			result.add(as.getRootAccount());
+		}
+		return result;
+	}
+
 	@Override
 	public AccountSystem createAccountSystemFor(Profile p) {
 		AccountSystem as = new AccountSystem();

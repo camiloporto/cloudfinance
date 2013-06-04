@@ -3,6 +3,7 @@ package br.com.camiloporto.cloudfinance.model;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.entity.RooJpaEntity;
 import org.springframework.roo.addon.serializable.RooSerializable;
@@ -28,7 +29,7 @@ public class Account {
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private br.com.camiloporto.cloudfinance.model.Account parentAccount;
+    private Account parentAccount;
     
     public Account(String name, Account father) {
 		this.name = name;
