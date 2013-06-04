@@ -29,7 +29,7 @@ import com.jayway.jsonpath.JsonPath;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
-public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTest {
+public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
     private WebApplicationContext wac;

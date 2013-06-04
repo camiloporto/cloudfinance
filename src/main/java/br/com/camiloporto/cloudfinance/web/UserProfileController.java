@@ -17,7 +17,7 @@ import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 @RequestMapping("/user")
 @Controller
 @SessionAttributes("logged")
-public class AccountSystemController {
+public class UserProfileController {
 	
 	@Autowired
 	private UserProfileManager userProfileManager;
