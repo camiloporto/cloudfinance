@@ -193,4 +193,52 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.assertUserNotInSession();
 		
 	}
+	
+	@Test
+	public void shouldFailAuthenticationWithWrongUsername() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", "doNotExist@SuchEmail.com")
+				.param("pass", userPass)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertUserNotInSession();
+		
+	}
+	
+	@Test
+	public void shouldFailAuthenticationWithEmptyCredentials() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", "")
+				.param("pass", "")
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertUserNotInSession();
+		
+	}
 }
