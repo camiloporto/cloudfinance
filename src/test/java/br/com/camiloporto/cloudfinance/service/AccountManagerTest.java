@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
+import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
@@ -41,5 +42,21 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		int EXPECTED_ACCOUNT_COUNT = 1;
 		Assert.assertEquals(roots.size(), EXPECTED_ACCOUNT_COUNT, "count of root accountes not as expected");
+	}
+	
+	@Test
+	public void shouldThrowsConstraintViolationExceptionIfProfileNull() {
+		Profile NULL_PROFILE = null;
+		try {
+			accountManager.findRootAccounts(NULL_PROFILE);
+			Assert.fail("did not throw expected exception");
+		} catch (Exception e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(
+						"br.com.camiloporto.cloudfinance.accountsystem.USER_ID_REQUIRED"
+				);
+		}
 	}
 }

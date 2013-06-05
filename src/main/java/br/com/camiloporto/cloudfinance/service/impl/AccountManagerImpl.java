@@ -18,9 +18,16 @@ public class AccountManagerImpl implements AccountManager {
 	
 	@Override
 	public List<Account> findRootAccounts(Profile profile) {
+		checkProfileRequired(profile);
 		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(profile);
 		List<Account> roots = createRootAccountList(accountSystems);
 		return roots;
+	}
+	
+	private void checkProfileRequired(Profile profile) {
+		new ConstraintValidator<AccountManagerConstraint>()
+			.validateForGroups(new AccountManagerConstraint(profile),
+					AccountManagerConstraint.PROFILE_REQUIRED.class);
 	}
 	
 	private List<Account> createRootAccountList(
