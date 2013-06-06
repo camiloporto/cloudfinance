@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
@@ -22,6 +23,37 @@ public class AccountManagerImpl implements AccountManager {
 		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(profile);
 		List<Account> roots = createRootAccountList(accountSystems);
 		return roots;
+	}
+	
+	@Override
+	public AccountNode getAccountBranch(Profile profile, Long accountId) {
+		checkGetAccountBranchEntries(profile, accountId);
+		AccountNode root = getNodeAccount(accountId);
+		appendBranchTree(root);
+		return root;
+	}
+
+	private void checkGetAccountBranchEntries(Profile profile, Long accountId) {
+		AccountManagerConstraint constraints = new AccountManagerConstraint(profile);
+		constraints.setAccountId(accountId);
+		
+		new ConstraintValidator<AccountManagerConstraint>()
+			.validateForGroups(constraints,
+				AccountManagerConstraint.GET_ACCOUNT_BRANCH.class);
+	}
+
+	private void appendBranchTree(AccountNode node) {
+		List<Account> childrenAccounts = accountRepository.findByParentAccount(node.getAccount());
+		for (Account account : childrenAccounts) {
+			AccountNode childNode = new AccountNode(account);
+			node.getChildren().add(childNode);
+			appendBranchTree(childNode);
+		}
+	}
+
+	private AccountNode getNodeAccount(Long accountId) {
+		Account nodeRootAccount = accountRepository.findOne(accountId);
+		return new AccountNode(nodeRootAccount);
 	}
 	
 	private void checkProfileRequired(Profile profile) {

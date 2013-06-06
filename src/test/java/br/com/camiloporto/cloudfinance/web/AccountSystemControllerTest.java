@@ -51,7 +51,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
     }
 	
 	@Test
-	public void shouldGetInitialAccountTree() throws Exception {
+	public void shouldGetUsersRootAccounts() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
@@ -72,8 +72,47 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		JSONArray accounts = JsonPath.read(json, "$.rootAccounts");
 		
 		final int EXPECTED_ACCOUNT_COUNTS = 1;
-		
+		System.out.println(json);
 		Assert.assertEquals(accounts.size(), EXPECTED_ACCOUNT_COUNTS, "accounts count not match");
 		Assert.assertNotNull(JsonPath.read(json, "$.rootAccounts[0].id"), "id of root account should not be null");
+		
+		//XXX Improve data transfer excluding properties not worth for operation requested
+		
+//		Assert.assertNull(JsonPath.read(json, "$.rootAccounts[0].version"), "trash properties should not be included");
+	}
+	
+	//FIXME fazer testes com possibilidade de falhas da consulta de contas raiz. Se usuario nao logado???
+	
+	@Test
+	public void shouldGetRootAccountWholeTree() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
+		
+		ResultActions response = mockMvc.perform(get("/account/roots")
+				.session(mockSession)
+			);
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		
+		
+		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.account").exists());
+		
+		json = response.andReturn().getResponse().getContentAsString();
+		JSONArray children = JsonPath.read(json, "$.account.children");
+		
+		final int EXPECTED_ACCOUNT_CHILDREN = 4;
+		Assert.assertEquals(children.size(), EXPECTED_ACCOUNT_CHILDREN, "children count not match");
+		System.out.println(json);
 	}
 }
