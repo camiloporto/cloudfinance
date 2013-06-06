@@ -44,7 +44,8 @@ public class ProfileChecker {
 	}
 
 	private void checkBasicAccountsCreated() {
-		AccountSystem accountSystem = accountSystemRepository.findByUserProfile(profile);
+		List<AccountSystem> result = accountSystemRepository.findByUserProfile(profile);
+		AccountSystem accountSystem = result.get(0);
 		Assert.assertNotNull(accountSystem, "account system for profile was not created");
 		
 		List<Account> firstLevelAccounts = accountRepository.findByParentAccount(accountSystem.getRootAccount());

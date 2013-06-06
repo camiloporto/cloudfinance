@@ -18,14 +18,23 @@ public class WebUserManagerOperationBuilder {
 		this.mockSession = mockSession;
 	}
 
-	public ResultActions signup(String userName, String userPass, String userConfirmPass) throws Exception {
+	public WebUserManagerOperationBuilder signup(String userName, String userPass, String userConfirmPass) throws Exception {
 		ResultActions response = mockMvc.perform(post("/user/signup")
 				.session(mockSession)
 				.param("userName", userName)
 				.param("pass", userPass)
 				.param("confirmPass", userConfirmPass)
 			);
-		return response;
+		return this;
+	}
+
+	public WebUserManagerOperationBuilder login(String userName, String userPass) throws Exception {
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			);
+		return this;
 	}
 
 }

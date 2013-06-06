@@ -38,7 +38,11 @@ public class UserProfileManagerImpl implements UserProfileManager {
 	}
 
 	private void checkSignUpConstraints(Profile profile) {
-		new UserProfileManagerConstraint(profile)
-			.validateForGroups(UserProfileManagerConstraint.SIGNUP_RULES.class);
+		new ConstraintValidator<UserProfileManagerConstraint>()
+			.validateForGroups(
+					new UserProfileManagerConstraint(profile),
+					UserProfileManagerConstraint.SIGNUP_RULES.class);
+//		new UserProfileManagerConstraint(profile)
+//			.validateForGroups(UserProfileManagerConstraint.SIGNUP_RULES.class);
 	}
 }

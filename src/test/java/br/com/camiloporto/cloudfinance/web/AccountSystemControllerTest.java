@@ -1,10 +1,13 @@
 package br.com.camiloporto.cloudfinance.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.UUID;
+
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,12 +23,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.jayway.jsonpath.JsonPath;
+
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
-import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
-import br.com.camiloporto.cloudfinance.model.Profile;
-
-import com.jayway.jsonpath.JsonPath;
+import br.com.camiloporto.cloudfinance.model.Account;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
@@ -47,198 +49,90 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
-    
-	@Test
-	public void shouldInsertNewAccountSystemWhenUserSignUp() throws Exception {
-		final String userName ="some@email.com";
-		final String userPass ="1234";
-		final String userConfirmPass ="1234";
-		
-		ResultActions response = mockMvc.perform(post("/user/signup")
-			.param("userName", userName)
-			.param("pass", userPass)
-			.param("confirmPass", userConfirmPass)
-		);
-		
-		
-		response
-			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.userId").exists());
-		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationSuccess();
-		
-		String jsonResponse = response.andReturn().getResponse().getContentAsString();
-		Integer userId = JsonPath.read(jsonResponse, "$.userId");
-		Profile profile = profileRepository.findOne(new Long(userId));
-		Assert.assertNotNull(profile, "profile not created in database");
-	}
 	
 	@Test
-	public void shouldInformErrorIfEmailAlreadyExistsOnSignUp() throws Exception {
-		final String userName ="some@email.com";
-		final String userPass ="1234";
-		final String userConfirmPass ="1234";
-		
-		mockMvc.perform(post("/user/signup")
-			.param("userName", userName)
-			.param("pass", userPass)
-			.param("confirmPass", userConfirmPass)
-		);
-		
-		//second request for signup
-		ResultActions response = mockMvc.perform(post("/user/signup")
-				.param("userName", userName)
-				.param("pass", userPass)
-				.param("confirmPass", userConfirmPass)
-			);
-		
-		response
-			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST");
-	}
-	
-	@Test
-	public void shouldInformErrorIfEmailIsEmptyOnSignUp() throws Exception {
-		final String userName ="";
-		final String userPass ="1234";
-		final String userConfirmPass ="1234";
-		
-		ResultActions response = mockMvc.perform(post("/user/signup")
-			.param("userName", userName)
-			.param("pass", userPass)
-			.param("confirmPass", userConfirmPass)
-		);
-		
-		response
-			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED");
-	}
-	
-	@Test
-	public void shouldInformErrorIfPasswordIsEmptyOnSignUp() throws Exception {
-		final String userName ="some@email.com";
-		final String userPass ="";
-		final String userConfirmPass ="";
-		
-		ResultActions response = mockMvc.perform(post("/user/signup")
-			.session(mockSession)
-			.param("userName", userName)
-			.param("pass", userPass)
-			.param("confirmPass", userConfirmPass)
-		);
-		
-		response
-			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED");
-	}
-	
-	@Test
-	public void shouldAuthenticateRegisteredUser() throws Exception {
+	public void shouldGetUsersRootAccounts() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(userName, userPass, userConfirmPass);
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
 		
-		ResultActions response = mockMvc.perform(post("/user/login")
+		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
-				.param("userName", userName)
-				.param("pass", userPass)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.rootAccounts").exists());
 		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationSuccess()
-			.assertUserIsInSession(userName);
+		String json = response.andReturn().getResponse().getContentAsString();
+		JSONArray accounts = JsonPath.read(json, "$.rootAccounts");
 		
+		final int EXPECTED_ACCOUNT_COUNTS = 1;
+		System.out.println(json);
+		Assert.assertEquals(accounts.size(), EXPECTED_ACCOUNT_COUNTS, "accounts count not match");
+		Assert.assertNotNull(JsonPath.read(json, "$.rootAccounts[0].id"), "id of root account should not be null");
+		
+		//XXX Improve data transfer excluding properties not worth for operation requested
+		
+//		Assert.assertNull(JsonPath.read(json, "$.rootAccounts[0].version"), "trash properties should not be included");
 	}
 	
+	//FIXME fazer testes com possibilidade de falhas da consulta de contas raiz. Se usuario nao logado???
+	
 	@Test
-	public void shouldFailAuthenticationWithWrongPassword() throws Exception {
+	public void shouldGetRootAccountWholeTree() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(userName, userPass, userConfirmPass);
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
 		
-		ResultActions response = mockMvc.perform(post("/user/login")
+		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
-				.param("userName", userName)
-				.param("pass", "WRONG_PASS")
+			);
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		
+		
+		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.accountTree").exists());
 		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationFail()
-			.assertUserNotInSession();
+		json = response.andReturn().getResponse().getContentAsString();
+		JSONArray children = JsonPath.read(json, "$.accountTree.children");
 		
+		final int EXPECTED_ACCOUNT_CHILDREN = 4;
+		Assert.assertEquals(children.size(), EXPECTED_ACCOUNT_CHILDREN, "children count not match");
 	}
 	
 	@Test
-	public void shouldFailAuthenticationWithWrongUsername() throws Exception {
+	public void shouldGetEmptyTreeIfAccountIdDoNotExists() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(userName, userPass, userConfirmPass);
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
 		
-		ResultActions response = mockMvc.perform(post("/user/login")
+		ResultActions response = mockMvc.perform(get("/account/tree/9999")
 				.session(mockSession)
-				.param("userName", "doNotExist@SuchEmail.com")
-				.param("pass", userPass)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationFail()
-			.assertUserNotInSession();
-		
-	}
-	
-	@Test
-	public void shouldFailAuthenticationWithEmptyCredentials() throws Exception {
-		final String userName ="some@email.com";
-		final String userPass ="1234";
-		final String userConfirmPass ="1234";
-		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(userName, userPass, userConfirmPass);
-		
-		ResultActions response = mockMvc.perform(post("/user/login")
-				.session(mockSession)
-				.param("userName", "")
-				.param("pass", "")
-			);
-		
-		response
-			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-		
-		new WebResponseChecker(response, mockSession)
-			.assertOperationFail()
-			.assertUserNotInSession();
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.accountTree").doesNotExist());
 		
 	}
 }
