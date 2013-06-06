@@ -106,13 +106,33 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		response
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.account").exists());
+			.andExpect(jsonPath("$.accountTree").exists());
 		
 		json = response.andReturn().getResponse().getContentAsString();
-		JSONArray children = JsonPath.read(json, "$.account.children");
+		JSONArray children = JsonPath.read(json, "$.accountTree.children");
 		
 		final int EXPECTED_ACCOUNT_CHILDREN = 4;
 		Assert.assertEquals(children.size(), EXPECTED_ACCOUNT_CHILDREN, "children count not match");
-		System.out.println(json);
+	}
+	
+	@Test
+	public void shouldGetEmptyTreeIfAccountIdDoNotExists() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
+		
+		ResultActions response = mockMvc.perform(get("/account/tree/9999")
+				.session(mockSession)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.accountTree").doesNotExist());
+		
 	}
 }

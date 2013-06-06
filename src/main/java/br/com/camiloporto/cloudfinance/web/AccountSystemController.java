@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 
@@ -38,10 +39,11 @@ public class AccountSystemController {
 	@RequestMapping(value = "/tree/{accountId}", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AbstractOperationResponse getAccountBranch(
 			@ModelAttribute(value="logged") Profile logged,
-			@PathVariable Integer accountId) {
+			@PathVariable Long accountId) {
 
-		AccountOperationResponse response = new AccountOperationResponse(false);
-		
+		AccountNode rootNode = accountManager.getAccountBranch(logged, accountId);
+		AccountOperationResponse response = new AccountOperationResponse(true);
+		response.setAccountTree(rootNode);
 		return response;
 	}
 

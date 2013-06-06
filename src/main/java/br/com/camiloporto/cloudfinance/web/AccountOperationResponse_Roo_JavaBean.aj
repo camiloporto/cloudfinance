@@ -3,6 +3,7 @@
 
 package br.com.camiloporto.cloudfinance.web;
 
+import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 
@@ -14,6 +15,14 @@ privileged aspect AccountOperationResponse_Roo_JavaBean {
     
     public void AccountOperationResponse.setRootAccounts(Account[] rootAccounts) {
         this.rootAccounts = rootAccounts;
+    }
+    
+    public AccountNode AccountOperationResponse.getAccountTree() {
+        return this.accountTree;
+    }
+    
+    public void AccountOperationResponse.setAccountTree(AccountNode accountTree) {
+        this.accountTree = accountTree;
     }
     
 }

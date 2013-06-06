@@ -29,7 +29,9 @@ public class AccountManagerImpl implements AccountManager {
 	public AccountNode getAccountBranch(Profile profile, Long accountId) {
 		checkGetAccountBranchEntries(profile, accountId);
 		AccountNode root = getNodeAccount(accountId);
-		appendBranchTree(root);
+		if(root != null) {
+			appendBranchTree(root);
+		}
 		return root;
 	}
 
@@ -53,7 +55,10 @@ public class AccountManagerImpl implements AccountManager {
 
 	private AccountNode getNodeAccount(Long accountId) {
 		Account nodeRootAccount = accountRepository.findOne(accountId);
-		return new AccountNode(nodeRootAccount);
+		if(nodeRootAccount != null) {
+			return new AccountNode(nodeRootAccount);
+		}
+		return null;
 	}
 	
 	private void checkProfileRequired(Profile profile) {

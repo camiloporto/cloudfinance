@@ -96,6 +96,24 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGetNullAccountNodeIfAccountDoNotExists() {
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
+		
+		Profile profile = userProfileManager.signUp(p);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, 9999L);
+		Assert.assertNull(rootBranch, "rootranch should be null");
+		
+	}
+	
+	@Test
 	public void shouldThrowsContraintViolationExceptionWhenGetAccountBranchWithNoAccountId() {
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";
