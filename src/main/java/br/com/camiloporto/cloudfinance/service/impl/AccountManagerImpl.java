@@ -17,12 +17,22 @@ public class AccountManagerImpl implements AccountManager {
 	@Autowired
 	private AccountSystemRepository accountSystemRepository;
 	
-	public void saveAccount(Account account) {
+	public void saveAccount(Profile profile, Account account) {
+		checkCreateNewAccountEntries(profile, account);
 		Account parent = accountRepository.findOne(account.getParentAccount().getId());
 		account.setParentAccount(parent);
 		accountRepository.save(account);
 	}
 	
+	private void checkCreateNewAccountEntries(Profile profile, Account account) {
+		AccountManagerConstraint constraints = new AccountManagerConstraint(profile);
+		constraints.setAccount(account);
+		
+		new ConstraintValidator<AccountManagerConstraint>()
+			.validateForGroups(constraints,
+				AccountManagerConstraint.CREATE_NEW_ACCOUNT.class);
+	}
+
 	@Override
 	public List<Account> findRootAccounts(Profile profile) {
 		checkProfileRequired(profile);

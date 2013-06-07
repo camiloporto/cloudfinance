@@ -2,6 +2,8 @@ package br.com.camiloporto.cloudfinance.web;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -53,15 +55,11 @@ public class AccountSystemController {
 			Account account) {
 		AccountOperationResponse response = new AccountOperationResponse(true);
 		try {
-			accountManager.saveAccount(account);
-			
+			accountManager.saveAccount(logged, account);
 			response.setAccount(account);
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.setSuccess(false);
+		} catch (ConstraintViolationException e) {
+			response = new AccountOperationResponse(e);
 		}
-		
-		
 		return response;
 	}
 

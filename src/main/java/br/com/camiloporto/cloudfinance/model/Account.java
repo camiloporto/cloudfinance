@@ -10,6 +10,8 @@ import org.springframework.roo.addon.jpa.entity.RooJpaEntity;
 import org.springframework.roo.addon.serializable.RooSerializable;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import br.com.camiloporto.cloudfinance.service.impl.AccountManagerConstraint;
+
 @RooJavaBean
 @RooToString
 @RooJpaEntity
@@ -30,6 +32,8 @@ public class Account {
 
     private String description;
 
+    @NotNull(message = "br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED",
+    		groups={AccountManagerConstraint.CREATE_NEW_ACCOUNT.class})
     @ManyToOne(fetch = FetchType.EAGER)
     private Account parentAccount;
     

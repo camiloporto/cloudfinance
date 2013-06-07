@@ -3,6 +3,7 @@
 
 package br.com.camiloporto.cloudfinance.service.impl;
 
+import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.impl.AccountManagerConstraint;
 
@@ -22,6 +23,14 @@ privileged aspect AccountManagerConstraint_Roo_JavaBean {
     
     public void AccountManagerConstraint.setAccountId(Long accountId) {
         this.accountId = accountId;
+    }
+    
+    public Account AccountManagerConstraint.getAccount() {
+        return this.account;
+    }
+    
+    public void AccountManagerConstraint.setAccount(Account account) {
+        this.account = account;
     }
     
 }

@@ -17,4 +17,6 @@ public interface AccountManager {
 	List<Account> findRootAccounts(Profile profile);
 
 	AccountNode getAccountBranch(Profile profile, Long accountId);
+	
+	public void saveAccount(Profile profile, Account account);
 }

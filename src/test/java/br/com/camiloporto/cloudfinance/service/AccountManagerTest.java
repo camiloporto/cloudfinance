@@ -60,6 +60,70 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldThrowConstraintViolationExceptionIfParentAccountNullWhenCreateNewAccount() {
+		
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
+		Profile profile = userProfileManager.signUp(p);
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = null;
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfParentAccountIdNullWhenCreateNewAccount() {
+		
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
+		Profile profile = userProfileManager.signUp(p);
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = new Account();//no ID assigned
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+		}
+		
+	}
+	
+	@Test
 	public void shouldListAllRootAccountOfAProfile() {
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";

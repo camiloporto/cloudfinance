@@ -27,6 +27,7 @@ import com.jayway.jsonpath.JsonPath;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
+import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
@@ -181,5 +182,46 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		Assert.assertNotNull(newAccount.getId(), "account id not setted");
 		Assert.assertEquals(newAccount.getName(), accountName, "account name did not match");
 		Assert.assertEquals(newAccount.getParentAccount().getId(), new Long(parentId), "parent did not match");
+	}
+	
+	@Test
+	public void shouldFailIfParentIdNotInformed() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
+		
+		ResultActions response = mockMvc.perform(get("/account/roots")
+				.session(mockSession)
+			);
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		
+		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
+			);
+		
+		json = response.andReturn().getResponse().getContentAsString();
+		
+		final String accountName = "NewAccount";
+		final String accountDescription ="short description";
+		
+		response = mockMvc.perform(post("/account")
+				.session(mockSession)
+				.param("name", accountName)
+				.param("description", accountDescription)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(false));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+		
 	}
 }
