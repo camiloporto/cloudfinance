@@ -46,5 +46,23 @@ public class AccountSystemController {
 		response.setAccountTree(rootNode);
 		return response;
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AbstractOperationResponse createAccount(
+			@ModelAttribute(value="logged")  Profile logged,
+			Account account) {
+		AccountOperationResponse response = new AccountOperationResponse(true);
+		try {
+			accountManager.saveAccount(account);
+			
+			response.setAccount(account);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setSuccess(false);
+		}
+		
+		
+		return response;
+	}
 
 }

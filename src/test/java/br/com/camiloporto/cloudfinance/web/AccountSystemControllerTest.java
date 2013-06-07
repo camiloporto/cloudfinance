@@ -135,4 +135,51 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(jsonPath("$.accountTree").doesNotExist());
 		
 	}
+	
+	@Test
+	public void shouldAddNewAccount() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass)
+			.login(userName, userPass);
+		
+		ResultActions response = mockMvc.perform(get("/account/roots")
+				.session(mockSession)
+			);
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		
+		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
+			);
+		
+		json = response.andReturn().getResponse().getContentAsString();
+		
+		final String accountName = "NewAccount";
+		final String accountDescription ="short description";
+		
+		final Integer parentId = JsonPath.read(json, "$.accountTree.children[0].account.id");
+		response = mockMvc.perform(post("/account")
+				.session(mockSession)
+				.param("name", accountName)
+				.param("description", accountDescription)
+				.param("parentAccount.id", parentId.toString())
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.account.id").exists());
+		
+		json = response.andReturn().getResponse().getContentAsString();
+		
+		Integer newAccountId = JsonPath.read(json, "$.account.id");
+		Account newAccount = accountRepository.findOne(new Long(newAccountId));
+		Assert.assertNotNull(newAccount.getId(), "account id not setted");
+		Assert.assertEquals(newAccount.getName(), accountName, "account name did not match");
+		Assert.assertEquals(newAccount.getParentAccount().getId(), new Long(parentId), "parent did not match");
+	}
 }

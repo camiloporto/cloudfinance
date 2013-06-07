@@ -17,6 +17,12 @@ public class AccountManagerImpl implements AccountManager {
 	@Autowired
 	private AccountSystemRepository accountSystemRepository;
 	
+	public void saveAccount(Account account) {
+		Account parent = accountRepository.findOne(account.getParentAccount().getId());
+		account.setParentAccount(parent);
+		accountRepository.save(account);
+	}
+	
 	@Override
 	public List<Account> findRootAccounts(Profile profile) {
 		checkProfileRequired(profile);

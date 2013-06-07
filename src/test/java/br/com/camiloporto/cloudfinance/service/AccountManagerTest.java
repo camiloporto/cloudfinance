@@ -30,6 +30,36 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldCreateNewAccount() {
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		
+		Profile p = new ProfileBuilder()
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
+		Profile profile = userProfileManager.signUp(p);
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+		accountManager.saveAccount(toSave);
+		
+		Assert.assertNotNull(toSave.getId(), "did not assign account id");
+		Account saved = accountManager.findAccount(toSave.getId());
+		Assert.assertEquals(saved.getParentAccount().getId(), parentAccount.getId(), "father id not match");
+		
+	}
+	
+	@Test
 	public void shouldListAllRootAccountOfAProfile() {
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";
