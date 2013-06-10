@@ -23,23 +23,26 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
 	private UserProfileManager userProfileManager;
+
+
+	private Profile profile;
 	
 	@BeforeMethod
 	public void clearUserData() {
 		cleanUserData();
+		
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		Profile p = new ProfileBuilder()
+		.newProfile()
+		.comEmail(camiloporto)
+		.comSenha(senha)
+		.create();
+		profile = userProfileManager.signUp(p);
 	}
 	
 	@Test
 	public void shouldCreateNewAccount() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		Profile profile = userProfileManager.signUp(p);
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		Account root = roots.get(0);
 		
@@ -62,15 +65,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfParentAccountNullWhenCreateNewAccount() {
 		
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		Profile profile = userProfileManager.signUp(p);
 		
 		final String name = "Account Name";
 		final String desc = "Account desc";
@@ -91,20 +85,8 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		
 	}
 	
-	//FIXME REFATORAR TESTES
-	
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfParentAccountIdNullWhenCreateNewAccount() {
-		
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		Profile profile = userProfileManager.signUp(p);
 		
 		final String name = "Account Name";
 		final String desc = "Account desc";
@@ -126,17 +108,61 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldThrowConstraintViolationExceptionIfAccountNameNullWhenCreateNewAccount() {
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = null;
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfAccountNameEmptyWhenCreateNewAccount() {
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_REQUIRED");
+		}
+		
+	}
+	
+	@Test
 	public void shouldListAllRootAccountOfAProfile() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		int EXPECTED_ACCOUNT_COUNT = 1;
@@ -145,16 +171,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetAccountBranch() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		Account root = roots.get(0);
 		
@@ -168,16 +184,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetLeafAccountBranch() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		Account root = roots.get(0);
 		
@@ -193,16 +199,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetNullAccountNodeIfAccountDoNotExists() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, 9999L);
 		Assert.assertNull(rootBranch, "rootranch should be null");
@@ -211,16 +207,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldThrowsContraintViolationExceptionWhenGetAccountBranchWithNoAccountId() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		
 		try {
 			accountManager.getAccountBranch(profile, null);
