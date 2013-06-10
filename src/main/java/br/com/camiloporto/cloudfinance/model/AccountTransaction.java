@@ -1,5 +1,6 @@
 package br.com.camiloporto.cloudfinance.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
@@ -17,10 +18,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 public class AccountTransaction {
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private AccountEntry origin;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private AccountEntry destin;
 }
