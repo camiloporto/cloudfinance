@@ -25,4 +25,12 @@ privileged aspect AccountOperationResponse_Roo_JavaBean {
         this.accountTree = accountTree;
     }
     
+    public Account AccountOperationResponse.getAccount() {
+        return this.account;
+    }
+    
+    public void AccountOperationResponse.setAccount(Account account) {
+        this.account = account;
+    }
+    
 }

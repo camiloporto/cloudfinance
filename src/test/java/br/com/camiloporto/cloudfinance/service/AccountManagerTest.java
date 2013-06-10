@@ -23,24 +23,176 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
 	private UserProfileManager userProfileManager;
+
+
+	private Profile profile;
 	
 	@BeforeMethod
 	public void clearUserData() {
 		cleanUserData();
+		
+		final String camiloporto = "some@email.com";
+		final String senha = "1234";
+		Profile p = new ProfileBuilder()
+		.newProfile()
+		.comEmail(camiloporto)
+		.comSenha(senha)
+		.create();
+		profile = userProfileManager.signUp(p);
+	}
+	
+	@Test
+	public void shouldCreateNewAccount() {
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+		accountManager.saveAccount(profile, toSave);
+		
+		Assert.assertNotNull(toSave.getId(), "did not assign account id");
+		Account saved = accountManager.findAccount(toSave.getId());
+		Assert.assertEquals(saved.getParentAccount().getId(), parentAccount.getId(), "father id not match");
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfParentAccountNullWhenCreateNewAccount() {
+		
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = null;
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfParentAccountIdNullWhenCreateNewAccount() {
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = new Account();//no ID assigned
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfAccountNameNullWhenCreateNewAccount() {
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = null;
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfAccountNameEmptyWhenCreateNewAccount() {
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void childrenAccountNameShouldBeUnique() {
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+		
+		accountManager.saveAccount(profile, toSave);
+
+		try {
+			Account childWithRepeatedName = new Account(name, parentAccount);
+			accountManager.saveAccount(profile, childWithRepeatedName);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_ALREADY_EXISTS");
+		}
+		
 	}
 	
 	@Test
 	public void shouldListAllRootAccountOfAProfile() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		int EXPECTED_ACCOUNT_COUNT = 1;
@@ -49,16 +201,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetAccountBranch() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		Account root = roots.get(0);
 		
@@ -72,16 +214,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetLeafAccountBranch() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		List<Account> roots = accountManager.findRootAccounts(profile);
 		Account root = roots.get(0);
 		
@@ -97,16 +229,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetNullAccountNodeIfAccountDoNotExists() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, 9999L);
 		Assert.assertNull(rootBranch, "rootranch should be null");
@@ -115,16 +237,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldThrowsContraintViolationExceptionWhenGetAccountBranchWithNoAccountId() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		Profile profile = userProfileManager.signUp(p);
 		
 		try {
 			accountManager.getAccountBranch(profile, null);
