@@ -184,6 +184,8 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		Assert.assertEquals(newAccount.getParentAccount().getId(), new Long(parentId), "parent did not match");
 	}
 	
+	//FIXME refatorar testes!! 
+	
 	@Test
 	public void shouldFailIfParentIdNotInformed() throws Exception {
 		final String userName ="some@email.com";

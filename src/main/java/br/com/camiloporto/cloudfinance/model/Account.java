@@ -32,8 +32,6 @@ public class Account {
 
     private String description;
 
-    @NotNull(message = "br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED",
-    		groups={AccountManagerConstraint.CREATE_NEW_ACCOUNT.class})
     @ManyToOne(fetch = FetchType.EAGER)
     private Account parentAccount;
     

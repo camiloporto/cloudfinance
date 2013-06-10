@@ -51,7 +51,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		
 		Account toSave = new Account(name, parentAccount);
 		toSave.setDescription(desc);
-		accountManager.saveAccount(toSave);
+		accountManager.saveAccount(profile, toSave);
 		
 		Assert.assertNotNull(toSave.getId(), "did not assign account id");
 		Account saved = accountManager.findAccount(toSave.getId());
@@ -90,6 +90,8 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		}
 		
 	}
+	
+	//FIXME REFATORAR TESTES
 	
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfParentAccountIdNullWhenCreateNewAccount() {
