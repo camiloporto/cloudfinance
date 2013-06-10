@@ -5,9 +5,18 @@ package br.com.camiloporto.cloudfinance.service.impl;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.service.impl.AccountManagerConstraint;
 
 privileged aspect AccountManagerConstraint_Roo_JavaBean {
+    
+    public AccountRepository AccountManagerConstraint.getAccountRepository() {
+        return this.accountRepository;
+    }
+    
+    public void AccountManagerConstraint.setAccountRepository(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
     
     public Profile AccountManagerConstraint.getProfile() {
         return this.profile;

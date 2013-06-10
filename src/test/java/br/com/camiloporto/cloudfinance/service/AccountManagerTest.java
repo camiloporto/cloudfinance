@@ -162,6 +162,36 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void childrenAccountNameShouldBeUnique() {
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		Account root = roots.get(0);
+		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+		
+		accountManager.saveAccount(profile, toSave);
+
+		try {
+			Account childWithRepeatedName = new Account(name, parentAccount);
+			accountManager.saveAccount(profile, childWithRepeatedName);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_ALREADY_EXISTS");
+		}
+		
+	}
+	
+	@Test
 	public void shouldListAllRootAccountOfAProfile() {
 		
 		List<Account> roots = accountManager.findRootAccounts(profile);

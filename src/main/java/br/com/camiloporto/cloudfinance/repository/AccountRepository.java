@@ -9,4 +9,6 @@ import org.springframework.roo.addon.layers.repository.jpa.RooJpaRepository;
 public interface AccountRepository {
 
 	List<Account> findByParentAccount(Account parentAccount);
+
+	Account findByName(String name);
 }

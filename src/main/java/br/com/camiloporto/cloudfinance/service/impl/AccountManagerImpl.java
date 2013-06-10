@@ -25,8 +25,9 @@ public class AccountManagerImpl implements AccountManager {
 	}
 	
 	private void checkCreateNewAccountEntries(Profile profile, Account account) {
-		AccountManagerConstraint constraints = new AccountManagerConstraint(profile);
+		AccountManagerConstraint constraints = new AccountManagerConstraint();
 		constraints.setAccount(account);
+		constraints.setProfile(profile);
 		
 		new ConstraintValidator<AccountManagerConstraint>()
 			.validateForGroups(constraints,
