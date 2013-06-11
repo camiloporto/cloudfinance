@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountEntry;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
+import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.TransactionManager;
 
@@ -17,8 +18,10 @@ public class TransactionManagerImpl implements TransactionManager {
 	private AccountManager accountManager;
 	
 	@Override
-	public AccountTransaction saveAccountTransaction(Long originAccountId, Long destAccountId,
+	public AccountTransaction saveAccountTransaction(Profile profile, Long originAccountId, Long destAccountId,
 			Date transactionDate, BigDecimal amount, String description) {
+		
+		checkSaveNewTransactionEntries(profile, originAccountId, destAccountId, transactionDate, amount, description);
 		Account origin = accountManager.findAccount(originAccountId);
 		Account dest = accountManager.findAccount(destAccountId);
 		
@@ -40,5 +43,21 @@ public class TransactionManagerImpl implements TransactionManager {
 		transaction.setDestin(destEntry);
 		
 		return accountTransactionRepository.save(transaction);
+	}
+	
+	private void checkSaveNewTransactionEntries(Profile profile, Long originAccountId, Long destAccountId,
+			Date transactionDate, BigDecimal amount, String description) {
+		
+		TransactionManagerConstraint constraints = new TransactionManagerConstraint();
+		constraints.setAmount(amount);
+		constraints.setDescription(description);
+		constraints.setDestAccountId(destAccountId);
+		constraints.setOriginAccountId(originAccountId);
+		constraints.setProfile(profile);
+		constraints.setTransactionDate(transactionDate);
+		
+		new ConstraintValidator<TransactionManagerConstraint>()
+			.validateForGroups(constraints,
+				TransactionManagerConstraint.SAVE_NEW_TRANSACTION.class);
 	}
 }

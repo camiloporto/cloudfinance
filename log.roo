@@ -84,3 +84,4 @@ exit
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-06-10 15:07:01
 // [failed] field date --fieldName date --type java.util.Date --class ~.model.AccountEntry --notNull 
 field date --fieldName transactionDate --type java.util.Date --class ~.model.AccountEntry --notNull 
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-06-11 16:23:52
