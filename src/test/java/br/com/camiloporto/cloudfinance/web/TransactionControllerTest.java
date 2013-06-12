@@ -111,6 +111,6 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		Integer newTransactionId = JsonPath.read(json, "$.transaction.id");
 		AccountTransaction transaction = transactionManager.findAccountTransaction(new Long(newTransactionId));
-		Assert.assertNotNull(newTransactionId, "transaction should not be null");
+		Assert.assertNotNull(transaction, "transaction should not be null");
 	}
 }
