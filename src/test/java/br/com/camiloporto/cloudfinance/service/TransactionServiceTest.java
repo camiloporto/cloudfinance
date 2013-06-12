@@ -18,9 +18,11 @@ import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
 import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountEntry;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
 
 public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 	
@@ -32,6 +34,9 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
 	private TransactionManager transactionManager;
+	
+	@Autowired
+	private AccountEntryRepository accountEntryRepository;
 	
 	private Profile profile;
 	
@@ -61,51 +66,26 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldAddNewTransaction() {
+		BigDecimal amount = new BigDecimal("1250.25");
 		AccountTransaction saved = transactionManager.saveAccountTransaction(
 				profile,
-				origin.getId(), dest.getId(), new Date(), new BigDecimal("1250.25"), "transaction description");
+				origin.getId(), dest.getId(), new Date(), amount, "transaction description");
 		
 		Assert.assertNotNull(saved.getId(), "did not assigned an id for new transaction");
+		assertAccountEntryAmountWasRegistered(origin, amount.negate());
+		assertAccountEntryAmountWasRegistered(dest, amount);
 	}
 	
-	@Test
-	public void shouldThrowsConstraintViolationExceptionWhenOriginAccountEmpty() {
-		Long nullOriginId = null;
-		try {
-			transactionManager.saveAccountTransaction(
-					profile,
-					nullOriginId, 
-					dest.getId(), 
-					new Date(), 
-					new BigDecimal("1250.25"), 
-					"transaction description");
-		} catch (ConstraintViolationException e) {
-			e.printStackTrace();
-			new ExceptionChecker(e)
-				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED");
+	private void assertAccountEntryAmountWasRegistered(Account account,
+			BigDecimal amount) {
+		List<AccountEntry> entries = accountEntryRepository.findAll();
+		for (AccountEntry accountEntry : entries) {
+			if(accountEntry.getAccount().getId().equals(account.getId())) {
+				Assert.assertEquals(accountEntry.getEntryValue(), amount, "expected accountEntry amount not match");
+			}
 		}
 	}
-	
-	@Test
-	public void shouldThrowsConstraintViolationExceptionWhenDestAccountEmpty() {
-		Long nullDestId = null;
-		try {
-			transactionManager.saveAccountTransaction(
-					profile,
-					origin.getId(), 
-					nullDestId, 
-					new Date(), 
-					new BigDecimal("1250.25"), 
-					"transaction description");
-		} catch (ConstraintViolationException e) {
-			e.printStackTrace();
-			new ExceptionChecker(e)
-				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.transaction.DEST_ACCOUNT_REQUIRED");
-		}
-	}
-	
+
 	@Test(dataProvider = "transactionValidationDataProvider")
 	public void validateSaveTransactionInputs(Profile profile, Long originAccountId, Long destAccountId, 
 			Date transactionDate, BigDecimal amount, String description, String expectedExceptionMessage) {
@@ -125,11 +105,12 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 		}
 	}
 	
+	//FIXME verificar: "A aplicação deverá retirar (debitar) o valor informado da conta de origem, e creditar o mesmo valor na conta de destino."
+	
 	@DataProvider(name = "transactionValidationDataProvider")
 	public Iterator<Object[]> saveTransactionValidationTestData() {
 		beforeTests();
 		
-		//FIXME adicionar testes de validacao de entradas para transacao
 		List<Object[]> testData = new ArrayList<Object[]>();
 		
 		testData.add(new Object[] {profile, null, dest.getId(), new Date(), new BigDecimal("1250.25"), "transact description", "br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED"});
