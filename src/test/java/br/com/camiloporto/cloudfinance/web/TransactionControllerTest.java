@@ -25,6 +25,7 @@ import com.jayway.jsonpath.JsonPath;
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.TransactionControllerTestHelper;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
+import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
@@ -73,10 +74,6 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		String json = response.andReturn().getResponse().getContentAsString();
 		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
 		
-//		Profile p = new Profile();
-//		p.setId(new Long(rootAccountId));
-//		List<Account> findRootAccounts = accountManager.findRootAccounts(p);
-		
 		testHelper = new TransactionControllerTestHelper(mockMvc, mockSession)
 			.signUpAndLogUser(userName, userPass, userConfirmPass);
 		
@@ -100,17 +97,40 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.locale(new Locale("pt", "BR"))
 			);
 		
-		String json = response.andReturn().getResponse().getContentAsString();
-		System.out
-				.println("TransactionControllerTest.shouldAddNewTransaction() " +json);
 		response
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON));
 		
-		json = response.andReturn().getResponse().getContentAsString();
+		String json = response.andReturn().getResponse().getContentAsString();
 		
 		Integer newTransactionId = JsonPath.read(json, "$.transaction.id");
 		AccountTransaction transaction = transactionManager.findAccountTransaction(new Long(newTransactionId));
 		Assert.assertNotNull(transaction, "transaction should not be null");
+	}
+	
+	@Test
+	public void shouldFailIfErrorOccurWhenAddNewTransaction() throws Exception {
+		//Given a created a user and a account hierarchy
+		
+		String invalidOriginAccount = "";
+		
+		ResultActions response = mockMvc.perform(post("/transaction")
+				.session(mockSession)
+				.param("originAccountId", invalidOriginAccount)
+				.param("destAccountId", destAccount.getId().toString())
+				.param("date", "10/06/2013")
+				.param("amount","1250,25")
+				.param("description", "transaction description")
+				.locale(new Locale("pt", "BR"))
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(false));
+	
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED");
 	}
 }
