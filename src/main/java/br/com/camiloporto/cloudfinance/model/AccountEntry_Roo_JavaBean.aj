@@ -6,6 +6,7 @@ package br.com.camiloporto.cloudfinance.model;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountEntry;
 import java.math.BigDecimal;
+import java.util.Date;
 
 privileged aspect AccountEntry_Roo_JavaBean {
     
@@ -31,6 +32,14 @@ privileged aspect AccountEntry_Roo_JavaBean {
     
     public void AccountEntry.setComment(String comment) {
         this.comment = comment;
+    }
+    
+    public Date AccountEntry.getTransactionDate() {
+        return this.transactionDate;
+    }
+    
+    public void AccountEntry.setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
     }
     
 }
