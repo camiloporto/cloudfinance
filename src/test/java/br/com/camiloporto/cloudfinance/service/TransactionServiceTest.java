@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -26,6 +27,7 @@ import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
+import br.com.camiloporto.cloudfinance.service.impl.TransactionManagerImpl;
 
 public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 	
@@ -47,10 +49,12 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 	private Account dest;
 	private Account root;
 	
+	private Clock fakeClock = Mockito.mock(Clock.class);
+	
 	@BeforeMethod
 	public void beforeTests() {
 		cleanUserData();
-		
+		((TransactionManagerImpl)transactionManager).setClock(fakeClock);
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";
 		Profile p = new ProfileBuilder()
@@ -169,14 +173,17 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 				"t4");
 		
 		//assuming today is 13/06/2013
-		//default begin date shuold be 3 days before today
+		Calendar fakeToday = new GregorianCalendar(2013, Calendar.JUNE, 13);
+		Mockito.when(fakeClock.today()).thenReturn(fakeToday);
+		
 		Date beginDate = null;
 		List<AccountTransaction> result = 
 				transactionManager.findAccountTransactionByDateBetween(
 						profile, 
 						root.getId(), 
 						beginDate, d3.getTime());
-		
+
+		//expected default begin date should be 3 days before 'today'
 		int expectedResultCount = 3;
 		Assert.assertEquals(result.size(), expectedResultCount, "result count did not match");
 		new TransactionTestChecker()
@@ -217,7 +224,9 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 				"t4");
 		
 		//assuming today is 13/06/2013
-		//default end date should be 'today'.
+		Calendar fakeToday = new GregorianCalendar(2013, Calendar.JUNE, 13);
+		Mockito.when(fakeClock.today()).thenReturn(fakeToday);
+		
 		Date endDate = null;
 		List<AccountTransaction> result = 
 				transactionManager.findAccountTransactionByDateBetween(
@@ -225,6 +234,7 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 						root.getId(), 
 						d1.getTime(), endDate);
 		
+		//expected default end date should be 'today'.
 		int expectedResultCount = 2;
 		Assert.assertEquals(result.size(), expectedResultCount, "result count did not match");
 		new TransactionTestChecker()
