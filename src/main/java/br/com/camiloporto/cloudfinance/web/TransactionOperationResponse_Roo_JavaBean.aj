@@ -5,6 +5,7 @@ package br.com.camiloporto.cloudfinance.web;
 
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.web.TransactionOperationResponse;
+import java.util.List;
 
 privileged aspect TransactionOperationResponse_Roo_JavaBean {
     
@@ -14,6 +15,14 @@ privileged aspect TransactionOperationResponse_Roo_JavaBean {
     
     public void TransactionOperationResponse.setTransaction(AccountTransaction transaction) {
         this.transaction = transaction;
+    }
+    
+    public List<AccountTransaction> TransactionOperationResponse.getTransactions() {
+        return this.transactions;
+    }
+    
+    public void TransactionOperationResponse.setTransactions(List<AccountTransaction> transactions) {
+        this.transactions = transactions;
     }
     
 }

@@ -36,6 +36,10 @@ public class Account {
     @ManyToOne(fetch = FetchType.EAGER)
     private Account parentAccount;
     
+    //to rapidly identify the owner of each account deep in the tree
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Account rootAccount;
+    
     public Account(String name, Account father) {
 		this.name = name;
 		parentAccount = father;

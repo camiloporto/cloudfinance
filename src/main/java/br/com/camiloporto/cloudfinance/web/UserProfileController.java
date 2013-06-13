@@ -1,5 +1,7 @@
 package br.com.camiloporto.cloudfinance.web;
 
+import java.util.List;
+
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +13,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @RequestMapping("/user")
 @Controller
-@SessionAttributes("logged")
+@SessionAttributes(value={"logged", "rootAccount"})
 public class UserProfileController {
 	
 	@Autowired
 	private UserProfileManager userProfileManager;
+	
+	@Autowired
+	private AccountManager accountManager;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AbstractOperationResponse signUp(String userName, String pass, String confirmPass) {
@@ -49,8 +56,14 @@ public class UserProfileController {
 		Profile logged = userProfileManager.login(userName, pass);
 		if(logged != null) {
 			map.addAttribute("logged", logged);
+			setDefaultRootAccount(logged, map);
 			return new UserOperationResponse(true);
 		}
 		return new UserOperationResponse(false);
+	}
+
+	private void setDefaultRootAccount(Profile logged, ModelMap map) {
+		List<Account> rootAccounts = accountManager.findRootAccounts(logged);
+		map.addAttribute("rootAccount", rootAccounts.get(0));
 	}
 }

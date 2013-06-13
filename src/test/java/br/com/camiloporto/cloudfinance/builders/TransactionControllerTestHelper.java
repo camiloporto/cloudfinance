@@ -1,6 +1,10 @@
 package br.com.camiloporto.cloudfinance.builders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import java.util.Locale;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -86,6 +90,20 @@ public class TransactionControllerTestHelper {
 
 	public Account getLoggedUserAssetAccount() {
 		return this.assetAccount;
+	}
+
+	public TransactionControllerTestHelper addTransaction(String originId, String destId, String date,
+			String amount, String desc) throws Exception {
+		mockMvc.perform(post("/transaction")
+				.session(mockSession)
+				.param("originAccountId", originId)
+				.param("destAccountId", destId)
+				.param("date", date)
+				.param("amount",amount)
+				.param("description", desc)
+				.locale(new Locale("pt", "BR"))
+			);
+		return this;
 	}
 
 }

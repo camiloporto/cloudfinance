@@ -37,16 +37,14 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Autowired
     private WebApplicationContext wac;
 	
-	@BeforeMethod
-	public void clearUserData() {
-		cleanUserData();
-	}
 
     private MockMvc mockMvc;
     private MockHttpSession mockSession;
+    private Integer rootAccountId;
 
     @BeforeMethod
     public void setup() throws Exception {
+    	cleanUserData();
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
         
@@ -56,6 +54,12 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
 			.signup(userName, userPass, userConfirmPass)
 			.login(userName, userPass);
+		
+		ResultActions response = mockMvc.perform(get("/account/roots")
+				.session(mockSession)
+			);
+		String json = response.andReturn().getResponse().getContentAsString();
+		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
     }
 	
 	@Test
@@ -87,14 +91,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldGetRootAccountWholeTree() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/roots")
-				.session(mockSession)
-			);
-		String json = response.andReturn().getResponse().getContentAsString();
-		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
-		
-		
-		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
 				.session(mockSession)
 			);
 		
@@ -103,7 +100,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.accountTree").exists());
 		
-		json = response.andReturn().getResponse().getContentAsString();
+		String json = response.andReturn().getResponse().getContentAsString();
 		JSONArray children = JsonPath.read(json, "$.accountTree.children");
 		
 		final int EXPECTED_ACCOUNT_CHILDREN = 4;
@@ -128,17 +125,11 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldAddNewAccount() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/roots")
+		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
 				.session(mockSession)
 			);
+		
 		String json = response.andReturn().getResponse().getContentAsString();
-		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
-		
-		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
-			);
-		
-		json = response.andReturn().getResponse().getContentAsString();
 		
 		final String accountName = "NewAccount";
 		final String accountDescription ="short description";
@@ -149,6 +140,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 				.param("name", accountName)
 				.param("description", accountDescription)
 				.param("parentAccount.id", parentId.toString())
+				.param("rootAccount.id", rootAccountId.toString())
 			);
 		
 		response
@@ -169,22 +161,10 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldFailIfParentIdNotInformed() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/roots")
-				.session(mockSession)
-			);
-		String json = response.andReturn().getResponse().getContentAsString();
-		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
-		
-		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
-			);
-		
-		json = response.andReturn().getResponse().getContentAsString();
-		
 		final String accountName = "NewAccount";
 		final String accountDescription ="short description";
 		
-		response = mockMvc.perform(post("/account")
+		ResultActions response = mockMvc.perform(post("/account")
 				.session(mockSession)
 				.param("name", accountName)
 				.param("description", accountDescription)

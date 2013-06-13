@@ -1,5 +1,7 @@
 package br.com.camiloporto.cloudfinance.web;
 
+import java.util.List;
+
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -11,6 +13,8 @@ public class TransactionOperationResponse extends AbstractOperationResponse {
 	
 
 	private AccountTransaction transaction;
+	
+	private List<AccountTransaction> transactions;
 
 	public TransactionOperationResponse(boolean success) {
 		super(success);
@@ -25,6 +29,12 @@ public class TransactionOperationResponse extends AbstractOperationResponse {
 
 	public TransactionOperationResponse(ConstraintViolationException e) {
 		super(e);
+	}
+
+	public TransactionOperationResponse(boolean success,
+			List<AccountTransaction> transactions) {
+		super(success);
+		this.transactions = transactions;
 	}
 
 }
