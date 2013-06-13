@@ -61,7 +61,10 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 			Account account, Date begin, Date end) {
 		AccountStatement as = new AccountStatement();
 		BigDecimal balanceBefore = accountEntryRepository.sumBetween(LOWEST_DATE, getBefore(begin), account);
+		BigDecimal operationalBalance = accountEntryRepository.sumBetween(begin, end, account);
+		BigDecimal balanceAfter = balanceBefore.add(operationalBalance);
 		as.setBalanceBeforeInterval(balanceBefore);
+		as.setBalanceAfterInterval(balanceAfter);
 		return as;
 	}
 

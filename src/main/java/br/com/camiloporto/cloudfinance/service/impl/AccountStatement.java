@@ -8,5 +8,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 public class AccountStatement {
 	
 	private BigDecimal balanceBeforeInterval;
+	private BigDecimal balanceAfterInterval;
 
 }

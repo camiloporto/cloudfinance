@@ -91,3 +91,6 @@ field date --fieldName transactionDate --type java.util.Date --class ~.model.Acc
 exit
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-06-13 13:53:24
 // Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-06-13 16:19:54
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log opened at 2013-06-13 17:25:14
+exit
+// Spring Roo 1.2.2.RELEASE [rev 7d75659] log closed at 2013-06-13 17:28:22

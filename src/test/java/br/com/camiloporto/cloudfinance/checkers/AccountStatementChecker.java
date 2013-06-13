@@ -23,4 +23,9 @@ public class AccountStatementChecker {
 		return this;
 	}
 
+	public AccountStatementChecker assertBalanceAfter(BigDecimal expectedBalanceAfter) {
+		Assert.assertTrue(accountStatement.getBalanceAfterInterval().compareTo(expectedBalanceAfter) == 0, "balance after not equals");
+		return this;
+	}
+
 }

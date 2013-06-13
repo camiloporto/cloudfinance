@@ -16,4 +16,12 @@ privileged aspect AccountStatement_Roo_JavaBean {
         this.balanceBeforeInterval = balanceBeforeInterval;
     }
     
+    public BigDecimal AccountStatement.getBalanceAfterInterval() {
+        return this.balanceAfterInterval;
+    }
+    
+    public void AccountStatement.setBalanceAfterInterval(BigDecimal balanceAfterInterval) {
+        this.balanceAfterInterval = balanceAfterInterval;
+    }
+    
 }
