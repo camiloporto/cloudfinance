@@ -206,4 +206,42 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE");
 	}
 	
+	@Test
+	public void shouldRemoveTransaction() throws Exception {
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"10/06/2013",
+				"1250,25",
+				"t1");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"12/06/2013",
+				"75,25",
+				"t2");
+		
+		ResultActions response = mockMvc.perform(get("/transaction")
+				.session(mockSession)
+				.param("begin", "10/06/2013")
+				.param("end", "10/06/2013")
+			);
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer txId = JsonPath.read(json, "$.transactions[0].id");
+		
+		response = mockMvc.perform(post("/transaction/delete")
+				.session(mockSession)
+				.param("id", txId.toString())
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(true));
+		
+		Assert.assertNull(transactionManager.findAccountTransaction(new Long(txId)), "transaction '" + txId + "' was not deleted");
+	}
+	
 }

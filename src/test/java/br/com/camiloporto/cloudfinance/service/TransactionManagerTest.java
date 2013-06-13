@@ -84,6 +84,23 @@ public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 		assertAccountEntryAmountWasRegistered(dest, amount);
 	}
 	
+	@Test
+	public void shouldDeleteTransactionById() {
+		Calendar d1 = new GregorianCalendar(2013, Calendar.JUNE, 10);
+		
+		AccountTransaction tx = transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d1.getTime(), new BigDecimal("1234.50"), 
+				"t1");
+		
+		transactionManager.deleteAccountTransaction(profile, root.getId(), tx.getId());
+		
+		Assert.assertNull(transactionManager.findAccountTransaction(tx.getId()), "transaction was not deleted");
+	}
+	
+	
 	private void assertAccountEntryAmountWasRegistered(Account account,
 			BigDecimal amount) {
 		List<AccountEntry> entries = accountEntryRepository.findAll();

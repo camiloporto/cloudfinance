@@ -73,4 +73,21 @@ public class TransactionController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AbstractOperationResponse delete(
+			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="rootAccount") Account rootAccount,
+			Long id
+			) {
+		TransactionOperationResponse response = new TransactionOperationResponse(false);
+		
+		try {
+			transactionManager.deleteAccountTransaction(logged, rootAccount.getId(), id);
+			response.setSuccess(true);
+		} catch(ConstraintViolationException e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+	
 }

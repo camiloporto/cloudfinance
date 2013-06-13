@@ -27,6 +27,11 @@ public class TransactionManagerImpl implements TransactionManager {
 	}
 	
 	@Override
+	public void deleteAccountTransaction(Profile profile, Long treeRootAccountId, Long txId) {
+		accountTransactionRepository.delete(txId);
+	}
+	
+	@Override
 	public AccountTransaction saveAccountTransaction(Profile profile, Long originAccountId, Long destAccountId,
 			Date transactionDate, BigDecimal amount, String description) {
 		
