@@ -66,6 +66,14 @@ privileged aspect TransactionManagerConstraint_Roo_JavaBean {
         this.rootAccountId = rootAccountId;
     }
     
+    public Long TransactionManagerConstraint.getTransactionId() {
+        return this.transactionId;
+    }
+    
+    public void TransactionManagerConstraint.setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
+    }
+    
     public Date TransactionManagerConstraint.getBegin() {
         return this.begin;
     }

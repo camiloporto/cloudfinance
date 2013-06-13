@@ -28,9 +28,22 @@ public class TransactionManagerImpl implements TransactionManager {
 	
 	@Override
 	public void deleteAccountTransaction(Profile profile, Long treeRootAccountId, Long txId) {
+		checkDeleteTransactionEntries(profile, treeRootAccountId, txId);
 		accountTransactionRepository.delete(txId);
 	}
 	
+	private void checkDeleteTransactionEntries(Profile profile,
+			Long treeRootAccountId, Long txId) {
+		TransactionManagerConstraint constraints = new TransactionManagerConstraint();
+		constraints.setProfile(profile);
+		constraints.setRootAccountId(treeRootAccountId);
+		constraints.setTransactionId(txId);
+		
+		new ConstraintValidator<TransactionManagerConstraint>()
+			.validateForGroups(constraints,
+				TransactionManagerConstraint.DELETE_TRANSACTION.class);
+	}
+
 	@Override
 	public AccountTransaction saveAccountTransaction(Profile profile, Long originAccountId, Long destAccountId,
 			Date transactionDate, BigDecimal amount, String description) {

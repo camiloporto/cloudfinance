@@ -100,6 +100,38 @@ public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 		Assert.assertNull(transactionManager.findAccountTransaction(tx.getId()), "transaction was not deleted");
 	}
 	
+	@Test(dataProvider = "deleteTx.invalidInputs")
+	public void shouldThrowsConstraintViolationExceptionWhenDeleteTransactionWithInvalidInput(
+			Profile profile, Long rootAccountId, Long txId, String expectedMessage) {
+
+		try {
+			transactionManager.deleteAccountTransaction(profile, rootAccountId, txId);
+			Assert.fail("should throws expected exception");
+		} catch (ConstraintViolationException e) {
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(expectedMessage);
+		}
+	}
+	
+	@DataProvider(name = "deleteTx.invalidInputs")
+	public Iterator<Object[]> deleteTransactionInputValidationTestData() {
+		beforeTests();
+		
+		List<Object[]> testData = new ArrayList<Object[]>();
+		
+		//no profile
+		testData.add(new Object[] {null, root.getId(), 1L, "br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED"});
+		
+		//no rootAccount id informed
+		testData.add(new Object[] {profile, null, 1L, "br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED"});
+		
+		//no id informed
+		testData.add(new Object[] {profile, root.getId(), null, "br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED"});
+		
+		return testData.iterator();
+	}
+	
 	
 	private void assertAccountEntryAmountWasRegistered(Account account,
 			BigDecimal amount) {
