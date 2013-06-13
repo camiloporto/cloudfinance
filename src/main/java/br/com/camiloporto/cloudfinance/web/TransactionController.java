@@ -85,7 +85,7 @@ public class TransactionController {
 			transactionManager.deleteAccountTransaction(logged, rootAccount.getId(), id);
 			response.setSuccess(true);
 		} catch(ConstraintViolationException e) {
-			e.printStackTrace();
+			response = new TransactionOperationResponse(e);
 		}
 		return response;
 	}

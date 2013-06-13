@@ -244,4 +244,22 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		Assert.assertNull(transactionManager.findAccountTransaction(new Long(txId)), "transaction '" + txId + "' was not deleted");
 	}
 	
+	@Test
+	public void shouldFailWhenGeDeleteTransactionsThrowsError() throws Exception {
+
+		//no transaction id informed for delete
+		ResultActions response = mockMvc.perform(post("/transaction/delete")
+				.session(mockSession)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(false));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED");
+	}
+	
 }
