@@ -58,4 +58,28 @@ privileged aspect TransactionManagerConstraint_Roo_JavaBean {
         this.description = description;
     }
     
+    public Long TransactionManagerConstraint.getRootAccountId() {
+        return this.rootAccountId;
+    }
+    
+    public void TransactionManagerConstraint.setRootAccountId(Long rootAccountId) {
+        this.rootAccountId = rootAccountId;
+    }
+    
+    public Date TransactionManagerConstraint.getBegin() {
+        return this.begin;
+    }
+    
+    public void TransactionManagerConstraint.setBegin(Date begin) {
+        this.begin = begin;
+    }
+    
+    public Date TransactionManagerConstraint.getEnd() {
+        return this.end;
+    }
+    
+    public void TransactionManagerConstraint.setEnd(Date end) {
+        this.end = end;
+    }
+    
 }

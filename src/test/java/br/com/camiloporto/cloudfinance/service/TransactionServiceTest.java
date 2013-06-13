@@ -134,6 +134,141 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 		new TransactionTestChecker()
 			.assertThatTransactionsArePresent(result, "t2", "t3");
 	}
+	
+	@Test
+	public void shouldSetDefaultBeginDateWhenItNotInformed() {
+		Calendar d1 = new GregorianCalendar(2013, Calendar.JUNE, 10);
+		Calendar d2 = new GregorianCalendar(2013, Calendar.JUNE, 12);
+		Calendar d3 = new GregorianCalendar(2013, Calendar.JUNE, 14);
+		Calendar d4 = new GregorianCalendar(2013, Calendar.JUNE, 16);
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d1.getTime(), new BigDecimal("1234.50"), 
+				"t1");
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d2.getTime(), new BigDecimal("1234.50"), 
+				"t2");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d3.getTime(), new BigDecimal("1234.50"), 
+				"t3");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d4.getTime(), new BigDecimal("1234.50"), 
+				"t4");
+		
+		//assuming today is 13/06/2013
+		//default begin date shuold be 3 days before today
+		Date beginDate = null;
+		List<AccountTransaction> result = 
+				transactionManager.findAccountTransactionByDateBetween(
+						profile, 
+						root.getId(), 
+						beginDate, d3.getTime());
+		
+		int expectedResultCount = 3;
+		Assert.assertEquals(result.size(), expectedResultCount, "result count did not match");
+		new TransactionTestChecker()
+			.assertThatTransactionsArePresent(result, "t1", "t2", "t3");
+	}
+	
+	@Test
+	public void shouldSetDefaultEndDateWhenItNotInformed() {
+		Calendar d1 = new GregorianCalendar(2013, Calendar.JUNE, 10);
+		Calendar d2 = new GregorianCalendar(2013, Calendar.JUNE, 12);
+		Calendar d3 = new GregorianCalendar(2013, Calendar.JUNE, 14);
+		Calendar d4 = new GregorianCalendar(2013, Calendar.JUNE, 16);
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d1.getTime(), new BigDecimal("1234.50"), 
+				"t1");
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d2.getTime(), new BigDecimal("1234.50"), 
+				"t2");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d3.getTime(), new BigDecimal("1234.50"), 
+				"t3");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d4.getTime(), new BigDecimal("1234.50"), 
+				"t4");
+		
+		//assuming today is 13/06/2013
+		//default end date should be 'today'.
+		Date endDate = null;
+		List<AccountTransaction> result = 
+				transactionManager.findAccountTransactionByDateBetween(
+						profile, 
+						root.getId(), 
+						d1.getTime(), endDate);
+		
+		int expectedResultCount = 2;
+		Assert.assertEquals(result.size(), expectedResultCount, "result count did not match");
+		new TransactionTestChecker()
+			.assertThatTransactionsArePresent(result, "t1", "t2");
+	}
+	
+	@Test(dataProvider = "txFindByDate.invalidInputs")
+	public void shouldThrowsExceptionWhenInvalidInputOnFindTransactionBetweenDates(
+			Profile profile, Long rootAccountId, Date begin, Date end, String expectedErrorMessage) {
+		
+		try {
+			transactionManager.findAccountTransactionByDateBetween(
+					profile, 
+					rootAccountId, 
+					begin, 
+					end);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate(expectedErrorMessage);
+		}
+	}
+	
+	@DataProvider(name = "txFindByDate.invalidInputs")
+	public Iterator<Object[]> findTransactionByDateValidationTestData() {
+		beforeTests();
+		Calendar begin = new GregorianCalendar(2013, Calendar.JUNE, 12);
+		Calendar end = new GregorianCalendar(2013, Calendar.JUNE, 14);
+		
+		List<Object[]> testData = new ArrayList<Object[]>();
+		
+		//no profile
+		testData.add(new Object[] {null, root.getId(), begin.getTime(), end.getTime(), "br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED"});
+		
+		//no rootAccount id informed
+		testData.add(new Object[] {profile, null, begin.getTime(), end.getTime(), "br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED"});
+		
+		//begin date > end date
+		testData.add(new Object[] {profile, root.getId(), end.getTime(), begin.getTime(), "br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE"});
+		
+		return testData.iterator();
+	}
 
 	@Test(dataProvider = "transactionValidationDataProvider")
 	public void validateSaveTransactionInputs(Profile profile, Long originAccountId, Long destAccountId, 
