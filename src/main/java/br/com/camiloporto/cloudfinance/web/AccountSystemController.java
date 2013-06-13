@@ -21,7 +21,7 @@ import br.com.camiloporto.cloudfinance.service.AccountManager;
 
 @RequestMapping("/account")
 @Controller
-@SessionAttributes("logged")
+@SessionAttributes(value = {"logged", "rootAccount"})
 public class AccountSystemController {
 	
 	@Autowired
@@ -52,10 +52,13 @@ public class AccountSystemController {
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AbstractOperationResponse createAccount(
 			@ModelAttribute(value="logged")  Profile logged,
+			@ModelAttribute(value="rootAccount")  Account rootAccount,
 			Account account) {
-		AccountOperationResponse response = new AccountOperationResponse(true);
+		AccountOperationResponse response = new AccountOperationResponse(false);
 		try {
+			account.setRootAccount(rootAccount);
 			accountManager.saveAccount(logged, account);
+			response.setSuccess(true);
 			response.setAccount(account);
 		} catch (ConstraintViolationException e) {
 			response = new AccountOperationResponse(e);

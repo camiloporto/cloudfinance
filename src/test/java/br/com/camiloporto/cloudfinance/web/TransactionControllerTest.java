@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import net.minidev.json.JSONArray;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -47,6 +49,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 	
 	private Account originAccount;
 	private Account destAccount;
+	private Integer rootAccountId;
 	
 	private MockMvc mockMvc;
     private MockHttpSession mockSession;
@@ -72,7 +75,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
-		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
 		
 		testHelper = new TransactionControllerTestHelper(mockMvc, mockSession)
 			.signUpAndLogUser(userName, userPass, userConfirmPass);
@@ -132,5 +135,54 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED");
+	}
+	
+	@Test
+	public void shouldGetTransactionsByTimeInterval() throws Exception {
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"10/06/2013",
+				"1250,25",
+				"t1");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"12/06/2013",
+				"75,25",
+				"t2");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"14/06/2013",
+				"175,25",
+				"t3");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"16/06/2013",
+				"575,25",
+				"t4");
+		
+		ResultActions response = mockMvc.perform(get("/transaction")
+				.session(mockSession)
+				.param("begin", "12/06/2013")
+				.param("end", "14/06/2013")
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(true));
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		System.out.println(json);
+		
+		JSONArray transactionDescs = JsonPath.read(json, "$.transactions[*].origin.comment");
+		int expectedResultCount = 2;
+		Assert.assertEquals(transactionDescs.size(), expectedResultCount, "result count did not match");
 	}
 }

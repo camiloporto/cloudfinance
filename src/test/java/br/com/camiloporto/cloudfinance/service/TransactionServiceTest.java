@@ -2,7 +2,9 @@ package br.com.camiloporto.cloudfinance.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
 import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
+import br.com.camiloporto.cloudfinance.checkers.TransactionTestChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountEntry;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
@@ -42,6 +45,7 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 	
 	private Account origin;
 	private Account dest;
+	private Account root;
 	
 	@BeforeMethod
 	public void beforeTests() {
@@ -50,14 +54,14 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";
 		Profile p = new ProfileBuilder()
-		.newProfile()
-		.comEmail(camiloporto)
-		.comSenha(senha)
-		.create();
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
 		profile = userProfileManager.signUp(p);
 		
 		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
+		root = roots.get(0);
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		origin = rootBranch.getChildren().get(0).getAccount();
@@ -85,6 +89,51 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 			}
 		}
 	}
+	
+	@Test
+	public void shouldGetTransactionBetweenDates() {
+		Calendar d1 = new GregorianCalendar(2013, Calendar.JUNE, 10);
+		Calendar d2 = new GregorianCalendar(2013, Calendar.JUNE, 12);
+		Calendar d3 = new GregorianCalendar(2013, Calendar.JUNE, 14);
+		Calendar d4 = new GregorianCalendar(2013, Calendar.JUNE, 16);
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d1.getTime(), new BigDecimal("1234.50"), 
+				"t1");
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d2.getTime(), new BigDecimal("1234.50"), 
+				"t2");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d3.getTime(), new BigDecimal("1234.50"), 
+				"t3");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d4.getTime(), new BigDecimal("1234.50"), 
+				"t4");
+		
+		List<AccountTransaction> result = 
+				transactionManager.findAccountTransactionByDateBetween(
+						profile, 
+						root.getId(), 
+						d2.getTime(), d3.getTime());
+		
+		int expectedResultCount = 2;
+		Assert.assertEquals(result.size(), expectedResultCount, "result count did not match");
+		new TransactionTestChecker()
+			.assertThatTransactionsArePresent(result, "t2", "t3");
+	}
 
 	@Test(dataProvider = "transactionValidationDataProvider")
 	public void validateSaveTransactionInputs(Profile profile, Long originAccountId, Long destAccountId, 
@@ -104,8 +153,6 @@ public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
 				.assertContainsMessageTemplate(expectedExceptionMessage);
 		}
 	}
-	
-	//FIXME verificar: "A aplicação deverá retirar (debitar) o valor informado da conta de origem, e creditar o mesmo valor na conta de destino."
 	
 	@DataProvider(name = "transactionValidationDataProvider")
 	public Iterator<Object[]> saveTransactionValidationTestData() {

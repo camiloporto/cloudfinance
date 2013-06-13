@@ -20,7 +20,9 @@ public class AccountManagerImpl implements AccountManager {
 	public void saveAccount(Profile profile, Account account) {
 		checkCreateNewAccountEntries(profile, account);
 		Account parent = accountRepository.findOne(account.getParentAccount().getId());
+		Account treeRoot = accountRepository.findOne(account.getRootAccount().getId());
 		account.setParentAccount(parent);
+		account.setRootAccount(treeRoot);
 		accountRepository.save(account);
 	}
 	
@@ -109,9 +111,13 @@ public class AccountManagerImpl implements AccountManager {
 		accountRepository.save(root);
 		
 		Account asset = new Account(Account.ASSET_NAME, root);
+		asset.setRootAccount(root);
 		Account liability = new Account(Account.LIABILITY_NAME, root);
+		liability.setRootAccount(root);
 		Account income = new Account(Account.INCOME_NAME, root);
+		income.setRootAccount(root);
 		Account outgoing = new Account(Account.OUTGOING_NAME, root);
+		outgoing.setRootAccount(root);
 		
 		accountRepository.save(asset);
 		accountRepository.save(liability);

@@ -1,8 +1,19 @@
 package br.com.camiloporto.cloudfinance.repository;
 
-import br.com.camiloporto.cloudfinance.model.AccountTransaction;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.roo.addon.layers.repository.jpa.RooJpaRepository;
+
+import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 
 @RooJpaRepository(domainType = AccountTransaction.class)
 public interface AccountTransactionRepository {
+	
+	@Query("SELECT t FROM AccountTransaction t WHERE " +
+			"t.origin.account.rootAccount.id = ?1 AND " +
+			"t.destin.account.rootAccount.id = ?1 AND " +
+			"t.origin.transactionDate between ?2 AND ?3")
+	List<AccountTransaction> findByDateBetween(Long rootAccountId, Date begin, Date end);
 }

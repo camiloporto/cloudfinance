@@ -2,6 +2,7 @@ package br.com.camiloporto.cloudfinance.web;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
@@ -18,18 +19,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.TransactionManager;
 
 @RequestMapping("/transaction")
 @Controller
-@SessionAttributes("logged")
+@SessionAttributes(value = {"logged", "rootAccount"})
 public class TransactionController {
 	
 	@Autowired
 	private TransactionManager transactionManager;
 	
+	//TODO refatorar isso. tirar anotacoes desnecessarias "@RequestParam"
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AbstractOperationResponse createTransaction(
 			@ModelAttribute(value="logged") Profile logged, 
@@ -45,6 +48,25 @@ public class TransactionController {
 					transactionManager.saveAccountTransaction(logged, originAccountId, destAccountId, date, amount, description);
 			response = new TransactionOperationResponse(true, transaction);
 		} catch (ConstraintViolationException e) {
+			response = new TransactionOperationResponse(e);
+		}
+		
+		return response;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AbstractOperationResponse getTransactions(
+			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
+			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
+
+		TransactionOperationResponse response = new TransactionOperationResponse(false);
+		try {
+			List<AccountTransaction> result = 
+					transactionManager.findAccountTransactionByDateBetween(logged, rootAccount.getId(), begin, end);
+			response = new TransactionOperationResponse(true, result);
+		} catch(ConstraintViolationException e) {
 			response = new TransactionOperationResponse(e);
 		}
 		

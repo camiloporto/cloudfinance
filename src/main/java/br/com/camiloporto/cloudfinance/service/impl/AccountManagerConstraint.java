@@ -45,6 +45,12 @@ public class AccountManagerConstraint {
 		return account != null && account.getParentAccount() != null && account.getParentAccount().getId() != null;
 	}
 	
+	@AssertTrue(message = "br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED",
+    		groups={AccountManagerConstraint.CREATE_NEW_ACCOUNT.class})
+	public boolean isTreeRootAccountIdNotNull() {
+		return account != null && account.getRootAccount() != null && account.getRootAccount().getId() != null;
+	}
+	
 	@AssertTrue(message = "br.com.camiloporto.cloudfinance.account.NAME_ALREADY_EXISTS", 
 			groups = {CREATE_NEW_ACCOUNT.class})
 	public boolean isAccountNameUniqueWithinItsSisters() {

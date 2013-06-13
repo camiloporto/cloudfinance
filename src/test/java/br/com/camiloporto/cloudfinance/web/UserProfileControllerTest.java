@@ -166,7 +166,8 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationSuccess()
-			.assertUserIsInSession(userName);
+			.assertUserIsInSession(userName)
+			.assertDefaultAccountTreeWasSetInSession();
 		
 	}
 	

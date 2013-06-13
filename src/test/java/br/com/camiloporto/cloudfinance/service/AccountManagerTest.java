@@ -10,6 +10,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
+import br.com.camiloporto.cloudfinance.builders.AccountBuilder;
 import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
 import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
@@ -23,6 +24,8 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
 	private UserProfileManager userProfileManager;
+	
+	private Account root;
 
 
 	private Profile profile;
@@ -34,17 +37,18 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";
 		Profile p = new ProfileBuilder()
-		.newProfile()
-		.comEmail(camiloporto)
-		.comSenha(senha)
-		.create();
+			.newProfile()
+			.comEmail(camiloporto)
+			.comSenha(senha)
+			.create();
 		profile = userProfileManager.signUp(p);
+		
+		List<Account> roots = accountManager.findRootAccounts(profile);
+		this.root = roots.get(0);
 	}
 	
 	@Test
 	public void shouldCreateNewAccount() {
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		
@@ -54,24 +58,52 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		
 		Account toSave = new Account(name, parentAccount);
 		toSave.setDescription(desc);
+		toSave.setRootAccount(root);
 		accountManager.saveAccount(profile, toSave);
 		
 		Assert.assertNotNull(toSave.getId(), "did not assign account id");
 		Account saved = accountManager.findAccount(toSave.getId());
 		Assert.assertEquals(saved.getParentAccount().getId(), parentAccount.getId(), "father id not match");
-		
+		Assert.assertEquals(saved.getRootAccount().getId(), root.getId(), "tree id not match");
 	}
 	
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfParentAccountNullWhenCreateNewAccount() {
 		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = null;
+		
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(parentAccount)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+		}
+		
+	}
+	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfRootAccountNullWhenCreateNewAccount() {
 		
 		final String name = "Account Name";
 		final String desc = "Account desc";
 		Account parentAccount = null;
 		
-		Account toSave = new Account(name, parentAccount);
-		toSave.setDescription(desc);
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(parentAccount)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
 
 		try {
 			accountManager.saveAccount(profile, toSave);
@@ -88,11 +120,14 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfParentAccountIdNullWhenCreateNewAccount() {
 		
-		final String name = "Account Name";
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "Account name";
 		final String desc = "Account desc";
-		Account parentAccount = new Account();//no ID assigned
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
 		
 		Account toSave = new Account(name, parentAccount);
+		toSave.setRootAccount(null);
 		toSave.setDescription(desc);
 
 		try {
@@ -102,7 +137,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED");
 		}
 		
 	}
@@ -110,17 +145,17 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfAccountNameNullWhenCreateNewAccount() {
 		
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
-		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		
 		final String name = null;
 		final String desc = "Account desc";
 		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
 		
-		Account toSave = new Account(name, parentAccount);
-		toSave.setDescription(desc);
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(parentAccount)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
 
 		try {
 			accountManager.saveAccount(profile, toSave);
@@ -137,17 +172,17 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	@Test
 	public void shouldThrowConstraintViolationExceptionIfAccountNameEmptyWhenCreateNewAccount() {
 		
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
-		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		
 		final String name = "";
 		final String desc = "Account desc";
 		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
 		
-		Account toSave = new Account(name, parentAccount);
-		toSave.setDescription(desc);
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(parentAccount)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
 
 		try {
 			accountManager.saveAccount(profile, toSave);
@@ -164,22 +199,26 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	@Test
 	public void childrenAccountNameShouldBeUnique() {
 		
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
-		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		
 		final String name = "Account Name";
 		final String desc = "Account desc";
 		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
 		
-		Account toSave = new Account(name, parentAccount);
-		toSave.setDescription(desc);
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(parentAccount)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
 		
 		accountManager.saveAccount(profile, toSave);
 
 		try {
-			Account childWithRepeatedName = new Account(name, parentAccount);
+			Account childWithRepeatedName = new AccountBuilder()
+				.newAccount(name, desc)
+				.withParent(parentAccount)
+				.belongingToTreeRootAccount(root)
+				.getAccount();
 			accountManager.saveAccount(profile, childWithRepeatedName);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
@@ -193,16 +232,14 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldListAllRootAccountOfAProfile() {
-		
 		List<Account> roots = accountManager.findRootAccounts(profile);
+		
 		int EXPECTED_ACCOUNT_COUNT = 1;
 		Assert.assertEquals(roots.size(), EXPECTED_ACCOUNT_COUNT, "count of root accountes not as expected");
 	}
 	
 	@Test
 	public void shouldGetAccountBranch() {
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		
@@ -214,8 +251,6 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetLeafAccountBranch() {
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		Account root = roots.get(0);
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		Long leafChildId = rootBranch.getChildren().get(0).getAccount().getId();

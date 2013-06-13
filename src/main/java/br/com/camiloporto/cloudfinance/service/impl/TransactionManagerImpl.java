@@ -2,6 +2,7 @@ package br.com.camiloporto.cloudfinance.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +45,13 @@ public class TransactionManagerImpl implements TransactionManager {
 		
 		return accountTransactionRepository.save(transaction);
 	}
+	
+	@Override
+	public List<AccountTransaction> findAccountTransactionByDateBetween(
+			Profile profile, Long rootAccountId, Date begin, Date end) {
+		return accountTransactionRepository.findByDateBetween(rootAccountId, begin,end);
+	}
+	
 	
 	private void checkSaveNewTransactionEntries(Profile profile, Long originAccountId, Long destAccountId,
 			Date transactionDate, BigDecimal amount, String description) {
