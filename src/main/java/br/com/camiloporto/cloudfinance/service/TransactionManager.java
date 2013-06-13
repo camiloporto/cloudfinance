@@ -17,4 +17,6 @@ public interface TransactionManager {
 
 	List<AccountTransaction> findAccountTransactionByDateBetween(
 			Profile profile, Long rootAccountId, Date begin, Date end);
+
+	void deleteAccountTransaction(Profile profile, Long treeRootAccountId, Long txId);
 }
