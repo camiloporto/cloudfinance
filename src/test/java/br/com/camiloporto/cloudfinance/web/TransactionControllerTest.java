@@ -185,4 +185,25 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		int expectedResultCount = 2;
 		Assert.assertEquals(transactionDescs.size(), expectedResultCount, "result count did not match");
 	}
+	
+	@Test
+	public void shouldFailWhenGetTransactionsByTimeIntervalThrowsError() throws Exception {
+		
+		//begin date greater than end date
+		ResultActions response = mockMvc.perform(get("/transaction")
+				.session(mockSession)
+				.param("begin", "16/06/2013")
+				.param("end", "14/06/2013")
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(false));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE");
+	}
+	
 }

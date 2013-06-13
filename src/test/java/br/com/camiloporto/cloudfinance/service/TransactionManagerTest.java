@@ -29,7 +29,7 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
 import br.com.camiloporto.cloudfinance.service.impl.TransactionManagerImpl;
 
-public class TransactionServiceTest extends AbstractCloudFinanceDatabaseTest {
+public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
 	private AccountManager accountManager;
