@@ -24,4 +24,12 @@ privileged aspect AccountStatement_Roo_JavaBean {
         this.balanceAfterInterval = balanceAfterInterval;
     }
     
+    public BigDecimal AccountStatement.getOperationalBalance() {
+        return this.operationalBalance;
+    }
+    
+    public void AccountStatement.setOperationalBalance(BigDecimal operationalBalance) {
+        this.operationalBalance = operationalBalance;
+    }
+    
 }

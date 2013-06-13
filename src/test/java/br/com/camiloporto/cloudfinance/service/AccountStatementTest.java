@@ -143,4 +143,12 @@ public class AccountStatementTest extends AbstractCloudFinanceDatabaseTest {
 			.forStatement(accountStatement)
 			.assertBalanceAfter(new BigDecimal("650.00"));
 	}
+	
+	@Test
+	public void shouldCalculateAccountOperationalBalanceOfTheIntervalInformed() {
+		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank, tx02Date.getTime(), tx03Date.getTime());
+		new AccountStatementChecker()
+			.forStatement(accountStatement)
+			.assertOperationalBalance(new BigDecimal("-350.00"));
+	}
 }

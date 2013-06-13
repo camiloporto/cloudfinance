@@ -64,6 +64,7 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 		BigDecimal operationalBalance = accountEntryRepository.sumBetween(begin, end, account);
 		BigDecimal balanceAfter = balanceBefore.add(operationalBalance);
 		as.setBalanceBeforeInterval(balanceBefore);
+		as.setOperationalBalance(operationalBalance);
 		as.setBalanceAfterInterval(balanceAfter);
 		return as;
 	}

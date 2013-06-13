@@ -9,5 +9,6 @@ public class AccountStatement {
 	
 	private BigDecimal balanceBeforeInterval;
 	private BigDecimal balanceAfterInterval;
+	private BigDecimal operationalBalance;
 
 }

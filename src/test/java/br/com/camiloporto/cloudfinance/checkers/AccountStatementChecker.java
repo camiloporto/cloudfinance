@@ -28,4 +28,9 @@ public class AccountStatementChecker {
 		return this;
 	}
 
+	public AccountStatementChecker assertOperationalBalance(BigDecimal expectedOperationalBalance) {
+		Assert.assertTrue(accountStatement.getOperationalBalance().compareTo(expectedOperationalBalance) == 0, "operational balance not equals");
+		return this;
+	}
+
 }
