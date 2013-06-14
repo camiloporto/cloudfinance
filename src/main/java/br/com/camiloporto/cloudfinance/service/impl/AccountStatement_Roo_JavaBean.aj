@@ -3,8 +3,12 @@
 
 package br.com.camiloporto.cloudfinance.service.impl;
 
+import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.service.impl.AccountStatement;
+import br.com.camiloporto.cloudfinance.service.impl.AccountStatementEntry;
 import java.math.BigDecimal;
+import java.util.List;
 
 privileged aspect AccountStatement_Roo_JavaBean {
     
@@ -30,6 +34,26 @@ privileged aspect AccountStatement_Roo_JavaBean {
     
     public void AccountStatement.setOperationalBalance(BigDecimal operationalBalance) {
         this.operationalBalance = operationalBalance;
+    }
+    
+    public Account AccountStatement.getAccountOfStatement() {
+        return this.accountOfStatement;
+    }
+    
+    public void AccountStatement.setAccountOfStatement(Account accountOfStatement) {
+        this.accountOfStatement = accountOfStatement;
+    }
+    
+    public List<AccountStatementEntry> AccountStatement.getEntries() {
+        return this.entries;
+    }
+    
+    public void AccountStatement.setEntries(List<AccountStatementEntry> entries) {
+        this.entries = entries;
+    }
+    
+    public List<AccountTransaction> AccountStatement.getTransactions() {
+        return this.transactions;
     }
     
 }

@@ -3,13 +3,16 @@ package br.com.camiloporto.cloudfinance.service.impl;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
+import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
 import br.com.camiloporto.cloudfinance.service.AccountStatementManager;
 
 @Service
@@ -17,6 +20,9 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 	
 	@Autowired
 	private AccountEntryRepository accountEntryRepository;
+	
+	@Autowired
+	private AccountTransactionRepository accountTransactionRepository;
 	
 	private final Date LOWEST_DATE;
 	private final Date HIGHEST_DATE;
@@ -66,6 +72,10 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 		as.setBalanceBeforeInterval(balanceBefore);
 		as.setOperationalBalance(operationalBalance);
 		as.setBalanceAfterInterval(balanceAfter);
+		as.setAccountOfStatement(account);
+		
+		List<AccountTransaction> entries = accountTransactionRepository.findByAccountAndDateBetween(account, begin, end);
+		as.setTransactions(entries);
 		return as;
 	}
 
