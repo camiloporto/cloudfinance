@@ -19,7 +19,7 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.impl.AccountStatement;
 import br.com.camiloporto.cloudfinance.service.impl.TransactionManagerImpl;
 
-public class AccountStatementTest extends AbstractCloudFinanceDatabaseTest {
+public class AccountStatementManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Autowired
 	private TransactionManager transactionManager;
@@ -130,7 +130,7 @@ public class AccountStatementTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldCalculateAccountBalanceBeforeTheIntervalInformed() {
-		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank, tx02Date.getTime(), tx03Date.getTime());
+		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank.getId(), tx02Date.getTime(), tx03Date.getTime());
 		new AccountStatementChecker()
 			.forStatement(accountStatement)
 			.assertBalanceBefore(new BigDecimal("1000.0"));
@@ -138,7 +138,7 @@ public class AccountStatementTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldCalculateAccountBalanceAfterTheIntervalInformed() {
-		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank, tx02Date.getTime(), tx03Date.getTime());
+		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank.getId(), tx02Date.getTime(), tx03Date.getTime());
 		new AccountStatementChecker()
 			.forStatement(accountStatement)
 			.assertBalanceAfter(new BigDecimal("650.00"));
@@ -146,7 +146,7 @@ public class AccountStatementTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldCalculateAccountOperationalBalanceOfTheIntervalInformed() {
-		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank, tx02Date.getTime(), tx03Date.getTime());
+		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank.getId(), tx02Date.getTime(), tx03Date.getTime());
 		new AccountStatementChecker()
 			.forStatement(accountStatement)
 			.assertOperationalBalance(new BigDecimal("-350.00"));
@@ -154,7 +154,7 @@ public class AccountStatementTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetEntriesInInformedTimeInterval() {
-		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank, tx02Date.getTime(), tx04Date.getTime());
+		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank.getId(), tx02Date.getTime(), tx04Date.getTime());
 		new AccountStatementChecker()
 			.forStatement(accountStatement)
 			//							date	desc		value			src/dest

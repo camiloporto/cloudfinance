@@ -12,6 +12,7 @@ import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
+import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
 import br.com.camiloporto.cloudfinance.service.AccountStatementManager;
 
@@ -23,6 +24,9 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 	
 	@Autowired
 	private AccountTransactionRepository accountTransactionRepository;
+	
+	@Autowired
+	private AccountRepository accountRepository;
 	
 	private final Date LOWEST_DATE;
 	private final Date HIGHEST_DATE;
@@ -64,8 +68,9 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 
 	@Override
 	public AccountStatement getAccountStatement(Profile profile,
-			Account account, Date begin, Date end) {
+			Long accountId, Date begin, Date end) {
 		AccountStatement as = new AccountStatement();
+		Account account = accountRepository.findOne(accountId);
 		BigDecimal balanceBefore = accountEntryRepository.sumBetween(LOWEST_DATE, getBefore(begin), account);
 		BigDecimal operationalBalance = accountEntryRepository.sumBetween(begin, end, account);
 		BigDecimal balanceAfter = balanceBefore.add(operationalBalance);
