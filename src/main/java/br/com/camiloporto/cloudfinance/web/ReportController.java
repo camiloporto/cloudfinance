@@ -41,7 +41,7 @@ public class ReportController {
 			response.setSuccess(true);
 			response.setAccountStatement(statement);
 		} catch (ConstraintViolationException e) {
-			e.printStackTrace();
+			response = new ReportOperationResponse(e);
 		}
 		
 		return response;

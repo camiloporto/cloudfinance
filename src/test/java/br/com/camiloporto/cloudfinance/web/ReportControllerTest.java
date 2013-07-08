@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
+import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.Profile;
@@ -174,8 +175,28 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 			.andExpect(jsonPath("$.success").value(true));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
-		System.out.println(json);
 		Double balanceBefore = JsonPath.read(json, "$.accountStatement.balanceBeforeInterval");
 		Assert.assertTrue(new BigDecimal("1000.0").compareTo(new BigDecimal(balanceBefore)) == 0, "balance before did not match");
+	}
+	
+	@Test
+	public void shouldFailIfErrorOccurWhenGetAccountStatement() throws Exception {
+		final String emptyAccountId = "";
+		
+		ResultActions response = mockMvc.perform(get("/report/statement")
+				.session(mockSession)
+				.param("accountId", emptyAccountId)
+				.param("begin", "12/06/2013")
+				.param("end", "14/06/2013")
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.success").value(false));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationFail()
+			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED");
 	}
 }

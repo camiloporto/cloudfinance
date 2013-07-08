@@ -15,6 +15,7 @@ import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
 import br.com.camiloporto.cloudfinance.service.AccountStatementManager;
+import br.com.camiloporto.cloudfinance.service.Clock;
 
 @Service
 public class AccountStatementManagerImpl implements AccountStatementManager {
@@ -28,8 +29,14 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 	@Autowired
 	private AccountRepository accountRepository;
 	
+	private Clock clock = new Clock();
+	
 	private final Date LOWEST_DATE;
 	private final Date HIGHEST_DATE;
+	
+	public void setClock(Clock clock) {
+		this.clock = clock;
+	}
 	
 	public AccountStatementManagerImpl() {
 		LOWEST_DATE = lowestDate();
@@ -69,8 +76,13 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 	@Override
 	public AccountStatement getAccountStatement(Profile profile,
 			Long accountId, Date begin, Date end) {
+		checkGetAccountStatementEntries(profile, accountId, begin, end);
 		AccountStatement as = new AccountStatement();
 		Account account = accountRepository.findOne(accountId);
+		
+		begin = getDefaultBeginIfNeeded(begin);
+		end = getDefaultEndIfNeeded(end);
+		
 		BigDecimal balanceBefore = accountEntryRepository.sumBetween(LOWEST_DATE, getBefore(begin), account);
 		BigDecimal operationalBalance = accountEntryRepository.sumBetween(begin, end, account);
 		BigDecimal balanceAfter = balanceBefore.add(operationalBalance);
@@ -82,6 +94,44 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 		List<AccountTransaction> entries = accountTransactionRepository.findByAccountAndDateBetween(account, begin, end);
 		as.setTransactions(entries);
 		return as;
+	}
+	
+	
+	private Date getDefaultEndIfNeeded(Date end) {
+		Date ret = end;
+		if(end == null) {
+			ret = today().getTime();
+		}
+		return ret;
+	}
+	
+	private Date getDefaultBeginIfNeeded(Date begin) {
+		Date ret = begin;
+		if(begin == null) {
+			Calendar defaultBegin = today();
+			defaultBegin.add(Calendar.DAY_OF_MONTH, -3);
+			ret = defaultBegin.getTime();
+		}
+		return ret;
+	}
+
+	private Calendar today() {
+		return clock.today();
+	}
+
+	private void checkGetAccountStatementEntries(Profile profile,
+			Long accountId, Date begin, Date end) {
+		
+		AccountStatementConstraint constraints = new AccountStatementConstraint();
+		constraints.setProfile(profile);
+		constraints.setAccountId(accountId);
+		constraints.setBegin(begin);
+		constraints.setEnd(end);
+		
+		new ConstraintValidator<AccountStatementConstraint>()
+			.validateForGroups(constraints,
+				AccountStatementConstraint.ACCOUNT_STATEMENT.class);
+		
 	}
 
 }
