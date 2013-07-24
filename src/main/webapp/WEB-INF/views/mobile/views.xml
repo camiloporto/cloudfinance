@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+	<definition name="mobile-template" template="/WEB-INF/views/mobile/template.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/mobile/header.jsp" />
+	    <put-attribute name="footer" value="/WEB-INF/views/mobile/footer.jsp" />
+	</definition>
+
+	<definition name="mobile-index" extends="mobile-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/index.jsp" />
+	</definition>
+	
+	<definition name="mobile-newUser" extends="mobile-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/newUser.jsp" />
+	</definition>
+	
+</tiles-definitions>
