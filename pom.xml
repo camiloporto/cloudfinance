@@ -50,6 +50,17 @@
     </pluginRepositories>
     <dependencies>
     	<dependency>
+	        <groupId>org.seleniumhq.selenium</groupId>
+	        <artifactId>selenium-firefox-driver</artifactId>
+	        <version>2.33.0</version>
+	    </dependency>
+	    <dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<version>2.33.0</version>
+		</dependency>
+            
+    	<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.1.1</version>
