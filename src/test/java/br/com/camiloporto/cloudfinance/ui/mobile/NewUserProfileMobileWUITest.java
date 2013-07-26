@@ -19,12 +19,20 @@ public class NewUserProfileMobileWUITest {
 	
 	@AfterClass
 	public void closeWebDriver() {
-		driver.close();
+//		driver.close();
 	}
 	
 	@Test
 	public void shouldCreateNewUserProfile() {
 		MobileHomePage mhp = PageFactory.initElements(driver, MobileHomePage.class);
 		mhp.clickNewUserProfileLink();
+		MobileNewUserPage newUserPage = PageFactory.initElements(driver, MobileNewUserPage.class);
+		newUserPage
+			.fillNewUserForm("user@gmail.com", "s3cret", "s3cret")
+			.submit();
+		
+		MobileStatusPage statusPage = PageFactory.initElements(driver, MobileStatusPage.class);
+		statusPage.assertIsOnPage();
+		
 	}
 }
