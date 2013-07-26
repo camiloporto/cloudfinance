@@ -17,4 +17,7 @@
 		<put-attribute name="body" value="/WEB-INF/views/mobile/newUser.jsp" />
 	</definition>
 	
+	<definition name="mobile-status" extends="mobile-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/status.jsp" />
+	</definition>
 </tiles-definitions>

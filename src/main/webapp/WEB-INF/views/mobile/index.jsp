@@ -11,7 +11,7 @@
 		<li>Descubra para onde o seu dinheiro esta indo</li>
 		<li>Nada de planilhas ou controles complicados</li>
 	</ul>
-	<a href="${newUser}">Quero Experimentar, sem Pagar</a>
+	<a href="${newUser}">Quero Experimentar, Sem Pagar</a>
 	<form>
 		<input type="text" placeholder="Nome de Usuario"> 
 		<input type="password" placeholder="Senha"> 

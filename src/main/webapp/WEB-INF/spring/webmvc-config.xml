@@ -25,7 +25,8 @@
     </mvc:interceptors>
 
     <!-- Selects a static view for rendering without the need for an explicit controller -->
-    <mvc:view-controller path="/mobile/newuser" view-name="mobile-newUser"/>
+    <mvc:view-controller path="/mobile/status" view-name="mobile-status"/>
+    <mvc:view-controller path="/mobile/newUser" view-name="mobile-newUser"/>
     <mvc:view-controller path="/mobile" view-name="mobile-index"/>
     <mvc:view-controller path="/" view-name="home"/>
     <mvc:view-controller path="/uncaughtException"/>
