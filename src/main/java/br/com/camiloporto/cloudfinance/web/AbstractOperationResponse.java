@@ -32,8 +32,8 @@ public abstract class AbstractOperationResponse {
 		int i = 0;
 		for (ConstraintViolation<?> cv : constraintViolations) {
 			System.out
-					.println("AbstractOperationResponse.configureErrorMessages() " + cv.getPropertyPath() );
-			errors[i] = cv.getMessage();
+					.println("AbstractOperationResponse.configureErrorMessages() " + cv.getMessageTemplate() );
+			errors[i++] = cv.getMessage();
 		}
 	}
 }
