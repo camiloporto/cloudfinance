@@ -1,5 +1,7 @@
 package br.com.camiloporto.cloudfinance.ui.mobile;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
@@ -14,6 +16,7 @@ public class NewUserProfileMobileWUITest {
 	@BeforeClass
 	public void startWebDriver() {
 		driver = new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		driver.get("http://localhost:8080/cloudfinance/mobile");
 	}
 	
@@ -32,7 +35,22 @@ public class NewUserProfileMobileWUITest {
 			.submit();
 		
 		MobileStatusPage statusPage = PageFactory.initElements(driver, MobileStatusPage.class);
-		statusPage.assertIsOnPage();
+		statusPage.assertPageTitleEquals("Cadastro de Usuario");
+		statusPage.assertSuccess();
+	}
+	
+	@Test
+	public void shouldReportErrorsWhenFailCreatingNewUserProfile() {
+		MobileHomePage mhp = PageFactory.initElements(driver, MobileHomePage.class);
+		mhp.clickNewUserProfileLink();
+		MobileNewUserPage newUserPage = PageFactory.initElements(driver, MobileNewUserPage.class);
+		newUserPage
+			.fillNewUserForm("", "", "") //no input informed
+			.submit();
 		
+		MobileStatusPage statusPage = PageFactory.initElements(driver, MobileStatusPage.class);
+		statusPage.assertPageTitleEquals("Cadastro de Usuario");
+		statusPage.assertFail();
+		statusPage.assertHasErrorMessages();
 	}
 }

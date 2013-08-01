@@ -42,7 +42,7 @@ public class UserProfileController {
 			response.setUserId(saved.getId());
 		} catch (ConstraintViolationException e) {
 			response = new UserOperationResponse(e);
-			
+			e.printStackTrace();
 		} catch (Throwable e) {
 			response.setSuccess(false);
 			e.printStackTrace();

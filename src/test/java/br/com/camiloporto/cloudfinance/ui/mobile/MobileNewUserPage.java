@@ -9,10 +9,10 @@ public class MobileNewUserPage {
 	@FindBy(how = How.NAME, name="userName")
 	private WebElement userNameEl;
 	
-	@FindBy(how = How.NAME, name="password")
+	@FindBy(how = How.NAME, name="pass")
 	private WebElement passwordEl;
 	
-	@FindBy(how = How.NAME, name="confirmPassword")
+	@FindBy(how = How.NAME, name="confirmPass")
 	private WebElement confirmPasswordEl;
 	
 	@FindBy(how = How.ID, id="btnSubmit")

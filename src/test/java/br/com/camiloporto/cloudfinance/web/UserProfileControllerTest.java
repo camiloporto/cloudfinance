@@ -48,6 +48,26 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
         this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
     
+    @Test
+	public void shouldInsertNewAccountSystemWhenUserSignUpWithNoJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		
+		//normal html POST - no JSON
+		ResultActions response = mockMvc.perform(post("/user/signup")
+			.param("userName", userName)
+			.param("pass", userPass)
+			.param("confirmPass", userConfirmPass)
+		);
+		
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.model().attributeExists("response"));
+		
+	}
+    
 	@Test
 	public void shouldInsertNewAccountSystemWhenUserSignUp() throws Exception {
 		final String userName ="some@email.com";
@@ -58,6 +78,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		
@@ -85,6 +106,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		//second request for signup
@@ -92,6 +114,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.param("userName", userName)
 				.param("pass", userPass)
 				.param("confirmPass", userConfirmPass)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -113,6 +136,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		response
@@ -135,6 +159,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		response
