@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 
 import net.minidev.json.JSONArray;
 
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testng.Assert;
@@ -31,6 +32,8 @@ public class WebResponseChecker {
 	}
 
 	public WebResponseChecker assertErrorMessageIsPresent(String errorMessage) throws UnsupportedEncodingException {
+		MockHttpServletResponse res = response.andReturn().getResponse();
+		System.out.println(res.getCharacterEncoding());
 		String jsonResponse = response.andReturn().getResponse().getContentAsString();
 		JSONArray errors = JsonPath.read(jsonResponse, "$.errors[*]");
 		System.out.println(errors);

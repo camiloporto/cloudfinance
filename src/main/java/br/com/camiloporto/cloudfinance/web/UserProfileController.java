@@ -29,12 +29,11 @@ public class UserProfileController {
 	@Autowired
 	private AccountManager accountManager;
 	
-	@RequestMapping(value = "/signup", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/signup", method = RequestMethod.POST ,produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE )
 	public @ResponseBody AbstractOperationResponse signUp(String userName, String pass, String confirmPass) {
 		Profile newProfile = new Profile();
 		newProfile.setPass(pass);
 		newProfile.setUserId(userName);
-		
 		Profile saved;
 		UserOperationResponse response = new UserOperationResponse(true);
 		try {
@@ -42,7 +41,7 @@ public class UserProfileController {
 			response.setUserId(saved.getId());
 		} catch (ConstraintViolationException e) {
 			response = new UserOperationResponse(e);
-			
+			e.printStackTrace();
 		} catch (Throwable e) {
 			response.setSuccess(false);
 			e.printStackTrace();

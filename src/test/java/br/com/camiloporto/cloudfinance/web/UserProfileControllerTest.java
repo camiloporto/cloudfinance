@@ -23,6 +23,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
@@ -48,6 +49,26 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
         this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
     
+    @Test
+	public void shouldInsertNewAccountSystemWhenUserSignUpWithNoJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		
+		//normal html POST - no JSON
+		ResultActions response = mockMvc.perform(post("/user/signup")
+			.param("userName", userName)
+			.param("pass", userPass)
+			.param("confirmPass", userConfirmPass)
+		);
+		
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.model().attributeExists("response"));
+		
+	}
+    
 	@Test
 	public void shouldInsertNewAccountSystemWhenUserSignUp() throws Exception {
 		final String userName ="some@email.com";
@@ -58,12 +79,13 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.userId").exists());
 		
 		new WebResponseChecker(response, mockSession)
@@ -85,6 +107,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		//second request for signup
@@ -92,15 +115,16 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.param("userName", userName)
 				.param("pass", userPass)
 				.param("confirmPass", userConfirmPass)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE));
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST");
+			.assertErrorMessageIsPresent(ValidationMessages.USER_ID_ALREADY_EXIST);
 	}
 	
 	@Test
@@ -113,15 +137,16 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE));
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED");
+			.assertErrorMessageIsPresent(ValidationMessages.USER_ID_REQUIRED);
 	}
 	
 	@Test
@@ -135,15 +160,16 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.param("userName", userName)
 			.param("pass", userPass)
 			.param("confirmPass", userConfirmPass)
+			.accept(MediaType.APPLICATION_JSON)
 		);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE));
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED");
+			.assertErrorMessageIsPresent(ValidationMessages.USER_PASS_REQUIRED);
 	}
 	
 	@Test

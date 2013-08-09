@@ -21,11 +21,17 @@ public class ExceptionChecker {
 		for (ConstraintViolation<?> constraintViolation : violations) {
 			String actualTemplate = constraintViolation.getMessageTemplate();
 			if(actualTemplate.equals(expected)){
+				assertInterpolatedMessageExist(constraintViolation);
 				found = true;
 				break;
 			}
 		}
 		Assert.assertTrue(found, "message template '" + expected + "' not found");
+	}
+	
+	private void assertInterpolatedMessageExist(
+			ConstraintViolation<?> constraintViolation) {
+		Assert.assertNotEquals(constraintViolation.getMessage(), constraintViolation.getMessageTemplate(), "error message not i18nized: " + constraintViolation.getMessageTemplate());
 	}
 
 	public ExceptionChecker assertExpectedErrorCountIs(int expectedErrorCount) {

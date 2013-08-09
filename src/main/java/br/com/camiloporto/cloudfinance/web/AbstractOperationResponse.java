@@ -31,7 +31,7 @@ public abstract class AbstractOperationResponse {
 		this.errors = new String[constraintViolations.size()];
 		int i = 0;
 		for (ConstraintViolation<?> cv : constraintViolations) {
-			errors[i] = cv.getMessage();
+			errors[i++] = cv.getMessage();
 		}
 	}
 }
