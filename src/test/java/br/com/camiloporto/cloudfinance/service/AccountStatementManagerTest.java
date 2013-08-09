@@ -192,7 +192,7 @@ public class AccountStatementManagerTest extends AbstractCloudFinanceDatabaseTes
 		List<Object[]> testData = new ArrayList<Object[]>();
 		
 		// no profile
-		testData.add(new Object[] { null, bank.getId(), tx01Date.getTime(), tx03Date.getTime(), "br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED" });
+		testData.add(new Object[] { null, bank.getId(), tx01Date.getTime(), tx03Date.getTime(), "{br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED}" });
 
 		// no account id informed
 		testData.add(new Object[] { profile, null, tx01Date.getTime(), tx03Date.getTime(), "br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED" });

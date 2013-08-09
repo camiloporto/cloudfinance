@@ -137,7 +137,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED}");
 		}
 		
 	}

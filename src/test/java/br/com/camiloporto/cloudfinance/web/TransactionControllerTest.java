@@ -134,7 +134,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 	
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED");
+			.assertErrorMessageIsPresent("{br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED}");
 	}
 	
 	@Test
@@ -203,7 +203,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE");
+			.assertErrorMessageIsPresent("{br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE}");
 	}
 	
 	@Test
@@ -259,7 +259,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED");
+			.assertErrorMessageIsPresent("{br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED}");
 	}
 	
 }
