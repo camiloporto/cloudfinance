@@ -116,7 +116,6 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.param("pass", userPass)
 				.param("confirmPass", userConfirmPass)
 				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
 			);
 		
 		response

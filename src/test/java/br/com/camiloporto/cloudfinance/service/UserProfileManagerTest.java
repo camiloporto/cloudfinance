@@ -58,7 +58,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"{{br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST}}"
+						"{br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST}"
 				);
 		}
 		
