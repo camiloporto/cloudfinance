@@ -30,7 +30,7 @@ public class UserProfileManagerConstraint {
 		this.profile = profile;
 	}
 	
-	@AssertTrue(groups={SIGNUP_RULES.class}, message="br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST")
+	@AssertTrue(groups={SIGNUP_RULES.class}, message="{br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST}")
 	public boolean isUserNameDoNotExist() {
 		if(profile != null && profile.getUserId() != null) {
 			return profileRepository.findByUserId(profile.getUserId()) == null;

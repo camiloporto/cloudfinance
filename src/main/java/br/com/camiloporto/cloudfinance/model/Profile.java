@@ -14,9 +14,9 @@ import br.com.camiloporto.cloudfinance.service.impl.UserProfileManagerConstraint
 @RooSerializable
 public class Profile {
 
-    @NotEmpty(groups={UserProfileManagerConstraint.SIGNUP_RULES.class}, message="br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED")
+    @NotEmpty(groups={UserProfileManagerConstraint.SIGNUP_RULES.class}, message="{br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED}")
     private String userId;
 
-    @NotEmpty(groups={UserProfileManagerConstraint.SIGNUP_RULES.class}, message="br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED")
+    @NotEmpty(groups={UserProfileManagerConstraint.SIGNUP_RULES.class}, message="{br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED}")
     private String pass;
 }

@@ -58,7 +58,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST"
+						"{{br.com.camiloporto.cloudfinance.profile.USER_ID_ALREADY_EXIST}}"
 				);
 		}
 		
@@ -81,7 +81,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED"
+						"{br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED}"
 				);
 		}
 		
@@ -104,7 +104,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED"
+						"{br.com.camiloporto.cloudfinance.profile.USER_ID_REQUIRED}"
 				);
 		}
 		
@@ -127,7 +127,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED"
+						"{br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED}"
 				);
 		}
 		
@@ -150,7 +150,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED"
+						"{br.com.camiloporto.cloudfinance.profile.USER_PASS_REQUIRED}"
 				);
 		}
 	}
