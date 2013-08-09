@@ -196,6 +196,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		
 	}
 	
+	//FIXME internacionalizar mensagens de AccountManager
 	@Test
 	public void childrenAccountNameShouldBeUnique() {
 		
