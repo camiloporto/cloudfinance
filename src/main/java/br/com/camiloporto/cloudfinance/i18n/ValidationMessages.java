@@ -18,6 +18,10 @@ public class ValidationMessages {
 	
 	public static final String BEGIN_DATE_GREATER_THAN_END_DATE = BUNDLE.getString("br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE");
 	
+	public static final String ACCOUNT_REQUIRED = BUNDLE.getString("br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED");
+	
+	public static final String PARENT_ACCOUNT_REQUIRED = BUNDLE.getString("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+	
 	
 	
 }

@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.Profile;
@@ -197,6 +198,6 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED");
+			.assertErrorMessageIsPresent(ValidationMessages.ACCOUNT_REQUIRED);
 	}
 }
