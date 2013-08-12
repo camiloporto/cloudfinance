@@ -87,7 +87,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED}");
 		}
 		
 	}
@@ -112,7 +112,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED}");
 		}
 		
 	}
@@ -137,7 +137,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED}");
 		}
 		
 	}
@@ -164,7 +164,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.NAME_REQUIRED}");
 		}
 		
 	}
@@ -191,11 +191,12 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.NAME_REQUIRED}");
 		}
 		
 	}
 	
+	//FIXME internacionalizar mensagens de AccountManager
 	@Test
 	public void childrenAccountNameShouldBeUnique() {
 		
@@ -225,7 +226,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.account.NAME_ALREADY_EXISTS");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.NAME_ALREADY_EXISTS}");
 		}
 		
 	}
@@ -280,7 +281,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			e.printStackTrace();
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
-				.assertContainsMessageTemplate("br.com.camiloporto.cloudfinance.accounttree.ACCOUNT_ID_REQUIRED");
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.accounttree.ACCOUNT_ID_REQUIRED}");
 		}
 	}
 	
@@ -295,7 +296,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			new ExceptionChecker(e)
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate(
-						"br.com.camiloporto.cloudfinance.accountsystem.USER_ID_REQUIRED"
+						"{br.com.camiloporto.cloudfinance.accountsystem.USER_ID_REQUIRED}"
 				);
 		}
 	}

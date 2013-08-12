@@ -121,13 +121,13 @@ public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 		List<Object[]> testData = new ArrayList<Object[]>();
 		
 		//no profile
-		testData.add(new Object[] {null, root.getId(), 1L, "br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED"});
+		testData.add(new Object[] {null, root.getId(), 1L, "{br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED}"});
 		
 		//no rootAccount id informed
-		testData.add(new Object[] {profile, null, 1L, "br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED"});
+		testData.add(new Object[] {profile, null, 1L, "{br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED}"});
 		
 		//no id informed
-		testData.add(new Object[] {profile, root.getId(), null, "br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED"});
+		testData.add(new Object[] {profile, root.getId(), null, "{br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED}"});
 		
 		return testData.iterator();
 	}
@@ -318,13 +318,13 @@ public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 		List<Object[]> testData = new ArrayList<Object[]>();
 		
 		//no profile
-		testData.add(new Object[] {null, root.getId(), begin.getTime(), end.getTime(), "br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED"});
+		testData.add(new Object[] {null, root.getId(), begin.getTime(), end.getTime(), "{br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED}"});
 		
 		//no rootAccount id informed
-		testData.add(new Object[] {profile, null, begin.getTime(), end.getTime(), "br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED"});
+		testData.add(new Object[] {profile, null, begin.getTime(), end.getTime(), "{br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED}"});
 		
 		//begin date > end date
-		testData.add(new Object[] {profile, root.getId(), end.getTime(), begin.getTime(), "br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE"});
+		testData.add(new Object[] {profile, root.getId(), end.getTime(), begin.getTime(), "{br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE}"});
 		
 		return testData.iterator();
 	}
@@ -354,10 +354,10 @@ public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 		
 		List<Object[]> testData = new ArrayList<Object[]>();
 		
-		testData.add(new Object[] {profile, null, dest.getId(), new Date(), new BigDecimal("1250.25"), "transact description", "br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED"});
-		testData.add(new Object[] {profile, origin.getId(), null, new Date(), new BigDecimal("1250.25"), "transact description", "br.com.camiloporto.cloudfinance.transaction.DEST_ACCOUNT_REQUIRED"});
-		testData.add(new Object[] {profile, origin.getId(), dest.getId(), null, new BigDecimal("1250.25"), "transact description", "br.com.camiloporto.cloudfinance.transaction.DATE_REQUIRED"});
-		testData.add(new Object[] {profile, origin.getId(), dest.getId(), new Date(), null, "transact description", "br.com.camiloporto.cloudfinance.transaction.AMOUNT_REQUIRED"});
+		testData.add(new Object[] {profile, null, dest.getId(), new Date(), new BigDecimal("1250.25"), "transact description", "{br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED}"});
+		testData.add(new Object[] {profile, origin.getId(), null, new Date(), new BigDecimal("1250.25"), "transact description", "{br.com.camiloporto.cloudfinance.transaction.DEST_ACCOUNT_REQUIRED}"});
+		testData.add(new Object[] {profile, origin.getId(), dest.getId(), null, new BigDecimal("1250.25"), "transact description", "{br.com.camiloporto.cloudfinance.transaction.DATE_REQUIRED}"});
+		testData.add(new Object[] {profile, origin.getId(), dest.getId(), new Date(), null, "transact description", "{br.com.camiloporto.cloudfinance.transaction.AMOUNT_REQUIRED}"});
 		
 		return testData.iterator();
 	}

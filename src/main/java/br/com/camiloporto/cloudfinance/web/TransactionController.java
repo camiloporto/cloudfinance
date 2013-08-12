@@ -33,7 +33,7 @@ public class TransactionController {
 	private TransactionManager transactionManager;
 	
 	//TODO refatorar isso. tirar anotacoes desnecessarias "@RequestParam"
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody AbstractOperationResponse createTransaction(
 			@ModelAttribute(value="logged") Profile logged, 
 			@RequestParam("originAccountId") Long originAccountId,
@@ -54,7 +54,7 @@ public class TransactionController {
 		return response;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody AbstractOperationResponse getTransactions(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
@@ -73,7 +73,7 @@ public class TransactionController {
 		return response;
 	}
 	
-	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody AbstractOperationResponse delete(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,

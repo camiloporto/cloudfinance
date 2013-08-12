@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 
 import com.jayway.jsonpath.JsonPath;
@@ -177,7 +178,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
+			.assertErrorMessageIsPresent(ValidationMessages.PARENT_ACCOUNT_REQUIRED);
 		
 	}
 }

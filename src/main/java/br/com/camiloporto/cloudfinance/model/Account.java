@@ -27,7 +27,7 @@ public class Account {
 
 	public static final String OUTGOING_NAME = "br.com.camiloporto.cloudfinance.model.Account.OUTGOING_NAME";
 
-	@NotEmpty(message = "br.com.camiloporto.cloudfinance.account.NAME_REQUIRED", 
+	@NotEmpty(message = "{br.com.camiloporto.cloudfinance.account.NAME_REQUIRED}", 
 			groups = {CREATE_NEW_ACCOUNT.class})
     private String name;
 

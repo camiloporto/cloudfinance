@@ -28,6 +28,7 @@ import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.TransactionControllerTestHelper;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
@@ -102,7 +103,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		
@@ -129,12 +130,12 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.success").value(false));
 	
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ORIGIN_ACCOUNT_REQUIRED");
+			.assertErrorMessageIsPresent(ValidationMessages.ORIGIN_ACCOUNT_REQUIRED);
 	}
 	
 	@Test
@@ -175,7 +176,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.success").value(true));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
@@ -198,12 +199,12 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.success").value(false));
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.BEGIN_DATE_GREATER_THAN_END_DATE");
+			.assertErrorMessageIsPresent(ValidationMessages.BEGIN_DATE_GREATER_THAN_END_DATE);
 	}
 	
 	@Test
@@ -238,7 +239,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.success").value(true));
 		
 		Assert.assertNull(transactionManager.findAccountTransaction(new Long(txId)), "transaction '" + txId + "' was not deleted");
@@ -250,16 +251,17 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		//no transaction id informed for delete
 		ResultActions response = mockMvc.perform(post("/transaction/delete")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.success").value(false));
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
-			.assertErrorMessageIsPresent("br.com.camiloporto.cloudfinance.transaction.ID_REQUIRED");
+			.assertErrorMessageIsPresent(ValidationMessages.TRANSACTION_ID_REQUIRED);
 	}
 	
 }
