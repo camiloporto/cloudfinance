@@ -195,10 +195,10 @@ public class AccountStatementManagerTest extends AbstractCloudFinanceDatabaseTes
 		testData.add(new Object[] { null, bank.getId(), tx01Date.getTime(), tx03Date.getTime(), "{br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED}" });
 
 		// no account id informed
-		testData.add(new Object[] { profile, null, tx01Date.getTime(), tx03Date.getTime(), "br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED" });
+		testData.add(new Object[] { profile, null, tx01Date.getTime(), tx03Date.getTime(), "{br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED}" });
 
 		// begin date > end date
-		testData.add(new Object[] {profile, bank.getId(), tx03Date.getTime(), tx01Date.getTime(), "br.com.camiloporto.cloudfinance.report.statement.BEGIN_DATE_GREATER_THAN_END_DATE"});
+		testData.add(new Object[] {profile, bank.getId(), tx03Date.getTime(), tx01Date.getTime(), "{br.com.camiloporto.cloudfinance.report.statement.BEGIN_DATE_GREATER_THAN_END_DATE}"});
 		
 		return testData.iterator();
 	}
