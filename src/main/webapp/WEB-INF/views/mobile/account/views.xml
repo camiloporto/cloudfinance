@@ -8,5 +8,8 @@
 	<definition name="mobile-accountHome" extends="mobile-template">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/home.jsp" />
 	</definition>
+	<definition name="mobile-rootAccountHome" extends="mobile-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/account/roots.jsp" />
+	</definition>
 
 </tiles-definitions>

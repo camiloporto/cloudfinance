@@ -5,11 +5,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.UUID;
 
 import net.minidev.json.JSONArray;
 
+import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -19,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -58,6 +62,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
@@ -68,6 +73,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -87,6 +93,21 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 //		Assert.assertNull(JsonPath.read(json, "$.rootAccounts[0].version"), "trash properties should not be included");
 	}
 	
+	@Test
+	public void shouldGetUsersRootAccountsWithNoJs() throws Exception {
+		
+		ResultActions response = mockMvc.perform(get("/account/roots")
+				.session(mockSession)
+			);
+		final int EXPECTED_ACCOUNT_COUNTS = 1;
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(view().name("mobile-rootAccountHome"))
+			.andExpect(model().attribute("response", Matchers.hasProperty("rootAccounts", Matchers.arrayWithSize(EXPECTED_ACCOUNT_COUNTS))));
+		
+	}
+	
 	//FIXME fazer testes com possibilidade de falhas da consulta de contas raiz. Se usuario nao logado???
 	
 	@Test
@@ -94,6 +115,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -109,10 +131,29 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
+	public void shouldGetRootAccountWholeTreeWithNoJs() throws Exception {
+		
+		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(view().name("mobile-accountHome"));
+		
+		ModelAndView mav = response.andReturn().getModelAndView();
+		AccountOperationResponse aor = (AccountOperationResponse) mav.getModel().get("response");
+		
+		final int EXPECTED_ACCOUNT_CHILDREN = 4;
+		Assert.assertEquals(aor.getAccountTree().getChildren().size(), EXPECTED_ACCOUNT_CHILDREN, "children count not match");
+	}
+	
+	@Test
 	public void shouldGetEmptyTreeIfAccountIdDoNotExists() throws Exception {
 		
 		ResultActions response = mockMvc.perform(get("/account/tree/9999")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -128,6 +169,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		String json = response.andReturn().getResponse().getContentAsString();
