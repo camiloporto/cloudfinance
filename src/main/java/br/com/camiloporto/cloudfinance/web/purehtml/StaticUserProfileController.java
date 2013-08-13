@@ -1,18 +1,15 @@
 package br.com.camiloporto.cloudfinance.web.purehtml;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.camiloporto.cloudfinance.service.AccountManager;
-import br.com.camiloporto.cloudfinance.service.UserProfileManager;
-import br.com.camiloporto.cloudfinance.web.AbstractOperationResponse;
 import br.com.camiloporto.cloudfinance.web.UserOperationResponse;
+import br.com.camiloporto.cloudfinance.web.UserProfileController;
 
 @RequestMapping("/user")
 @Controller
@@ -20,13 +17,7 @@ import br.com.camiloporto.cloudfinance.web.UserOperationResponse;
 public class StaticUserProfileController {
 	
 	@Autowired
-	private UserProfileManager userProfileManager;
-	
-	@Autowired
-	private AccountManager accountManager;
-	
-	@Autowired
-	private br.com.camiloporto.cloudfinance.web.UserProfileController jsonController;
+	private UserProfileController jsonController;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public ModelAndView signUp(String userName, String pass, String confirmPass) {
@@ -34,6 +25,19 @@ public class StaticUserProfileController {
 		ModelAndView mav = new ModelAndView("mobile-status");
 		mav.addObject("response", response);
 		mav.addObject("operation", "Cadastro de Usuario");
+		return mav;
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ModelAndView login(String userName, String pass, ModelMap map) {
+		UserOperationResponse response = (UserOperationResponse) jsonController.login(userName, pass, map);
+		ModelAndView mav = new ModelAndView("mobile-index");
+		if(response.isSuccess()) {
+			mav = new ModelAndView("redirect:/account/roots");
+			return mav;
+		} else {
+			mav.getModelMap().put("response", response);
+		}
 		return mav;
 	}
 

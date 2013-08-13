@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -184,6 +185,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("userName", userName)
 				.param("pass", userPass)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -194,6 +196,56 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.assertOperationSuccess()
 			.assertUserIsInSession(userName)
 			.assertDefaultAccountTreeWasSetInSession();
+		
+	}
+	
+	@Test
+	public void shouldAuthenticateRegisteredUserWithNoJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			);
+		
+		String expectedRedirectedUrl = "/account/roots";
+		response
+			.andExpect(status().isMovedTemporarily()) //redirected
+			.andExpect(MockMvcResultMatchers.redirectedUrl(expectedRedirectedUrl));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertUserIsInSession(userName)
+			.assertDefaultAccountTreeWasSetInSession();
+		
+	}
+	
+	@Test
+	public void shouldNotRedirectIfFailAuthenticationWithNoJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", "WRONG_PASS")
+			);
+		
+		String expectedViewName = "mobile-index";
+		response
+			.andExpect(status().isOk()) //not redirected
+			.andExpect(MockMvcResultMatchers.view().name(expectedViewName))
+			.andExpect(MockMvcResultMatchers.model().attribute("response", Matchers.hasProperty("success", Matchers.is(false))));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertUserNotInSession();
 		
 	}
 	
@@ -209,6 +261,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("userName", userName)
 				.param("pass", "WRONG_PASS")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -233,6 +286,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("userName", "doNotExist@SuchEmail.com")
 				.param("pass", userPass)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -257,6 +311,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("userName", "")
 				.param("pass", "")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
