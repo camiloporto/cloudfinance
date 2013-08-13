@@ -74,6 +74,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");

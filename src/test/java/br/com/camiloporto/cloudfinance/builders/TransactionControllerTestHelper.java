@@ -8,6 +8,7 @@ import java.util.Locale;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -39,6 +40,7 @@ public class TransactionControllerTestHelper {
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
 		
@@ -46,6 +48,7 @@ public class TransactionControllerTestHelper {
 		
 		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		json = response.andReturn().getResponse().getContentAsString();
