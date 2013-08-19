@@ -14,6 +14,9 @@
 	</ul>
 	<a href="${newUser}">Quero Experimentar, Sem Pagar</a>
 	<form action="${loginUser}" method="POST">
+		<c:if test="${not empty response && not response.success}">
+			<p id="loginStatus">Login failed</p>
+		</c:if>
 		<input type="text" placeholder="Nome de Usuario" name="userName"> 
 		<input type="password" placeholder="Senha" name="pass"> 
 		<input type="submit" value="Login" id="btnSubmit">

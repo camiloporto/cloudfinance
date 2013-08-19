@@ -17,12 +17,12 @@ public class RootAccountHomePage {
 
 	public RootAccountHomePage checkRootAccountsArePresent(String... rootAccountNames) {
 		for (String rootAccountName : rootAccountNames) {
-			Assert.assertTrue(rootAccountisListed(rootAccountName), "expected root account not listed");
+			Assert.assertTrue(rootAccountIsListed(rootAccountName), "expected root account not listed");
 		}
 		return this;
 	}
 
-	private Boolean rootAccountisListed(String rootAccountName) {
+	private Boolean rootAccountIsListed(String rootAccountName) {
 		for (WebElement rootAccountItem : rootAccountItems) {
 			if(rootAccountItem.getText().contains(rootAccountName)){
 				return true;

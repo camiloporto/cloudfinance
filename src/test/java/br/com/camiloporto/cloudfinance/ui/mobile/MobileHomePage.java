@@ -3,6 +3,7 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.testng.Assert;
 
 public class MobileHomePage {
 
@@ -18,6 +19,9 @@ public class MobileHomePage {
 	@FindBy(how = How.ID, id="btnSubmit")
 	private WebElement submitEl;
 	
+	@FindBy(how = How.ID, id="loginStatus")
+	private WebElement loginStatus;
+	
 	public void clickNewUserProfileLink() {
 		newUserProfileLink.click();
 	}
@@ -26,6 +30,12 @@ public class MobileHomePage {
 		userNameEl.sendKeys(userName);
 		passwordEl.sendKeys(pass);
 		submitEl.submit();
+	}
+
+	
+	public MobileHomePage assertLoginStatusMessageIs(String expectedLoginStatusMessage) {
+		Assert.assertTrue(loginStatus.getText().equalsIgnoreCase(expectedLoginStatusMessage), expectedLoginStatusMessage + " not present");
+		return this;
 	}
 
 }

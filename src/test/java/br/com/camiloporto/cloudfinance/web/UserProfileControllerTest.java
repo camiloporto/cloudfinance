@@ -1,6 +1,7 @@
 package br.com.camiloporto.cloudfinance.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,6 +14,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -244,8 +246,41 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.andExpect(MockMvcResultMatchers.view().name(expectedViewName))
 			.andExpect(MockMvcResultMatchers.model().attribute("response", Matchers.hasProperty("success", Matchers.is(false))));
 		
+		
 		new WebResponseChecker(response, mockSession)
 			.assertUserNotInSession();
+		
+	}
+	
+	@Test
+	public void shouldRedirectToRootAccountsPageIfHasAlreadyALoggedUser_WithNoJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+						.session(mockSession)
+						.param("userName", userName)
+						.param("pass", userPass)
+					); 
+		
+		//already logged user try to access home page again
+		response = mockMvc.perform(get("/mobile")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			); 
+		
+		String expectedRedirectedUrl = "/account/roots";
+		response
+			.andExpect(status().isMovedTemporarily()) //redirected
+			.andExpect(MockMvcResultMatchers.redirectedUrl(expectedRedirectedUrl));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertUserIsInSession(userName)
+			.assertDefaultAccountTreeWasSetInSession();
 		
 	}
 	
