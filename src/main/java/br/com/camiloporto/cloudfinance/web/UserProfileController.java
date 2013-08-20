@@ -54,7 +54,6 @@ public class UserProfileController {
 	public @ResponseBody AbstractOperationResponse login(String userName, String pass, ModelMap map) {
 		Profile logged = userProfileManager.login(userName, pass);
 		if(logged != null) {
-			logged.setPass(null);//clear password for traffic
 			map.addAttribute("logged", logged);
 			setDefaultRootAccount(logged, map);
 			return new UserOperationResponse(true);

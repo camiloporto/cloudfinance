@@ -3,7 +3,7 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -19,7 +19,7 @@ public class LoginUserMobileWUITest {
 
 	@BeforeMethod
 	public void startWebDriver() {
-		driver = new FirefoxDriver();
+		driver = new HtmlUnitDriver();
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		driver.get("http://localhost:8080/cloudfinance/mobile");
 	}
