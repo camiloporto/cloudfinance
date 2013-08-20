@@ -202,6 +202,85 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 	}
 	
 	@Test
+	public void shouldLogoffLoggedUser() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationSuccess()
+			.assertUserIsInSession(userName)
+			.assertDefaultAccountTreeWasSetInSession();
+		
+		response = mockMvc.perform(post("/user/logoff")
+				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+	
+		new WebResponseChecker(response, mockSession)
+			.assertOperationSuccess()
+			.assertUserNotInSession();
+		
+	}
+	
+	@Test
+	public void shouldLogoffLoggedUser_noJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertOperationSuccess()
+			.assertUserIsInSession(userName)
+			.assertDefaultAccountTreeWasSetInSession();
+		
+		
+		//logoff
+		response = mockMvc.perform(post("/user/logoff")
+				.session(mockSession)
+			);
+		
+		String expectedRedirectedUrl = "/mobile";
+		response
+			.andExpect(status().isMovedTemporarily())
+			.andExpect(MockMvcResultMatchers.redirectedUrl(expectedRedirectedUrl));
+	
+		new WebResponseChecker(response, mockSession)
+			.assertUserNotInSession();
+		
+	}
+	
+	@Test
 	public void shouldAuthenticateRegisteredUserWithNoJS() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
