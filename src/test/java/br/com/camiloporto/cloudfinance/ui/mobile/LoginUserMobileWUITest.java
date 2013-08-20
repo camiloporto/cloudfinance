@@ -54,11 +54,6 @@ public class LoginUserMobileWUITest {
 				RootAccountHomePage.class);
 		rootAccountPage.checkRootAccountsArePresent(NEWUSER_GMAIL_COM);
 
-		// FIXME refatorar testes, torna-los repetiveis, mesmo que usuario ja
-		// cadastrado.
-		// FIXME tratar erro quando usuario cadastrado ja existe. apresentar
-		// mensagem de erro. tratar isso.
-
 	}
 
 	@Test
@@ -90,9 +85,6 @@ public class LoginUserMobileWUITest {
 				RootAccountHomePage.class);
 		rootAccountPage.checkRootAccountsArePresent(NEWUSER_GMAIL_COM);
 		
-		//FIXME corrigir esse teste. login nao funciona apos uma falha.
-		// a falha aparentemente ta relacionada quando um usuario ja logou, e tenta logar novamente
-
 	}
 
 }
