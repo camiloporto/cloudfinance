@@ -28,7 +28,7 @@ public class AccountSystemController {
 	private AccountManager accountManager;
 	
 	@RequestMapping(value = "/roots", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AbstractOperationResponse getRootAccounts(@ModelAttribute(value="logged") Profile logged) {
+	public @ResponseBody AccountOperationResponse getRootAccounts(@ModelAttribute(value="logged") Profile logged) {
 		List<Account> rootAccounts = accountManager.findRootAccounts(logged);
 		Account[] result = new Account[rootAccounts.size()];
 		rootAccounts.toArray(result);
@@ -39,7 +39,7 @@ public class AccountSystemController {
 	}
 	
 	@RequestMapping(value = "/tree/{accountId}", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AbstractOperationResponse getAccountBranch(
+	public @ResponseBody AccountOperationResponse getAccountBranch(
 			@ModelAttribute(value="logged") Profile logged,
 			@PathVariable Long accountId) {
 
@@ -50,7 +50,7 @@ public class AccountSystemController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AbstractOperationResponse createAccount(
+	public @ResponseBody AccountOperationResponse createAccount(
 			@ModelAttribute(value="logged")  Profile logged,
 			@ModelAttribute(value="rootAccount")  Account rootAccount,
 			Account account) {

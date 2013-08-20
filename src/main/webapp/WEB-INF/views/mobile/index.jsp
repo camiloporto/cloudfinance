@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:url value="/mobile/newUser" var="newUser"></c:url>
+<c:url value="/user/login" var="loginUser"></c:url>
 <section>
 	<h2>Tenha dinheiro ate o ultimo dia do mes</h2>
 	<p>Controle seu dinheiro sem complicacao e passe o mes inteiro sem
@@ -12,9 +13,12 @@
 		<li>Nada de planilhas ou controles complicados</li>
 	</ul>
 	<a href="${newUser}">Quero Experimentar, Sem Pagar</a>
-	<form>
-		<input type="text" placeholder="Nome de Usuario"> 
-		<input type="password" placeholder="Senha"> 
-		<input type="submit" value="Login">
+	<form action="${loginUser}" method="POST">
+		<c:if test="${not empty response && not response.success}">
+			<p id="loginStatus">Login failed</p>
+		</c:if>
+		<input type="text" placeholder="Nome de Usuario" name="userName"> 
+		<input type="password" placeholder="Senha" name="pass"> 
+		<input type="submit" value="Login" id="btnSubmit">
 	</form>
 </section>
