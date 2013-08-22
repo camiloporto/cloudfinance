@@ -173,7 +173,7 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 		new ProfileChecker(logged)
 			.assertUserNameEquals(camiloporto)
 			.assertPasswordIsEmpty();
-		//FIXME the password should not go within the Profile Object. turn authentication process more secure (Spring Security?)
+		//FIXME Knowing bug. the password should not go within the Profile Object. turn authentication process more secure (Spring Security?)
 	}
 	
 	@Test

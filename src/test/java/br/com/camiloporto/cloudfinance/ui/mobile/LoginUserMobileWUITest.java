@@ -3,8 +3,10 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -19,7 +21,7 @@ public class LoginUserMobileWUITest {
 
 	@BeforeMethod
 	public void startWebDriver() {
-		driver = new HtmlUnitDriver();
+		driver = new FirefoxDriver();
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		driver.get("http://localhost:8080/cloudfinance/mobile");
 	}
@@ -53,6 +55,22 @@ public class LoginUserMobileWUITest {
 		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver,
 				RootAccountHomePage.class);
 		rootAccountPage.checkRootAccountsArePresent(NEWUSER_GMAIL_COM);
+
+	}
+	
+	@Test
+	public void shouldLogoffExistentLoggedUser() {
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver,
+				RootAccountHomePage.class);
+		rootAccountPage.checkRootAccountsArePresent(NEWUSER_GMAIL_COM);
+		
+		rootAccountPage.logoff();
+		String currentLocation = driver.getCurrentUrl();
+		
+		Assert.assertTrue(currentLocation.endsWith("/mobile"), "current location [" + currentLocation + "] did not match expected end path ");
 
 	}
 

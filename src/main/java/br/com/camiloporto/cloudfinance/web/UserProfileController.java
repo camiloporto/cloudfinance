@@ -2,6 +2,8 @@ package br.com.camiloporto.cloudfinance.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
@@ -59,6 +62,17 @@ public class UserProfileController {
 			return new UserOperationResponse(true);
 		}
 		return new UserOperationResponse(false);
+	}
+	
+	@RequestMapping(value = "/logoff", method = RequestMethod.POST ,produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody UserOperationResponse logoff(HttpSession session, SessionStatus status) {
+		try {
+			status.setComplete();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			//OK. session already invalidated
+		}
+		return new UserOperationResponse(true);
 	}
 
 	private void setDefaultRootAccount(Profile logged, ModelMap map) {
