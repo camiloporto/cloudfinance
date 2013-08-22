@@ -12,6 +12,9 @@ public class RootAccountHomePage {
 	@FindBy(how = How.ID, id="rootAccountList")
 	private WebElement rootAccountList;
 	
+	@FindBy(how = How.ID, id="logoffBtn")
+	private WebElement logoffBtn;
+	
 	@FindBy(how=How.CSS, css="#rootAccountList li")
 	private List<WebElement> rootAccountItems;
 
@@ -29,6 +32,11 @@ public class RootAccountHomePage {
 			}
 		}
 		return false;
+	}
+
+	public void logoff() {
+		// FIXME criar link para logoff no template interno da aplicacao (e nao no template da HomePage. adicionar link no cabecalho)
+		logoffBtn.submit();
 	}
 
 }

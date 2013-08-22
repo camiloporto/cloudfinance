@@ -1,6 +1,7 @@
 package br.com.camiloporto.cloudfinance.web.purehtml;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.web.UserOperationResponse;
@@ -46,9 +48,12 @@ public class StaticUserProfileController {
 	}
 	
 	@RequestMapping(value = "/logoff", method = RequestMethod.POST)
-	public ModelAndView logoff(HttpServletRequest request) {
+	public ModelAndView logoff(HttpSession session, SessionStatus status) {
 		ModelAndView mav = new ModelAndView("redirect:/mobile");
-		jsonController.logoff(request);
+		UserOperationResponse response = jsonController.logoff(session, status);
+		if(response.isSuccess()) {
+			return mav;
+		}
 		return mav;
 	}
 
