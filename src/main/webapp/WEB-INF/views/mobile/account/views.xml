@@ -5,11 +5,10 @@
 
 <tiles-definitions>
 	
-	<definition name="mobile-accountHome" extends="mobile-template">
+	<definition name="mobile-accountHome" extends="mobile-logged-template">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/home.jsp" />
 	</definition>
-	<definition name="mobile-rootAccountHome" extends="mobile-template">
-		<put-attribute name="header" value="/WEB-INF/views/mobile/header-in.jsp" />
+	<definition name="mobile-rootAccountHome" extends="mobile-logged-template">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/roots.jsp" />
 	</definition>
 
