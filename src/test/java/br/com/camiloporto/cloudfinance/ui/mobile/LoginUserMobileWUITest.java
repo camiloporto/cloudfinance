@@ -42,7 +42,7 @@ public class LoginUserMobileWUITest {
 		}
 	}
 
-	 @AfterMethod
+	@AfterMethod
 	public void closeWebDriver() {
 		driver.close();
 	}
