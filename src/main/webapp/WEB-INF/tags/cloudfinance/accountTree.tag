@@ -7,9 +7,14 @@
 <ul>
 	<li>
 		<h3>
-			<a href="${showFormNewAccount}/${topNode.account.id}">
+			<c:if test="${not empty topNode.account.parentAccount}">
+				<a href="${showFormNewAccount}/${topNode.account.id}">
+					<spring:message code="${topNode.account.name}"  text="${topNode.account.name}"></spring:message>
+				</a>
+			</c:if>
+			<c:if test="${empty topNode.account.parentAccount}">
 				<spring:message code="${topNode.account.name}"  text="${topNode.account.name}"></spring:message>
-			</a>
+			</c:if>
 		</h3>
 		<p>${topNode.account.description}</p>
 		<cloudfinance:accountTreeChildren children="${topNode.children}"></cloudfinance:accountTreeChildren>
