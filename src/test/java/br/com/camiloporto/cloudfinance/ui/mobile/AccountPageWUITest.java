@@ -57,7 +57,25 @@ public class AccountPageWUITest extends AbstractWUITest {
 		
 		accountHomePage = PageFactory.initElements(driver, AccountHomePage.class);
 		accountHomePage.checkAccountsArePresent(newName);
+	}
+	
+	@Test
+	public void shouldShowErrorsIfAddAccountFails() {
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver,
+				RootAccountHomePage.class);
+		rootAccountPage.selectRootAccount(NEWUSER_GMAIL_COM);
+		AccountHomePage accountHomePage = PageFactory.initElements(driver, AccountHomePage.class);
+		accountHomePage.clickOnAccountLink("Ativos");
+		FormNewAccountPage newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
 		
+		final String newInvalidName = "";
+		final String newDescription = "Patrimonio em ações";
+		newAccountForm.fillNewAccount(newInvalidName, newDescription).submitForm();
 		
+		newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
+		newAccountForm.assertHasErrors();
 	}
 }
