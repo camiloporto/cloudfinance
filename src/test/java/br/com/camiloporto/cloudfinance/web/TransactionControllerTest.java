@@ -4,16 +4,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Locale;
 import java.util.UUID;
 
 import net.minidev.json.JSONArray;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -105,6 +104,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.param("date", "10/06/2013")
 				.param("amount","1250,25")
 				.param("description", "transaction description")
+				.accept(MediaType.APPLICATION_JSON)
 				.locale(new Locale("pt", "BR"))
 			);
 		
@@ -120,6 +120,68 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 	}
 	
 	@Test
+	public void shouldAddNewTransaction_NoJS() throws Exception {
+		//Given a created a user and a account hierarchy
+		
+		String expectedUrl = "/transaction";
+		ResultActions response = mockMvc.perform(post("/transaction")
+				.session(mockSession)
+				.param("originAccountId", originAccount.getId().toString())
+				.param("destAccountId", destAccount.getId().toString())
+				.param("date", "10/06/2013")
+				.param("amount","1250,25")
+				.param("description", "transaction description")
+				.locale(new Locale("pt", "BR"))
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isMovedTemporarily())
+			.andExpect(redirectedUrl(expectedUrl))
+			.andReturn().getModelAndView();
+		
+		TransactionOperationResponse res = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNotNull(res.getTransaction(), "new saved transaction should not be null");
+	}
+	
+	@Test
+	public void shouldShowErrorsWhenFailAddNewTransaction_NoJS() throws Exception {
+		//Given a created a user and a account hierarchy
+		
+		String expectedView = "mobile-transactionNewForm";
+		String invalidOriginAccount = "";
+		ResultActions response = mockMvc.perform(post("/transaction")
+				.session(mockSession)
+				.param("originAccountId", invalidOriginAccount)
+				.param("destAccountId", destAccount.getId().toString())
+				.param("date", "10/06/2013")
+				.param("amount","1250,25")
+				.param("description", "transaction description")
+				.locale(new Locale("pt", "BR"))
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andExpect(view().name(expectedView))
+			.andReturn().getModelAndView();
+		
+		TransactionOperationResponse res = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNull(res.getTransaction(), "should not create invalid transaction");
+		Assert.assertTrue(res.getErrors().length > 0, "should have errors on response");
+	}
+	
+	@Test
+	public void shouldShowFormForNewTransaction_NoJs() throws Exception {
+		ResultActions response = mockMvc.perform(get("/transaction/newForm")
+				.session(mockSession)
+			);
+		String expectedViewName = "mobile-transactionNewForm";
+		response
+			.andExpect(status().isOk())
+			.andExpect(view().name(expectedViewName));
+	}
+	
+	
+	@Test
 	public void shouldFailIfErrorOccurWhenAddNewTransaction() throws Exception {
 		//Given a created a user and a account hierarchy
 		
@@ -132,6 +194,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.param("date", "10/06/2013")
 				.param("amount","1250,25")
 				.param("description", "transaction description")
+				.accept(MediaType.APPLICATION_JSON)
 				.locale(new Locale("pt", "BR"))
 			);
 		

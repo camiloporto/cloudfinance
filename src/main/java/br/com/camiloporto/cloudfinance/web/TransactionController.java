@@ -34,7 +34,7 @@ public class TransactionController {
 	
 	//TODO refatorar isso. tirar anotacoes desnecessarias "@RequestParam"
 	@RequestMapping(method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AbstractOperationResponse createTransaction(
+	public @ResponseBody TransactionOperationResponse createTransaction(
 			@ModelAttribute(value="logged") Profile logged, 
 			@RequestParam("originAccountId") Long originAccountId,
 			@RequestParam("destAccountId") Long destAccountId,

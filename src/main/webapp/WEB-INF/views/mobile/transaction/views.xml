@@ -9,5 +9,9 @@
 		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/home.jsp" />
 	</definition>
 	
+	<definition name="mobile-transactionNewForm" extends="mobile-logged-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/newForm.jsp" />
+	</definition>
+	
 
 </tiles-definitions>
