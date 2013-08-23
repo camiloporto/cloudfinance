@@ -1,5 +1,6 @@
 package br.com.camiloporto.cloudfinance.ui.mobile;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -15,6 +16,15 @@ public class AccountHomePage {
 		for (String account : accounts) {
 			Assert.assertTrue(alltext.contains(account), account + " not find in " + alltext);
 		}
+	}
+
+	public void clickOnAccountLink(String accountName) {
+		findLinkByName(accountName).click();
+		
+	}
+	
+	private WebElement findLinkByName(String name) {
+		return rootAccountNode.findElement(By.linkText(name));
 	}
 
 }

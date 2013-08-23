@@ -33,9 +33,13 @@ public class AbstractWUITest {
 		}
 	}
 	
+	protected WebDriver newWebDriver() {
+		return new HtmlUnitDriver();
+	}
+	
 	@BeforeMethod
 	public void startWebDriver() {
-		driver = new HtmlUnitDriver();
+		driver = newWebDriver();
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		driver.get("http://localhost:8080/cloudfinance/mobile");
 	}

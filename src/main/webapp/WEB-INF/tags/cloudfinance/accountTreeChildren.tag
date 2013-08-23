@@ -3,12 +3,16 @@
 <%@ taglib prefix="cloudfinance" tagdir="/WEB-INF/tags/cloudfinance" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
+<c:url var="showFormNewAccount" value="/account/showForm"></c:url>
 <c:if test="${not empty children}">
 	<ul>
 		<c:forEach var="childNode" items="${children}">
 			<li>
 				<h3>
-					<spring:message code="${childNode.account.name}" text="${childNode.account.name}"></spring:message>
+					<a href="${showFormNewAccount}/${childNode.account.id}">
+						<spring:message code="${childNode.account.name}" text="${childNode.account.name}"></spring:message>
+					</a>
+					
 				</h3>
 				<p>${childNode.account.description}</p>
 			</li>
