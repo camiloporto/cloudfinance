@@ -235,7 +235,6 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 				.param("name", newAccountName)
 				.param("description", newAccountDescription)
 				.param("parentAccount.id", parentId.toString())
-				.param("rootAccount.id", rootAccountId.toString())
 			);
 		response
 			.andExpect(status().isMovedTemporarily())
