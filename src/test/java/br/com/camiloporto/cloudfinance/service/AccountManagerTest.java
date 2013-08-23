@@ -93,6 +93,30 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldThrowConstraintViolationExceptionWhenTryingToCreateNewAccountUnderRootAccounts() {
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(root)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
+
+		try {
+			accountManager.saveAccount(profile, toSave);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.CREATE_ACCOUNT_UNDER_ROOT_DENIED}");
+		}
+		
+	}
+	
+	@Test
 	public void shouldThrowConstraintViolationExceptionIfRootAccountNullWhenCreateNewAccount() {
 		
 		final String name = "Account Name";

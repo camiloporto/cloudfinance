@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import net.minidev.json.JSONArray;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -181,6 +182,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		final Integer parentId = JsonPath.read(json, "$.accountTree.children[0].account.id");
 		response = mockMvc.perform(post("/account")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 				.param("name", accountName)
 				.param("description", accountDescription)
 				.param("parentAccount.id", parentId.toString())
@@ -249,6 +251,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		ResultActions response = mockMvc.perform(post("/account")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 				.param("name", accountName)
 				.param("description", accountDescription)
 			);
@@ -261,6 +264,28 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent(ValidationMessages.PARENT_ACCOUNT_REQUIRED);
+		
+	}
+	
+	@Test
+	public void shouldFailIfhasErrorsWhenCreatenewAccount_NoJS() throws Exception {
+		
+		final String accountName = "NewAccount";
+		final String accountDescription ="short description";
+		
+		ResultActions response = mockMvc.perform(post("/account")
+				.session(mockSession)
+				.param("name", accountName)
+				.param("description", accountDescription)
+			);
+		
+		String expectedViewName = "mobile-newAccountForm";
+		ModelAndView mav = response.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name(expectedViewName))
+				.andReturn()
+				.getModelAndView();
+		AccountOperationResponse aor = (AccountOperationResponse) mav.getModelMap().get("response");
+		Assert.assertFalse(aor.isSuccess(), "success message shuould be false");
 		
 	}
 }

@@ -1,6 +1,7 @@
 package br.com.camiloporto.cloudfinance.service.impl;
 
 import javax.validation.Valid;
+import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
@@ -59,6 +60,22 @@ public class AccountManagerConstraint {
 		}
 		//if get here, the rule is not applicable
 		return true;
+	}
+	
+	@AssertFalse(message = "{br.com.camiloporto.cloudfinance.account.CREATE_ACCOUNT_UNDER_ROOT_DENIED}",
+			groups = {CREATE_NEW_ACCOUNT.class})
+	public boolean isTryingToCreateAccountUnderRootAccount() {
+		boolean ret = false;
+		if(isParentAccountIdNotNull()) {
+			Long parentAccountId = account.getParentAccount().getId();
+			Account parent = accountRepository.findOne(parentAccountId);
+			ret =  isRootAccount(parent);
+		}
+		return ret;
+	}
+
+	private boolean isRootAccount(Account account) {
+		return account.getParentAccount() == null;
 	}
 
 	public AccountManagerConstraint(Profile profile) {

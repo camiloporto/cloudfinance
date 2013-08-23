@@ -54,8 +54,10 @@ public class StaticAccountSystemController {
 		AccountOperationResponse response = jsonController.createAccount(logged, rootAccount, account);
 		if(response.isSuccess()) {
 			mav.setViewName("redirect:/account/tree/" + rootAccount.getId());
-			mav.getModelMap().addAttribute("response", response);
+		} else {
+			mav = new ModelAndView("mobile-newAccountForm");
 		}
+		mav.getModelMap().addAttribute("response", response);
 		return mav;
 	}
 	
