@@ -15,7 +15,7 @@ public class RootAccountHomePage {
 	@FindBy(how = How.ID, id="logoffBtn")
 	private WebElement logoffBtn;
 	
-	@FindBy(how=How.CSS, css="#rootAccountList li")
+	@FindBy(how=How.CSS, css="#rootAccountList li a")
 	private List<WebElement> rootAccountItems;
 
 	public RootAccountHomePage checkRootAccountsArePresent(String... rootAccountNames) {
@@ -35,8 +35,21 @@ public class RootAccountHomePage {
 	}
 
 	public void logoff() {
-		// FIXME criar link para logoff no template interno da aplicacao (e nao no template da HomePage. adicionar link no cabecalho)
 		logoffBtn.submit();
+	}
+
+	public void selectRootAccount(String rootAccountName) {
+		WebElement rootAccountLink = findRootAccountLink(rootAccountName);
+		rootAccountLink.click();
+	}
+
+	private WebElement findRootAccountLink(String rootAccountName) {
+		for (WebElement rootAccountItem : rootAccountItems) {
+			if(rootAccountItem.getText().contains(rootAccountName)){
+				return rootAccountItem;
+			}
+		}
+		return null;
 	}
 
 }

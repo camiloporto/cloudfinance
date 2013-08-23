@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 import br.com.camiloporto.cloudfinance.web.AccountSystemController;
 
@@ -20,6 +22,9 @@ public class StaticAccountSystemController {
 	
 	@Autowired
 	private AccountSystemController jsonController;
+	
+	@Autowired
+	private AccountManager accountManager;
 	
 	@RequestMapping(value = "/roots", method = RequestMethod.GET)
 	public ModelAndView getRootAccounts(@ModelAttribute(value="logged") Profile logged) {
@@ -37,6 +42,35 @@ public class StaticAccountSystemController {
 		AccountOperationResponse response = jsonController.getAccountBranch(logged, accountId);
 		ModelAndView mav = new ModelAndView("mobile-accountHome");
 		mav.getModelMap().put("response", response);
+		return mav;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createAccount(
+			@ModelAttribute(value="logged")  Profile logged,
+			@ModelAttribute(value="rootAccount")  Account rootAccount,
+			Account account) {
+		ModelAndView mav = new ModelAndView();
+		AccountOperationResponse response = jsonController.createAccount(logged, rootAccount, account);
+		if(response.isSuccess()) {
+			mav.setViewName("redirect:/account/tree/" + rootAccount.getId());
+		} else {
+			mav = new ModelAndView("mobile-newAccountForm");
+		}
+		mav.getModelMap().addAttribute("response", response);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/showForm/{parentId}", method = RequestMethod.GET)
+	public ModelAndView showFormAddAccount(@ModelAttribute(value="logged") Profile logged, @PathVariable Long parentId) {
+		Account parent = accountManager.findAccount(parentId);
+		ModelAndView mav = null;
+		if(parent != null) {
+			mav = new ModelAndView("mobile-newAccountForm");
+			AccountOperationResponse aor = new AccountOperationResponse(true);
+			aor.setAccount(parent);
+			mav.getModelMap().addAttribute("response", aor);
+		}
 		return mav;
 	}
 

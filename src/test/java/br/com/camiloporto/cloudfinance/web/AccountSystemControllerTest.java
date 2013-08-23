@@ -4,14 +4,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.UUID;
 
 import net.minidev.json.JSONArray;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
@@ -180,6 +182,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		final Integer parentId = JsonPath.read(json, "$.accountTree.children[0].account.id");
 		response = mockMvc.perform(post("/account")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 				.param("name", accountName)
 				.param("description", accountDescription)
 				.param("parentAccount.id", parentId.toString())
@@ -202,6 +205,45 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
+	public void shouldAddNewAccount_NoJS() throws Exception {
+		final String newAccountName = "NewAccount";
+		final String newAccountDescription ="short description";
+		final Integer parentId;
+		String json;
+		String expectedRedirectedUrl = "/account/tree/" + rootAccountId;
+		ModelAndView mav;
+		
+		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		json = response.andReturn().getResponse().getContentAsString();
+		parentId = JsonPath.read(json, "$.accountTree.children[0].account.id");
+		
+		//navigate to 'showForm' page to insert new account
+		response = mockMvc.perform(get("/account/showForm/" + parentId)
+				.session(mockSession));
+		mav = response.andExpect(status().isOk())
+			.andReturn()
+			.getModelAndView();
+		AccountOperationResponse aor = (AccountOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNotNull(aor.getAccount(), "parent account not presente in request response");
+		Assert.assertNotNull(aor.getAccount().getName(), "parent account name not presente in request response");
+		Assert.assertEquals(aor.getAccount().getId().toString(), parentId.toString(), "parent account id did not match wth the requested");
+		
+		//insert new account as child of the requested parent in 'showForm' page
+		response = mockMvc.perform(post("/account")
+				.session(mockSession)
+				.param("name", newAccountName)
+				.param("description", newAccountDescription)
+				.param("parentAccount.id", parentId.toString())
+			);
+		response
+			.andExpect(status().isMovedTemporarily())
+			.andExpect(MockMvcResultMatchers.redirectedUrl(expectedRedirectedUrl));
+	}
+	
+	@Test
 	public void shouldFailIfParentIdNotInformed() throws Exception {
 		
 		final String accountName = "NewAccount";
@@ -209,6 +251,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		ResultActions response = mockMvc.perform(post("/account")
 				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
 				.param("name", accountName)
 				.param("description", accountDescription)
 			);
@@ -221,6 +264,28 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent(ValidationMessages.PARENT_ACCOUNT_REQUIRED);
+		
+	}
+	
+	@Test
+	public void shouldFailIfhasErrorsWhenCreatenewAccount_NoJS() throws Exception {
+		
+		final String accountName = "NewAccount";
+		final String accountDescription ="short description";
+		
+		ResultActions response = mockMvc.perform(post("/account")
+				.session(mockSession)
+				.param("name", accountName)
+				.param("description", accountDescription)
+			);
+		
+		String expectedViewName = "mobile-newAccountForm";
+		ModelAndView mav = response.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.view().name(expectedViewName))
+				.andReturn()
+				.getModelAndView();
+		AccountOperationResponse aor = (AccountOperationResponse) mav.getModelMap().get("response");
+		Assert.assertFalse(aor.isSuccess(), "success message shuould be false");
 		
 	}
 }
