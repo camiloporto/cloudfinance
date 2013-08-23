@@ -55,7 +55,7 @@ public class TransactionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AbstractOperationResponse getTransactions(
+	public @ResponseBody TransactionOperationResponse getTransactions(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,

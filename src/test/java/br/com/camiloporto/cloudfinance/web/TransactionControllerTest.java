@@ -1,14 +1,19 @@
 package br.com.camiloporto.cloudfinance.web;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
 import net.minidev.json.JSONArray;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -16,13 +21,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.jayway.jsonpath.JsonPath;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.TransactionControllerTestHelper;
@@ -31,9 +36,10 @@ import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
-import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.TransactionManager;
+
+import com.jayway.jsonpath.JsonPath;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
@@ -173,6 +179,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("begin", "12/06/2013")
 				.param("end", "14/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -181,11 +188,58 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.andExpect(jsonPath("$.success").value(true));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
-		System.out.println(json);
 		
 		JSONArray transactionDescs = JsonPath.read(json, "$.transactions[*].origin.comment");
 		int expectedResultCount = 2;
 		Assert.assertEquals(transactionDescs.size(), expectedResultCount, "result count did not match");
+	}
+	
+	//request by static html, with No JavaScript enabled (no json, so)
+	@Test
+	public void shouldGetTransactionsByTimeInterval_NoJS() throws Exception {
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"10/06/2013",
+				"1250,25",
+				"t1");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"12/06/2013",
+				"75,25",
+				"t2");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"14/06/2013",
+				"175,25",
+				"t3");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"16/06/2013",
+				"575,25",
+				"t4");
+		
+		ResultActions response = mockMvc.perform(get("/transaction")
+				.session(mockSession)
+				.param("begin", "12/06/2013")
+				.param("end", "14/06/2013")
+			);
+		
+		int expectedResultCount = 2;
+		String expectedViewName = "mobile-transaction";
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name(expectedViewName))
+			.andReturn().getModelAndView();
+		
+		TransactionOperationResponse res = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertEquals(res.getTransactions().size(), expectedResultCount, "result count did not match");
 	}
 	
 	@Test
@@ -196,6 +250,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("begin", "16/06/2013")
 				.param("end", "14/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -228,6 +283,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 				.param("begin", "10/06/2013")
 				.param("end", "10/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		String json = response.andReturn().getResponse().getContentAsString();
