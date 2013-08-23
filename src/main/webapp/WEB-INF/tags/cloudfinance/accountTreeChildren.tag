@@ -7,7 +7,9 @@
 	<ul>
 		<c:forEach var="childNode" items="${children}">
 			<li>
-				<h3><spring:message code="${childNode.account.name}" text="${childNode.account.name}"></spring:message></h3>
+				<h3>
+					<spring:message code="${childNode.account.name}" text="${childNode.account.name}"></spring:message>
+				</h3>
 				<p>${childNode.account.description}</p>
 			</li>
 			<c:if test="${not empty childNode.children}">

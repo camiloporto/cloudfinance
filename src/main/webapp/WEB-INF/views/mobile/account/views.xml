@@ -11,5 +11,9 @@
 	<definition name="mobile-rootAccountHome" extends="mobile-logged-template">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/roots.jsp" />
 	</definition>
+	
+	<definition name="mobile-newAccountForm" extends="mobile-logged-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/account/newAccountForm.jsp" />
+	</definition>
 
 </tiles-definitions>
