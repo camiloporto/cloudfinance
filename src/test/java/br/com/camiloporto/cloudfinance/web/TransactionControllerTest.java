@@ -175,9 +175,13 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.session(mockSession)
 			);
 		String expectedViewName = "mobile-transactionNewForm";
-		response
+		ModelAndView mav = response
 			.andExpect(status().isOk())
-			.andExpect(view().name(expectedViewName));
+			.andExpect(view().name(expectedViewName))
+			.andReturn().getModelAndView();
+		TransactionOperationResponse tor = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNotNull(tor.getOriginAccountList(), "origin account list attribute not found on response");
+		Assert.assertNotNull(tor.getDestAccountList(), "dest account list attribute not found on response");
 	}
 	
 	

@@ -2,6 +2,7 @@ package br.com.camiloporto.cloudfinance.web.purehtml;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
@@ -22,6 +23,9 @@ import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.web.AbstractOperationResponse;
+import br.com.camiloporto.cloudfinance.web.AccountController;
+import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
+import br.com.camiloporto.cloudfinance.web.AccountSystemController;
 import br.com.camiloporto.cloudfinance.web.MediaTypeApplicationJsonUTF8;
 import br.com.camiloporto.cloudfinance.web.TransactionController;
 import br.com.camiloporto.cloudfinance.web.TransactionOperationResponse;
@@ -33,6 +37,9 @@ public class StaticTransactionController {
 	
 	@Autowired
 	private TransactionController jsonController;
+	
+	@Autowired
+	private AccountSystemController accountController;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTransactions(
@@ -69,10 +76,17 @@ public class StaticTransactionController {
 	}
 	
 	@RequestMapping(value = "/newForm", method = RequestMethod.GET)
-	public String getTransactions(
+	public ModelAndView showNewForm(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount) {
-		return "mobile-transactionNewForm";
+		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, rootAccount.getId());
+		TransactionOperationResponse tor = new TransactionOperationResponse(true);
+		tor.setDestAccountList(aor.getLeafAccounts());
+		tor.setOriginAccountList(aor.getLeafAccounts());
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("mobile-transactionNewForm");
+		mav.getModelMap().addAttribute("response", tor);
+		return mav;
 		
 	}
 
