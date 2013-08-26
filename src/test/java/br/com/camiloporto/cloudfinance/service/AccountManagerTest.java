@@ -264,6 +264,26 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldListAllLeafAccountsOfARootAccountTree() {
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new Account(name, parentAccount);
+		toSave.setDescription(desc);
+		toSave.setRootAccount(root);
+		accountManager.saveAccount(profile, toSave);
+		
+		List<Account> leaves = accountManager.findAllLeavesFrom(root.getId());
+		
+		final int expectedCount = 4;
+		Assert.assertEquals(leaves.size(), expectedCount, "accounts count did not match expected value");
+		
+	}
+	
+	@Test
 	public void shouldGetAccountBranch() {
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());

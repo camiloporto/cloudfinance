@@ -17,6 +17,10 @@ public class AccountManagerImpl implements AccountManager {
 	@Autowired
 	private AccountSystemRepository accountSystemRepository;
 	
+	public List<Account> findAllLeavesFrom(Long accountId) {
+		return accountRepository.findLeavesFrom(accountId);
+	}
+	
 	public void saveAccount(Profile profile, Account account) {
 		checkCreateNewAccountEntries(profile, account);
 		Account parent = accountRepository.findOne(account.getParentAccount().getId());

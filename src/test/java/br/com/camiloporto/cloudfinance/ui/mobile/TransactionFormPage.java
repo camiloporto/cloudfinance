@@ -34,4 +34,8 @@ public class TransactionFormPage extends TemplatePage {
 		Assert.assertTrue(submitBtn.isDisplayed(), "submit button not present");
 	}
 
+	public void assertOriginAccountsAreListed(String... expectedAccounts) {
+		Assert.fail("IMPLEMENTAR CODIGO");
+	}
+
 }

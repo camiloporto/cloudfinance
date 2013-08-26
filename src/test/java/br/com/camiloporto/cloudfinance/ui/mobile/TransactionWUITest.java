@@ -22,5 +22,6 @@ public class TransactionWUITest extends AbstractWUITest {
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		transactionFormPage.assertPageTitle("Nova Transação");
 		transactionFormPage.assertFormElementsArePresent();
+		transactionFormPage.assertOriginAccountsAreListed("Ativos");
 	}
 }
