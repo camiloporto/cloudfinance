@@ -17,6 +17,14 @@ privileged aspect AccountOperationResponse_Roo_JavaBean {
         this.rootAccounts = rootAccounts;
     }
     
+    public Account[] AccountOperationResponse.getLeafAccounts() {
+        return this.leafAccounts;
+    }
+    
+    public void AccountOperationResponse.setLeafAccounts(Account[] leafAccounts) {
+        this.leafAccounts = leafAccounts;
+    }
+    
     public AccountNode AccountOperationResponse.getAccountTree() {
         return this.accountTree;
     }

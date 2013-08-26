@@ -220,6 +220,21 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		
 	}
 	
+	@Test
+	public void shouldThrowConstraintViolationExceptionIfAccountIdEmptyWhenListAllLeaves() {
+		
+		try {
+			accountManager.findAllLeavesFrom(profile, null);
+			Assert.fail("did not throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED}");
+		}
+		
+	}
+	
 	//FIXME internacionalizar mensagens de AccountManager
 	@Test
 	public void childrenAccountNameShouldBeUnique() {
@@ -276,7 +291,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		toSave.setRootAccount(root);
 		accountManager.saveAccount(profile, toSave);
 		
-		List<Account> leaves = accountManager.findAllLeavesFrom(root.getId());
+		List<Account> leaves = accountManager.findAllLeavesFrom(profile, root.getId());
 		
 		final int expectedCount = 4;
 		Assert.assertEquals(leaves.size(), expectedCount, "accounts count did not match expected value");
