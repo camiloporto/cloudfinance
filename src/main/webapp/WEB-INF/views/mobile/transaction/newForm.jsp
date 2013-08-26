@@ -9,17 +9,13 @@
 		<label>
 			Conta de Origem:
 			<select name="originAccountId">
+				<cf:accountOptionList accounts="${response.originAccountList}"></cf:accountOptionList>
 			</select>
 		</label>
 		<label>
 			Conta de Destino:
 			<select name="destAccountId">
-				<optgroup label="Grupo1">
-					<option>Opcao 1 </option>
-				</optgroup>
-				<optgroup label="Grupo2">
-					<option>Opcao 2 </option>
-				</optgroup>
+				<cf:accountOptionList accounts="${response.destAccountList}"></cf:accountOptionList>
 			</select>
 		</label>
 		<input name="date" type="date" placeholder="Data da transação">
