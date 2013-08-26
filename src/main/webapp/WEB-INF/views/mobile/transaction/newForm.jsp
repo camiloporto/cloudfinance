@@ -5,4 +5,20 @@
 
 <section>
 	<h2>Nova Transação</h2>
+	<form id="formNewTransaction" action="" method="POST">
+		<label>
+			Conta de Origem:
+			<select name="originAccountId">
+			</select>
+		</label>
+		<label>
+			Conta de Destino:
+			<select name="destAccountId">
+			</select>
+		</label>
+		<input name="date" type="date" placeholder="Data da transação">
+		<input name="amount" type="number" placeholder="Valor">
+		<input name="description" type="text" placeholder="Descrição">
+		<input type="submit" value="Salvar">
+	</form>
 </section>

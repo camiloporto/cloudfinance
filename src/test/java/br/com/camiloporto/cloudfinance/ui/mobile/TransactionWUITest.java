@@ -14,14 +14,13 @@ public class TransactionWUITest extends AbstractWUITest {
 //	}
 	
 	@Test
-	public void shouldAddNewTransaction() {
+	public void shouldShowNewTransactionForm() {
 		MobileHomePage mhp = PageFactory.initElements(driver,
 				MobileHomePage.class);
 		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
-		goToPath("/transaction");
-		TransactionHomePage transactionPage = PageFactory.initElements(driver, TransactionHomePage.class);
-		transactionPage.assertPageTitle("Transações");
-		Assert.fail("COMPLETAR ESTE TESTE");
-		//FIXME comppletar este teste
+		goToPath("/transaction/newForm");
+		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.assertPageTitle("Nova Transação");
+		transactionFormPage.assertFormElementsArePresent();
 	}
 }
