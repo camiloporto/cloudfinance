@@ -359,12 +359,53 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		response = mockMvc.perform(post("/transaction/delete")
 				.session(mockSession)
 				.param("id", txId.toString())
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.success").value(true));
+		
+		Assert.assertNull(transactionManager.findAccountTransaction(new Long(txId)), "transaction '" + txId + "' was not deleted");
+	}
+	
+	@Test
+	public void shouldRemoveTransaction_NoJS() throws Exception {
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"10/06/2013",
+				"1250,25",
+				"t1");
+		
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"12/06/2013",
+				"75,25",
+				"t2");
+		
+		ResultActions response = mockMvc.perform(get("/transaction")
+				.session(mockSession)
+				.param("begin", "10/06/2013")
+				.param("end", "10/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer txId = JsonPath.read(json, "$.transactions[0].id");
+		
+		response = mockMvc.perform(post("/transaction/delete")
+				.session(mockSession)
+				.param("id", txId.toString())
+			);
+		
+		String expectedUrl = "/transaction";
+		ModelAndView mav = response
+			.andExpect(status().isMovedTemporarily())
+			.andExpect(redirectedUrl(expectedUrl))
+			.andReturn().getModelAndView();
 		
 		Assert.assertNull(transactionManager.findAccountTransaction(new Long(txId)), "transaction '" + txId + "' was not deleted");
 	}

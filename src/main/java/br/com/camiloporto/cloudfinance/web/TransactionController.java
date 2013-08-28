@@ -74,7 +74,7 @@ public class TransactionController {
 	}
 	
 	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AbstractOperationResponse delete(
+	public @ResponseBody TransactionOperationResponse delete(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
 			Long id

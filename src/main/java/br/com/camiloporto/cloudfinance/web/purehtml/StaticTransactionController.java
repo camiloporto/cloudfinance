@@ -54,6 +54,24 @@ public class StaticTransactionController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public ModelAndView delete(
+			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="rootAccount") Account rootAccount,
+			Long id
+			) {
+		TransactionOperationResponse response = jsonController.delete(logged, rootAccount, id);
+		ModelAndView mav = new ModelAndView();
+		if(response.isSuccess()) {
+			mav.setViewName("redirect:/transaction");
+		} else {
+			mav.setViewName("mobile-transactionNewForm");
+		}
+		
+		mav.getModelMap().addAttribute("response", response);
+		return mav;
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createTransaction(
 			@ModelAttribute(value="logged") Profile logged, 
