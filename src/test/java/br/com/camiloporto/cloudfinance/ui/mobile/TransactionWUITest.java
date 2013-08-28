@@ -3,15 +3,14 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class TransactionWUITest extends AbstractWUITest {
 	
-//	@Override
-//	protected WebDriver newWebDriver() {
-//		return new FirefoxDriver();
-//	}
+	@Override
+	protected WebDriver newWebDriver() {
+		return new FirefoxDriver();
+	}
 	
 	@Test
 	public void shouldShowNewTransactionForm() {
@@ -25,4 +24,20 @@ public class TransactionWUITest extends AbstractWUITest {
 		transactionFormPage.assertOriginAccountsAreListed("Passivos");
 		transactionFormPage.assertDestAccountsAreListed("Despesas");
 	}
+	
+	@Test
+	public void shouldAddNewTransaction() {
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		goToPath("/transaction/newForm");
+		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+		System.out.println(driver.getPageSource());
+
+		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+	}
+	
+	
 }

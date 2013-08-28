@@ -59,4 +59,22 @@ public class TransactionFormPage extends TemplatePage {
 		}
 	}
 
+	public TransactionFormPage fillNewTransaction(String originAccount, String destAccount,
+			String date, String amount, String desc) {
+		Select originSelect = new Select(originAccountElement);
+		originSelect.selectByVisibleText(originAccount);
+		
+		Select destSelect = new Select(destAccountElement);
+		destSelect.selectByVisibleText(destAccount);
+		
+		dateElement.sendKeys(date);
+		amountElement.sendKeys(amount);
+		descriptionElement.sendKeys(desc);
+		return this;
+	}
+
+	public void submit() {
+		submitBtn.submit();
+	}
+
 }

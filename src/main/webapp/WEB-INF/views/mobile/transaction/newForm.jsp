@@ -3,9 +3,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="cf" tagdir="/WEB-INF/tags/cloudfinance" %>
 
+<c:url var="newTransactionUrl" value="/transaction"></c:url>
 <section>
 	<h2>Nova Transação</h2>
-	<form id="formNewTransaction" action="" method="POST">
+	<form id="formNewTransaction" action="${newTransactionUrl}" method="POST">
 		<label>
 			Conta de Origem:
 			<select name="originAccountId">
@@ -18,7 +19,7 @@
 				<cf:accountOptionList accounts="${response.destAccountList}"></cf:accountOptionList>
 			</select>
 		</label>
-		<input name="date" type="date" placeholder="Data da transação">
+		<input name="date" type="text" placeholder="Data da transação">
 		<input name="amount" type="number" placeholder="Valor">
 		<input name="description" type="text" placeholder="Descrição">
 		<input type="submit" value="Salvar">
