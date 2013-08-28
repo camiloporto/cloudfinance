@@ -56,7 +56,7 @@ public class StaticTransactionController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/deleteConfirm/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ModelAndView showDeleteForm(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,

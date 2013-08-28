@@ -411,7 +411,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 	}
 	
 	@Test
-	public void shouldShowDeleteConfirmationForTransaction_NoJS() throws Exception {
+	public void shouldShowTransactionDetail_NoJS() throws Exception {
 		testHelper.addTransaction(
 				originAccount.getId().toString(),
 				destAccount.getId().toString(),
@@ -429,7 +429,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		String json = response.andReturn().getResponse().getContentAsString();
 		Integer txId = JsonPath.read(json, "$.transactions[0].id");
 		
-		response = mockMvc.perform(get("/transaction/deleteConfirm/" + txId.toString())
+		response = mockMvc.perform(get("/transaction/" + txId.toString())
 				.session(mockSession)
 			);
 		

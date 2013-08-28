@@ -2,6 +2,7 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
@@ -71,6 +72,23 @@ public class TransactionHomePage extends TemplatePage {
 			}
 		}
 		Assert.assertFalse(found, String.format("expected transaction should not be found: %1$s %2$s %3$s %4$s %5$s", date, originAccount, destAccount, amount, desc));
+	}
+	
+	private WebElement findTransactionLi(String originAccount, String destAccount,
+			String date, String amount, String desc) {
+		for (WebElement transactionLi : transactionList) {
+			if(isTransaction(transactionLi, date, originAccount, destAccount, amount, desc)) {
+				return transactionLi;
+			}
+		}
+		return null;
+	}
+
+	public void showDetailOfTransaction(String originAccount, String destAccount,
+			String date, String amount, String desc) {
+		WebElement transactionLi = findTransactionLi(originAccount, destAccount, date, amount, desc);
+		WebElement detailLink = transactionLi.findElement(By.cssSelector("a"));
+		detailLink.click();
 	}
 
 }
