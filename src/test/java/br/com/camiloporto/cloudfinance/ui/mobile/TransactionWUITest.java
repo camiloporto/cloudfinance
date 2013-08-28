@@ -39,5 +39,20 @@ public class TransactionWUITest extends AbstractWUITest {
 		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
 	}
 	
+	@Test
+	public void shouldShowErrorsOnAddingNewTransaction() {
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		goToPath("/transaction/newForm?lang=pt_BR");
+		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		
+		//try to submit empty form. all required field are empty
+		transactionFormPage.submit();
+		
+		transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.assertHasErrorMessages();
+	}
+	
 	
 }

@@ -7,6 +7,11 @@
 <section>
 	<h2>Nova Transação</h2>
 	<form id="formNewTransaction" action="${newTransactionUrl}" method="POST">
+		<ul id="errors">
+			<c:forEach var="error" items="${response.errors}">
+				<li>${error}</li>
+			</c:forEach>
+		</ul>
 		<label>
 			Conta de Origem:
 			<select name="originAccountId">
