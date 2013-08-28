@@ -13,5 +13,9 @@
 		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/newForm.jsp" />
 	</definition>
 	
+	<definition name="mobile-transactionDetail" extends="mobile-logged-template">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/detail.jsp" />
+	</definition>
+	
 
 </tiles-definitions>

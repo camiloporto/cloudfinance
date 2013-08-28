@@ -411,6 +411,36 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 	}
 	
 	@Test
+	public void shouldShowDeleteConfirmationForTransaction_NoJS() throws Exception {
+		testHelper.addTransaction(
+				originAccount.getId().toString(),
+				destAccount.getId().toString(),
+				"10/06/2013",
+				"1250,25",
+				"t1");
+		
+		ResultActions response = mockMvc.perform(get("/transaction")
+				.session(mockSession)
+				.param("begin", "10/06/2013")
+				.param("end", "10/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		Integer txId = JsonPath.read(json, "$.transactions[0].id");
+		
+		response = mockMvc.perform(get("/transaction/deleteConfirm/" + txId.toString())
+				.session(mockSession)
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		TransactionOperationResponse tor = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNotNull(tor.getTransaction(), "transaction attribute should be present");
+	}
+	
+	@Test
 	public void shouldFailWhenGeDeleteTransactionsThrowsError() throws Exception {
 
 		//no transaction id informed for delete

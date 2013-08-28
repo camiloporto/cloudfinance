@@ -12,6 +12,7 @@ import org.springframework.format.annotation.NumberFormat;
 import org.springframework.format.annotation.NumberFormat.Style;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.service.TransactionManager;
 import br.com.camiloporto.cloudfinance.web.AbstractOperationResponse;
 import br.com.camiloporto.cloudfinance.web.AccountController;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
@@ -50,6 +52,17 @@ public class StaticTransactionController {
 
 		TransactionOperationResponse response = jsonController.getTransactions(logged, rootAccount, begin, end);
 		ModelAndView mav = new ModelAndView("mobile-transaction");
+		mav.getModelMap().addAttribute("response", response);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/deleteConfirm/{id}", method = RequestMethod.GET)
+	public ModelAndView showDeleteForm(
+			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@PathVariable Long id) {
+		TransactionOperationResponse response = jsonController.getById(logged, rootAccount, id);
+		ModelAndView mav = new ModelAndView("mobile-transactionDetail");
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
 	}
