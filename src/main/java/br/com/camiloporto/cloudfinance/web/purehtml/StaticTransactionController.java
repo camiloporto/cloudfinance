@@ -63,7 +63,6 @@ public class StaticTransactionController {
 			@RequestParam("description") String description,
 			@RequestParam("amount") @NumberFormat(style = Style.NUMBER) BigDecimal amount) {
 		
-		System.out.println("StaticTransactionController.createTransaction() " + amount);
 		TransactionOperationResponse response = jsonController.createTransaction(logged, originAccountId, destAccountId, date, description, amount);
 		ModelAndView mav = new ModelAndView();
 		if(response.isSuccess()) {

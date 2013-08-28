@@ -7,10 +7,10 @@ import org.testng.annotations.Test;
 
 public class TransactionWUITest extends AbstractWUITest {
 	
-	@Override
-	protected WebDriver newWebDriver() {
-		return new FirefoxDriver();
-	}
+//	@Override
+//	protected WebDriver newWebDriver() {
+//		return new FirefoxDriver();
+//	}
 	
 	@Test
 	public void shouldShowNewTransactionForm() {
@@ -30,10 +30,10 @@ public class TransactionWUITest extends AbstractWUITest {
 		MobileHomePage mhp = PageFactory.initElements(driver,
 				MobileHomePage.class);
 		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
-		goToPath("/transaction/newForm");
+		//FIXME trabalhar melhor o locale. vide http://www.mkyong.com/spring-mvc/spring-mvc-internationalization-example/
+		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
-		System.out.println(driver.getPageSource());
 
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
 		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
