@@ -5,8 +5,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<c:url var="transactionFilterUrl" value="/transaction"></c:url>
 <section>
 	<h2>Transações</h2>
+	<form id="filterForm" action="${transactionFilterUrl}" method="GET">
+		<input type="text" placeholder="Data Inicial" name="begin">
+		<input type="text" placeholder="Data Final" name="end">
+		<input type="submit" value="Pesquisar">
+	</form>
 	<ul>
 		<c:forEach var="t" items="${response.transactions}">
 			<li>

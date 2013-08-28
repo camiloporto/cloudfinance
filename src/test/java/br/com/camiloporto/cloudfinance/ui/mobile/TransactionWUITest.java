@@ -7,16 +7,20 @@ import org.testng.annotations.Test;
 
 public class TransactionWUITest extends AbstractWUITest {
 	
-//	@Override
-//	protected WebDriver newWebDriver() {
-//		return new FirefoxDriver();
-//	}
+	@Override
+	protected WebDriver newWebDriver() {
+		return new FirefoxDriver();
+	}
 	
-	@Test
-	public void shouldShowNewTransactionForm() {
+	public void loginExistentUser() {
 		MobileHomePage mhp = PageFactory.initElements(driver,
 				MobileHomePage.class);
 		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+	}
+	
+	@Test
+	public void shouldShowNewTransactionForm() {
+		loginExistentUser();
 		goToPath("/transaction/newForm");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		transactionFormPage.assertPageTitle("Nova Transação");
@@ -24,12 +28,12 @@ public class TransactionWUITest extends AbstractWUITest {
 		transactionFormPage.assertOriginAccountsAreListed("Passivos");
 		transactionFormPage.assertDestAccountsAreListed("Despesas");
 	}
+
+
 	
 	@Test
 	public void shouldAddNewTransaction() {
-		MobileHomePage mhp = PageFactory.initElements(driver,
-				MobileHomePage.class);
-		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		loginExistentUser();
 		//FIXME trabalhar melhor o locale. vide http://www.mkyong.com/spring-mvc/spring-mvc-internationalization-example/
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
@@ -41,9 +45,7 @@ public class TransactionWUITest extends AbstractWUITest {
 	
 	@Test
 	public void shouldShowErrorsOnAddingNewTransaction() {
-		MobileHomePage mhp = PageFactory.initElements(driver,
-				MobileHomePage.class);
-		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		loginExistentUser();
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		
@@ -52,6 +54,25 @@ public class TransactionWUITest extends AbstractWUITest {
 		
 		transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		transactionFormPage.assertHasErrorMessages();
+	}
+	
+	@Test
+	public void shouldListTransactionsWithinDatePeriodInformed() {
+		loginExistentUser();
+		
+		goToPath("/transaction/newForm?lang=pt_BR");
+		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "25/08/2013", "149,90", "pagamento de INSS").submit();
+		
+		goToPath("/transaction/newForm?lang=pt_BR");
+		transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "319,09", "Feira de Supermercado").submit();
+		
+		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.fillTransactionDateFilter("26/08/2013", "30/08/2013").submitDateFilter();
+		
+		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "319,09", "Feira de Supermercado");
+		transactionHomePage.assertTransactionsIsNotPresent("Receitas", "Despesas", "25/08/2013", "149,90", "pagamento de INSS");
 	}
 	
 	

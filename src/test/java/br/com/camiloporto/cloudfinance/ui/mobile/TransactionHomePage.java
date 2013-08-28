@@ -16,6 +16,15 @@ public class TransactionHomePage extends TemplatePage {
 		@FindBy(how=How.CSS, css = "ul li")
 	})
 	private List<WebElement> transactionList;
+	
+	@FindBy(how = How.CSS, css = "#filterForm input[name=begin]")
+	private WebElement beginDateField;
+	
+	@FindBy(how = How.CSS, css = "#filterForm input[name=end]")
+	private WebElement endDateField;
+	
+	@FindBy(how = How.CSS, css = "#filterForm input[type=submit]")
+	private WebElement filterSubmit;
 
 	public void assertTransactionsIsPresent(String originAccount, String destAccount,
 			String date, String amount, String desc) {
@@ -39,6 +48,29 @@ public class TransactionHomePage extends TemplatePage {
 		isTransaction &= allText.contains(amount);
 		isTransaction &= allText.contains(desc);
 		return isTransaction;
+	}
+
+	public TransactionHomePage fillTransactionDateFilter(String beginDate, String endDate) {
+		beginDateField.sendKeys(beginDate);
+		endDateField.sendKeys(endDate);
+		return this;
+	}
+
+	public void submitDateFilter() {
+		filterSubmit.submit();
+		
+	}
+
+	public void assertTransactionsIsNotPresent(String originAccount, String destAccount,
+			String date, String amount, String desc) {
+		boolean found = false;
+		for (WebElement transactionLi : transactionList) {
+			if(isTransaction(transactionLi, date, originAccount, destAccount, amount, desc)) {
+				found = true;
+				break;
+			}
+		}
+		Assert.assertFalse(found, String.format("expected transaction should not be found: %1$s %2$s %3$s %4$s %5$s", date, originAccount, destAccount, amount, desc));
 	}
 
 }
