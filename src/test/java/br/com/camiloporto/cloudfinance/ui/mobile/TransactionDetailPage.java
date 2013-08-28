@@ -9,6 +9,9 @@ public class TransactionDetailPage extends TemplatePage {
 
 	@FindBy(how = How.CSS, css="#detail")
 	private WebElement transactionDetail;
+	
+	@FindBy(how = How.CSS, css="#deleteForm input[type=submit]")
+	private WebElement deleteButton;
 
 	public void assertTransactionsIs(String originAccount, String destAccount,
 			String date, String amount, String desc) {
@@ -27,6 +30,10 @@ public class TransactionDetailPage extends TemplatePage {
 		isTransaction &= allText.contains(amount);
 		isTransaction &= allText.contains(desc);
 		return isTransaction;
+	}
+
+	public void deleteTransaction() {
+		deleteButton.submit();
 	}
 
 }

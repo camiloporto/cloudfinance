@@ -5,7 +5,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<c:url var="newTransactionUrl" value="/transaction"></c:url>
+<c:url var="transactionUrl" value="/transaction"></c:url>
 <section>
 	<h2>Detalhes Transação</h2>
 	<div id="detail">
@@ -15,4 +15,8 @@
 		<p><fmt:formatNumber value="${response.transaction.destin.entryValue}" type="currency" pattern="#,#00.00#"/> </p>
 		<p>${response.transaction.destin.comment}</p>
 	</div>
+	<form id="deleteForm" action="${transactionUrl}/delete" method="POST">
+		<input type="hidden" name="id" value="${response.transaction.id}">
+		<input type="submit" value="Apagar">
+	</form>
 </section>

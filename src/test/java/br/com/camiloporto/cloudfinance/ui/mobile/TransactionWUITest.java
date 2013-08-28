@@ -7,10 +7,10 @@ import org.testng.annotations.Test;
 
 public class TransactionWUITest extends AbstractWUITest {
 	
-//	@Override
-//	protected WebDriver newWebDriver() {
-//		return new FirefoxDriver();
-//	}
+	@Override
+	protected WebDriver newWebDriver() {
+		return new FirefoxDriver();
+	}
 	
 	public void loginExistentUser() {
 		MobileHomePage mhp = PageFactory.initElements(driver,
@@ -87,6 +87,24 @@ public class TransactionWUITest extends AbstractWUITest {
 		
 		TransactionDetailPage detailPage = PageFactory.initElements(driver, TransactionDetailPage.class);
 		detailPage.assertTransactionsIs("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+	}
+	
+	@Test
+	public void shouldDeleteTransaction() {
+		loginExistentUser();
+		goToPath("/transaction/newForm?lang=pt_BR");
+		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+
+		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		
+		TransactionDetailPage detailPage = PageFactory.initElements(driver, TransactionDetailPage.class);
+		detailPage.deleteTransaction();
+		
+		transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.fillTransactionDateFilter("20/08/2013", "30/08/2013").submitDateFilter();
+		transactionHomePage.assertTransactionsIsNotPresent("Receitas", "Despesas", "25/08/2013", "149,90", "pagamento de INSS");
 	}
 	
 	
