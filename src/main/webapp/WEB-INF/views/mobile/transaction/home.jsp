@@ -8,6 +8,9 @@
 <c:url var="transactionUrl" value="/transaction"></c:url>
 <section>
 	<h2>Transações</h2>
+	<ul id="menu">
+		<li><a href="${transactionUrl}/newForm">Nova</a></li>
+	</ul>
 	<form id="filterForm" action="${transactionUrl}" method="GET">
 		<input type="text" placeholder="Data Inicial" name="begin">
 		<input type="text" placeholder="Data Final" name="end">

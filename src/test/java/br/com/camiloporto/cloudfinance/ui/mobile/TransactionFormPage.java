@@ -77,4 +77,9 @@ public class TransactionFormPage extends TemplatePage {
 		submitBtn.submit();
 	}
 
+	@Override
+	protected String getPageTitle() {
+		return "Nova Transação";
+	}
+
 }

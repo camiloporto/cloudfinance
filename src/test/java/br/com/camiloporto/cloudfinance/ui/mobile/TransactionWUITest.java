@@ -107,5 +107,17 @@ public class TransactionWUITest extends AbstractWUITest {
 		transactionHomePage.assertTransactionsIsNotPresent("Receitas", "Despesas", "25/08/2013", "149,90", "pagamento de INSS");
 	}
 	
+	@Test
+	public void shouldNavigateFromTransactionListToNewTransactionScreen() {
+		loginExistentUser();
+		goToPath("/transaction");
+		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.clickNewTransactionNavigationLink();
+		
+		TemplatePage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.assertIsOnPage();
+		
+	}
+	
 	
 }

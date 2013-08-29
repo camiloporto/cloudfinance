@@ -36,4 +36,9 @@ public class TransactionDetailPage extends TemplatePage {
 		deleteButton.submit();
 	}
 
+	@Override
+	protected String getPageTitle() {
+		return "Detalhe Transação";
+	}
+
 }

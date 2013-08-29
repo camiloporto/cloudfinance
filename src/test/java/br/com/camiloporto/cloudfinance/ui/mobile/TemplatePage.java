@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.testng.Assert;
 
-public class TemplatePage {
+public abstract class TemplatePage {
 	
 	@FindBy(how = How.CSS, css="h2")
 	private WebElement pageTitle;
@@ -27,6 +27,10 @@ public class TemplatePage {
 		}
 	}
 
-	
+	public void assertIsOnPage() {
+		assertPageTitle(getPageTitle());
+	}
+
+	protected abstract String getPageTitle();
 
 }

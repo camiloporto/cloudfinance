@@ -13,6 +13,8 @@ import org.testng.Assert;
 
 public class TransactionHomePage extends TemplatePage {
 	
+	private static final String NAV_LINK_NOVA = "Nova";
+
 	@FindAll({
 		@FindBy(how=How.CSS, css = "ul li")
 	})
@@ -26,6 +28,20 @@ public class TransactionHomePage extends TemplatePage {
 	
 	@FindBy(how = How.CSS, css = "#filterForm input[type=submit]")
 	private WebElement filterSubmit;
+	
+	@FindAll({
+		@FindBy(how = How.CSS, css = "#menu li a")
+	})
+	private List<WebElement> navigationLinks;
+	
+	private WebElement findnavigationItem(String name) {
+		for (WebElement link : navigationLinks) {
+			if(link.getText().contains(name)) {
+				return link;
+			}
+		}
+		return null;
+	}
 
 	public void assertTransactionsIsPresent(String originAccount, String destAccount,
 			String date, String amount, String desc) {
@@ -89,6 +105,15 @@ public class TransactionHomePage extends TemplatePage {
 		WebElement transactionLi = findTransactionLi(originAccount, destAccount, date, amount, desc);
 		WebElement detailLink = transactionLi.findElement(By.cssSelector("a"));
 		detailLink.click();
+	}
+
+	public void clickNewTransactionNavigationLink() {
+		findnavigationItem(NAV_LINK_NOVA).click();
+	}
+
+	@Override
+	protected String getPageTitle() {
+		return "Transação";
 	}
 
 }
