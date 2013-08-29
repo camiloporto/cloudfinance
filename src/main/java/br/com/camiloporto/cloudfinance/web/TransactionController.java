@@ -13,11 +13,13 @@ import org.springframework.format.annotation.NumberFormat.Style;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
@@ -34,7 +36,7 @@ public class TransactionController {
 	
 	//TODO refatorar isso. tirar anotacoes desnecessarias "@RequestParam"
 	@RequestMapping(method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AbstractOperationResponse createTransaction(
+	public @ResponseBody TransactionOperationResponse createTransaction(
 			@ModelAttribute(value="logged") Profile logged, 
 			@RequestParam("originAccountId") Long originAccountId,
 			@RequestParam("destAccountId") Long destAccountId,
@@ -54,8 +56,26 @@ public class TransactionController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody TransactionOperationResponse getById(
+			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@PathVariable Long id) {
+		TransactionOperationResponse response = new TransactionOperationResponse(false);
+		try {
+			AccountTransaction t = transactionManager.findAccountTransaction(id);
+			if(t != null) {
+				response = new TransactionOperationResponse(true);
+				response.setTransaction(t);
+			}
+		} catch (ConstraintViolationException e) {
+			response = new TransactionOperationResponse(e);
+		}
+		return response;
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AbstractOperationResponse getTransactions(
+	public @ResponseBody TransactionOperationResponse getTransactions(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
@@ -74,7 +94,7 @@ public class TransactionController {
 	}
 	
 	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AbstractOperationResponse delete(
+	public @ResponseBody TransactionOperationResponse delete(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
 			Long id

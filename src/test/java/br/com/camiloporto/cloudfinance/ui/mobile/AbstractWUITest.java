@@ -16,6 +16,11 @@ public class AbstractWUITest {
 	
 	protected WebDriver driver;
 	private boolean userCreated = false;
+	private String domainPath = "http://localhost:8080/cloudfinance";
+	
+	protected void goToPath(String path) {
+		driver.get(domainPath + path);
+	}
 	
 	@BeforeClass
 	public void createNewUser() {
@@ -41,7 +46,7 @@ public class AbstractWUITest {
 	public void startWebDriver() {
 		driver = newWebDriver();
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		driver.get("http://localhost:8080/cloudfinance/mobile");
+		goToPath("/mobile");
 	}
 	
 	@AfterMethod

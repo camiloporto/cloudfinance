@@ -45,4 +45,9 @@ public class FormNewAccountPage extends TemplatePage {
 		Assert.assertTrue(!errors.isEmpty(), "should have errors in WUI");
 	}
 
+	@Override
+	protected String getPageTitle() {
+		return "Nova Conta";
+	}
+
 }

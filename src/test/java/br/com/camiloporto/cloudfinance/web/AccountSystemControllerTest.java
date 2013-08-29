@@ -133,6 +133,26 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
+	public void shouldGetRootAccountLeaves() throws Exception {
+		
+		ResultActions response = mockMvc.perform(get("/account/leaf/" + rootAccountId)
+				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.leafAccounts").exists());
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		JSONArray leaves = JsonPath.read(json, "$.leafAccounts");
+		
+		final int EXPECTED_LEAVES_COUNT = 4;
+		Assert.assertEquals(leaves.size(), EXPECTED_LEAVES_COUNT, "leaves count not match");
+	}
+	
+	@Test
 	public void shouldGetRootAccountWholeTreeWithNoJs() throws Exception {
 		
 		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)

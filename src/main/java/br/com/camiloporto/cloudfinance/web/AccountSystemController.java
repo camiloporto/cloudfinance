@@ -38,6 +38,19 @@ public class AccountSystemController {
 		return response;
 	}
 	
+	@RequestMapping(value = "/leaf/{accountId}", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody AccountOperationResponse getLeavesAccounts(
+			@ModelAttribute(value="logged") Profile logged,
+			@PathVariable Long accountId) {
+		List<Account> leavesAccounts = accountManager.findAllLeavesFrom(logged, accountId);
+		Account[] result = new Account[leavesAccounts.size()];
+		leavesAccounts.toArray(result);
+		AccountOperationResponse response = new AccountOperationResponse(true);
+		response.setLeafAccounts(result);
+		
+		return response;
+	}
+	
 	@RequestMapping(value = "/tree/{accountId}", method = RequestMethod.GET ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody AccountOperationResponse getAccountBranch(
 			@ModelAttribute(value="logged") Profile logged,

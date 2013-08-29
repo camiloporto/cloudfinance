@@ -19,5 +19,7 @@ public interface AccountManager {
 	AccountNode getAccountBranch(Profile profile, Long accountId);
 	
 	void saveAccount(Profile profile, Account account);
+
+	List<Account> findAllLeavesFrom(Profile profile, Long accountId);
 	
 }

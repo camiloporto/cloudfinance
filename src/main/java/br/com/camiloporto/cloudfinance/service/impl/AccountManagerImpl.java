@@ -17,6 +17,25 @@ public class AccountManagerImpl implements AccountManager {
 	@Autowired
 	private AccountSystemRepository accountSystemRepository;
 	
+	public List<Account> findAllLeavesFrom(Profile profile, Long rootAccountId) {
+		checkFindAllLeavesEntries(profile, rootAccountId);
+		return accountRepository.findLeavesFrom(rootAccountId);
+	}
+	
+	private void checkFindAllLeavesEntries(Profile profile, Long accountId) {
+		AccountManagerConstraint constraints = new AccountManagerConstraint();
+		Account account = new Account();
+		Account root = new Account();
+		root.setId(accountId);
+		account.setRootAccount(root);
+		constraints.setAccount(account);
+		constraints.setProfile(profile);
+		
+		new ConstraintValidator<AccountManagerConstraint>()
+			.validateForGroups(constraints,
+				AccountManagerConstraint.FIND_LEAVES_ACCOUNTS.class);
+	}
+
 	public void saveAccount(Profile profile, Account account) {
 		checkCreateNewAccountEntries(profile, account);
 		Account parent = accountRepository.findOne(account.getParentAccount().getId());

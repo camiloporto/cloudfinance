@@ -12,6 +12,8 @@ public class AccountOperationResponse extends AbstractOperationResponse {
 	
 	private Account[] rootAccounts;
 	
+	private Account[] leafAccounts;
+	
 	private AccountNode accountTree;
 	
 	private Account account;

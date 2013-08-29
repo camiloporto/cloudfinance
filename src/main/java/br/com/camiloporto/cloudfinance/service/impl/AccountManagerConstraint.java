@@ -19,6 +19,8 @@ import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 @Configurable
 public class AccountManagerConstraint {
 
+	public interface FIND_LEAVES_ACCOUNTS {}
+
 	public interface CREATE_NEW_ACCOUNT {}
 
 	public interface GET_ACCOUNT_BRANCH {}
@@ -29,7 +31,7 @@ public class AccountManagerConstraint {
 	private AccountRepository accountRepository;
 
 	@NotNull(message = "{br.com.camiloporto.cloudfinance.accountsystem.USER_ID_REQUIRED}", 
-			groups = {PROFILE_REQUIRED.class, GET_ACCOUNT_BRANCH.class})
+			groups = {PROFILE_REQUIRED.class, GET_ACCOUNT_BRANCH.class, FIND_LEAVES_ACCOUNTS.class})
 	@Valid
 	private Profile profile;
 	
@@ -47,7 +49,7 @@ public class AccountManagerConstraint {
 	}
 	
 	@AssertTrue(message = "{br.com.camiloporto.cloudfinance.account.TREE_ROOT_ACCOUNT_REQUIRED}",
-    		groups={AccountManagerConstraint.CREATE_NEW_ACCOUNT.class})
+    		groups={AccountManagerConstraint.CREATE_NEW_ACCOUNT.class, FIND_LEAVES_ACCOUNTS.class})
 	public boolean isTreeRootAccountIdNotNull() {
 		return account != null && account.getRootAccount() != null && account.getRootAccount().getId() != null;
 	}
