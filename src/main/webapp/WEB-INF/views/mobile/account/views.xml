@@ -5,7 +5,7 @@
 
 <tiles-definitions>
 	
-	<definition name="mobile-accountHome" extends="mobile-logged-template">
+	<definition name="mobile-accountHome" extends="mobile-logged-template-navigation">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/home.jsp" />
 	</definition>
 	<definition name="mobile-rootAccountHome" extends="mobile-logged-template">
