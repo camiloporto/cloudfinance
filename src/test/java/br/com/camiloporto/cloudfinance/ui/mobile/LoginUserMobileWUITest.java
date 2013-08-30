@@ -4,6 +4,9 @@ import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
+
 public class LoginUserMobileWUITest extends AbstractWUITest {
 
 

@@ -5,17 +5,16 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TemplatePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionDetailPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionFormPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionHomePage;
+
 public class TransactionWUITest extends AbstractWUITest {
 	
 	@Override
 	protected WebDriver newWebDriver() {
 		return new FirefoxDriver();
-	}
-	
-	public void loginExistentUser() {
-		MobileHomePage mhp = PageFactory.initElements(driver,
-				MobileHomePage.class);
-		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
 	}
 	
 	@Test

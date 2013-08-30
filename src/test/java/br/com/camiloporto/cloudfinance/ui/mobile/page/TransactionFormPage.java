@@ -1,4 +1,4 @@
-package br.com.camiloporto.cloudfinance.ui.mobile;
+package br.com.camiloporto.cloudfinance.ui.mobile.page;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

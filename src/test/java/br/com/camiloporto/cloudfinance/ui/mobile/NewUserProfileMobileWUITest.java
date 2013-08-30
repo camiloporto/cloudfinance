@@ -3,6 +3,10 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileNewUserPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileStatusPage;
+
 public class NewUserProfileMobileWUITest extends AbstractWUITest {
 	
 	@Test

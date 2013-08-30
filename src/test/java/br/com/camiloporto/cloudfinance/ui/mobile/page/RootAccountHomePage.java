@@ -1,4 +1,4 @@
-package br.com.camiloporto.cloudfinance.ui.mobile;
+package br.com.camiloporto.cloudfinance.ui.mobile.page;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.testng.Assert;
 
-public class RootAccountHomePage {
+public class RootAccountHomePage extends TemplatePage {
 	
 	@FindBy(how = How.ID, id="rootAccountList")
 	private WebElement rootAccountList;
@@ -18,7 +18,7 @@ public class RootAccountHomePage {
 	@FindBy(how=How.CSS, css="#rootAccountList li a")
 	private List<WebElement> rootAccountItems;
 
-	public RootAccountHomePage checkRootAccountsArePresent(String... rootAccountNames) {
+	public TemplatePage checkRootAccountsArePresent(String... rootAccountNames) {
 		for (String rootAccountName : rootAccountNames) {
 			Assert.assertTrue(rootAccountIsListed(rootAccountName), "expected root account not listed");
 		}
@@ -50,6 +50,11 @@ public class RootAccountHomePage {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected String getPageTitle() {
+		return "Sistemas de Contas";
 	}
 
 }

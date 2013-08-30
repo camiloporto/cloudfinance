@@ -5,6 +5,11 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.AccountHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.FormNewAccountPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
+
 public class AccountPageWUITest extends AbstractWUITest {
 	
 //	@Override

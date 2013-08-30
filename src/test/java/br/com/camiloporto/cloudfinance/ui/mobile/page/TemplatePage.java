@@ -1,4 +1,4 @@
-package br.com.camiloporto.cloudfinance.ui.mobile;
+package br.com.camiloporto.cloudfinance.ui.mobile.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -32,5 +32,9 @@ public abstract class TemplatePage {
 	}
 
 	protected abstract String getPageTitle();
+
+	public void assertMainNavigationMenuIsPresent() {
+		Assert.fail("IMPLEMENTAR LOGICA E CRIAR MENU");
+	}
 
 }
