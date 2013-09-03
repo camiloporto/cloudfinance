@@ -50,6 +50,7 @@ public class TransactionController {
 					transactionManager.saveAccountTransaction(logged, originAccountId, destAccountId, date, amount, description);
 			response = new TransactionOperationResponse(true, transaction);
 		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
 			response = new TransactionOperationResponse(e);
 		}
 		

@@ -38,7 +38,7 @@ public class TransactionDetailPage extends TemplatePage {
 
 	@Override
 	protected String getPageTitle() {
-		return "Detalhe Transação";
+		return "Detalhes Transação";
 	}
 
 }

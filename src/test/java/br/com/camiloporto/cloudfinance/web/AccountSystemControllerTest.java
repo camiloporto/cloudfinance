@@ -3,6 +3,7 @@ package br.com.camiloporto.cloudfinance.web;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -153,21 +154,52 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
-	public void shouldGetRootAccountWholeTreeWithNoJs() throws Exception {
-		
-		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+	public void shouldRedirectToAccountHomeAfterSelectRootAccount_NoJs() throws Exception {
+		//sets the active root accountId
+		ResultActions response = mockMvc.perform(get("/account/" + rootAccountId)
 				.session(mockSession)
 			);
 		
+		//should redirect get to /account
 		response
-			.andExpect(status().isOk())
-			.andExpect(view().name("mobile-accountHome"));
+			.andExpect(status().isMovedTemporarily())
+			.andExpect(redirectedUrl("/account"));
+		
+		//following redirect... should redirect to /account/tree/<rootAccountPreviousSelected>
+		response = mockMvc.perform(get("/account")
+				.session(mockSession))
+				.andExpect(status().isMovedTemporarily())
+				.andExpect(redirectedUrl("/account/tree/" + rootAccountId));
+		
+		//following redirect should return <selectedRootAccount> hierarchy
+		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
+				.session(mockSession)
+			);
 		
 		ModelAndView mav = response.andReturn().getModelAndView();
 		AccountOperationResponse aor = (AccountOperationResponse) mav.getModel().get("response");
 		
 		final int EXPECTED_ACCOUNT_CHILDREN = 4;
 		Assert.assertEquals(aor.getAccountTree().getChildren().size(), EXPECTED_ACCOUNT_CHILDREN, "children count not match");
+	}
+	
+	@Test
+	public void shouldRedirectToRootAccountHomeIfNoRootAccountSelectedTryingAccountHome_NoJs() throws Exception {
+		mockSession.removeAttribute("rootAccount");
+		//try to get account home, with no selected root account
+		ResultActions response = mockMvc.perform(get("/account")
+				.session(mockSession)
+			);
+		
+		//should redirect get to /account/roots
+		response
+			.andExpect(status().isMovedTemporarily())
+			.andExpect(redirectedUrl("/account/roots"));
+		
+		ModelAndView mav = response.andReturn().getModelAndView();
+		AccountOperationResponse aor = (AccountOperationResponse) mav.getModel().get("response");
+		Assert.assertTrue(aor.getErrors().length > 0, "errors should not be empty");
+		
 	}
 	
 	@Test

@@ -12,7 +12,7 @@
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/roots.jsp" />
 	</definition>
 	
-	<definition name="mobile-newAccountForm" extends="mobile-logged-template">
+	<definition name="mobile-newAccountForm" extends="mobile-logged-template-navigation">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/account/newAccountForm.jsp" />
 	</definition>
 

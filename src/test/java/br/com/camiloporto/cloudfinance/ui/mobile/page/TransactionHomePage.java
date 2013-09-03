@@ -113,7 +113,7 @@ public class TransactionHomePage extends TemplatePage {
 
 	@Override
 	protected String getPageTitle() {
-		return "Transação";
+		return "Transações";
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,6 +78,32 @@ public class AccountSystemController {
 			response = new AccountOperationResponse(e);
 		}
 		return response;
+	}
+
+	@RequestMapping(value = "/{rootAccountId}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody AccountOperationResponse setActiveRootAccount(
+			@ModelAttribute(value="logged") Profile logged,
+			@PathVariable Long rootAccountId, 
+			ModelMap map) {
+		Account a = accountManager.findAccount(rootAccountId);
+		AccountOperationResponse response = new AccountOperationResponse(false);
+		if(a != null && isRoot(a)) {
+			map.addAttribute("rootAccount", a);
+			response.setAccount(a);
+			response = new AccountOperationResponse(true);
+		}
+		return response;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody AccountOperationResponse getRootAccountBranch(
+			@ModelAttribute(value="logged")  Profile logged,
+			@ModelAttribute(value="rootAccount")  Account rootAccount) {
+		return getAccountBranch(logged, rootAccount.getId());
+	}
+
+	private boolean isRoot(Account a) {
+		return a.getParentAccount() == null;
 	}
 
 }

@@ -5,6 +5,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.TemplatePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionDetailPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionFormPage;
@@ -12,14 +13,18 @@ import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionHomePage;
 
 public class TransactionWUITest extends AbstractWUITest {
 	
-	@Override
-	protected WebDriver newWebDriver() {
-		return new FirefoxDriver();
-	}
+//	@Override
+//	protected WebDriver newWebDriver() {
+//		return new FirefoxDriver();
+//	}
 	
 	@Test
 	public void shouldShowNewTransactionForm() {
 		loginExistentUser();
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver, RootAccountHomePage.class);
+		rootAccountPage.assertIsOnPage();
+		rootAccountPage.selectRootAccount(NEWUSER_GMAIL_COM);
+		
 		goToPath("/transaction/newForm");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		transactionFormPage.assertPageTitle("Nova Transação");
@@ -33,6 +38,10 @@ public class TransactionWUITest extends AbstractWUITest {
 	@Test
 	public void shouldAddNewTransaction() {
 		loginExistentUser();
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver, RootAccountHomePage.class);
+		rootAccountPage.assertIsOnPage();
+		rootAccountPage.selectRootAccount(NEWUSER_GMAIL_COM);
+		
 		//FIXME trabalhar melhor o locale. vide http://www.mkyong.com/spring-mvc/spring-mvc-internationalization-example/
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);

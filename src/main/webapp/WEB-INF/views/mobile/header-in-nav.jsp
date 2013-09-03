@@ -14,8 +14,8 @@
 		<ul id="nav">
 			<li><a href="${accountHome}/roots">Sistema de Contas</a></li>
 			<li><a href="${accountHome}">Contas</a></li>
-			<li><a href="${accountHome}">Transações</a></li>
-			<li><a href="${accountHome}">Relatórios</a></li>
+			<li><a href="${transactionHome}">Transações</a></li>
+			<li><a href="${reportHome}">Relatórios</a></li>
 		</ul>
 	</nav>
 </header>
