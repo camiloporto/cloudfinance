@@ -88,13 +88,15 @@ public class TransactionWUITest extends AbstractWUITest {
 		loginExistentUser();
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
-		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+		String date = "28/08/2013";
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", date, "149,90", "pagamento de INSS").submit();
 
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
-		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		transactionHomePage.fillTransactionDateFilter(date, date).submitDateFilter();
+		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", date, "149,90", "pagamento de INSS");
 		
 		TransactionDetailPage detailPage = PageFactory.initElements(driver, TransactionDetailPage.class);
-		detailPage.assertTransactionsIs("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		detailPage.assertTransactionsIs("Receitas", "Despesas", date, "149,90", "pagamento de INSS");
 	}
 	
 	@Test
@@ -102,10 +104,12 @@ public class TransactionWUITest extends AbstractWUITest {
 		loginExistentUser();
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
-		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+		String date28082013 = "28/08/2013";
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", date28082013, "149,90", "pagamento de INSS").submit();
 
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
-		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		transactionHomePage.fillTransactionDateFilter(date28082013, date28082013).submitDateFilter();
+		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", date28082013, "149,90", "pagamento de INSS");
 		
 		TransactionDetailPage detailPage = PageFactory.initElements(driver, TransactionDetailPage.class);
 		detailPage.deleteTransaction();

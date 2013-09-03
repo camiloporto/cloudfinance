@@ -46,6 +46,7 @@ public class TransactionHomePage extends TemplatePage {
 	public void assertTransactionsIsPresent(String originAccount, String destAccount,
 			String date, String amount, String desc) {
 		boolean found = false;
+		fillTransactionDateFilter(date, date).submitDateFilter();
 		for (WebElement transactionLi : transactionList) {
 			if(isTransaction(transactionLi, date, originAccount, destAccount, amount, desc)) {
 				found = true;
