@@ -213,6 +213,52 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 	}
 	
 	@Test
+	public void shouldValidateNumericConversionWhenAddNewTransaction() throws Exception {
+		//Given a created a user and a account hierarchy
+		String invalidNumeric = "abc";
+		
+		ResultActions response = mockMvc.perform(post("/transaction")
+				.session(mockSession)
+				.param("originAccountId", originAccount.getId().toString())
+				.param("destAccountId", destAccount.getId().toString())
+				.param("date", "10/06/2013")
+				.param("amount",invalidNumeric)
+				.param("description", "transaction description")
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		
+		TransactionOperationResponse tor = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertFalse(tor.isSuccess(), "add transaction should not succeed with invalid amount number");
+		Assert.assertEquals(tor.getErrors()[0], "O valor da transação deve ser um número válido");
+	}
+	
+	@Test
+	public void shouldValidateDateFieldConversionWhenAddNewTransaction() throws Exception {
+		//Given a created a user and a account hierarchy
+		String invalidDate = "abc";
+		
+		ResultActions response = mockMvc.perform(post("/transaction")
+				.session(mockSession)
+				.param("originAccountId", originAccount.getId().toString())
+				.param("destAccountId", destAccount.getId().toString())
+				.param("date", invalidDate)
+				.param("amount","1250,50")
+				.param("description", "transaction description")
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		
+		TransactionOperationResponse tor = (TransactionOperationResponse) mav.getModelMap().get("response");
+		Assert.assertFalse(tor.isSuccess(), "add transaction should not succeed with invalid amount number");
+		Assert.assertEquals(tor.getErrors()[0], "Informe uma data válida para a transação");
+	}
+	
+	@Test
 	public void shouldGetTransactionsByTimeInterval() throws Exception {
 		testHelper.addTransaction(
 				originAccount.getId().toString(),

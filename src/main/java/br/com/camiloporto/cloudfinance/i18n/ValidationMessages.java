@@ -21,7 +21,6 @@ public class ValidationMessages {
 	public static final String ACCOUNT_REQUIRED = BUNDLE.getString("br.com.camiloporto.cloudfinance.report.statement.ACCOUNT_REQUIRED");
 	
 	public static final String PARENT_ACCOUNT_REQUIRED = BUNDLE.getString("br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED");
-	
-	
+
 	
 }
