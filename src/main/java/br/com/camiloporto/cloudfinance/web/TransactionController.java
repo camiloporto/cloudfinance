@@ -57,14 +57,14 @@ public class TransactionController {
 		return response;
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/{transactionId}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody TransactionOperationResponse getById(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
-			@PathVariable Long id) {
+			@PathVariable Long transactionId) {
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
 		try {
-			AccountTransaction t = transactionManager.findAccountTransaction(id);
+			AccountTransaction t = transactionManager.findAccountTransaction(transactionId);
 			if(t != null) {
 				response = new TransactionOperationResponse(true);
 				response.setTransaction(t);
@@ -81,7 +81,7 @@ public class TransactionController {
 			@ModelAttribute(value="rootAccount") Account rootAccount,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
-
+		
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
 		try {
 			List<AccountTransaction> result = 
@@ -90,7 +90,6 @@ public class TransactionController {
 		} catch(ConstraintViolationException e) {
 			response = new TransactionOperationResponse(e);
 		}
-		
 		return response;
 	}
 	
@@ -101,7 +100,7 @@ public class TransactionController {
 			Long id
 			) {
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
-		
+		//FIXME verificar por que na remocao de uma transacao, a rootAccount eh alterada
 		try {
 			transactionManager.deleteAccountTransaction(logged, rootAccount.getId(), id);
 			response.setSuccess(true);

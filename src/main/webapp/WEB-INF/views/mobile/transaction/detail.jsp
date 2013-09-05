@@ -16,7 +16,7 @@
 		<p>${response.transaction.destin.comment}</p>
 	</div>
 	<form id="deleteForm" action="${transactionUrl}/delete" method="POST">
-		<input type="hidden" name="id" value="${response.transaction.id}">
+		<input type="hidden" name="transactionId" value="${response.transaction.id}">
 		<input type="submit" value="Apagar">
 	</form>
 </section>

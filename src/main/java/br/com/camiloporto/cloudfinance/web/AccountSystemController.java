@@ -56,7 +56,6 @@ public class AccountSystemController {
 	public @ResponseBody AccountOperationResponse getAccountBranch(
 			@ModelAttribute(value="logged") Profile logged,
 			@PathVariable Long accountId) {
-
 		AccountNode rootNode = accountManager.getAccountBranch(logged, accountId);
 		AccountOperationResponse response = new AccountOperationResponse(true);
 		response.setAccountTree(rootNode);

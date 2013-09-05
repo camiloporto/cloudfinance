@@ -56,12 +56,12 @@ public class StaticTransactionController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ModelAndView showDeleteForm(
+	@RequestMapping(value = "/{transactionId}", method = RequestMethod.GET)
+	public ModelAndView showTransactionDetail(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
-			@PathVariable Long id) {
-		TransactionOperationResponse response = jsonController.getById(logged, rootAccount, id);
+			@PathVariable Long transactionId) {
+		TransactionOperationResponse response = jsonController.getById(logged, rootAccount, transactionId);
 		ModelAndView mav = new ModelAndView("mobile-transactionDetail");
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
@@ -71,9 +71,9 @@ public class StaticTransactionController {
 	public ModelAndView delete(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
-			Long id
+			Long transactionId
 			) {
-		TransactionOperationResponse response = jsonController.delete(logged, rootAccount, id);
+		TransactionOperationResponse response = jsonController.delete(logged, rootAccount, transactionId);
 		ModelAndView mav = new ModelAndView();
 		if(response.isSuccess()) {
 			mav.setViewName("redirect:/transaction");
