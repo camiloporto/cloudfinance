@@ -1,25 +1,28 @@
 package br.com.camiloporto.cloudfinance.web;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.NumberFormat;
-import org.springframework.format.annotation.NumberFormat.Style;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
@@ -34,27 +37,45 @@ public class TransactionController {
 	@Autowired
 	private TransactionManager transactionManager;
 	
-	//TODO refatorar isso. tirar anotacoes desnecessarias "@RequestParam"
+	@Autowired
+	private MessageSource messageSource;
+	
 	@RequestMapping(method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody TransactionOperationResponse createTransaction(
-			@ModelAttribute(value="logged") Profile logged, 
-			@RequestParam("originAccountId") Long originAccountId,
-			@RequestParam("destAccountId") Long destAccountId,
-			@RequestParam("date") @DateTimeFormat(pattern="dd/MM/yyyy") Date date,
-			@RequestParam("description") String description,
-			@RequestParam("amount") @NumberFormat(style = Style.NUMBER) BigDecimal amount) {
+			HttpServletRequest request,
+			@ModelAttribute(value="logged") Profile logged,
+			@ModelAttribute(value="transactionForm") TransactionForm form,
+			BindingResult errors) {
 		
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
-		try {
-			AccountTransaction transaction = 
-					transactionManager.saveAccountTransaction(logged, originAccountId, destAccountId, date, amount, description);
-			response = new TransactionOperationResponse(true, transaction);
-		} catch (ConstraintViolationException e) {
-			e.printStackTrace();
-			response = new TransactionOperationResponse(e);
+		if(errors.hasErrors()) {
+			String[] errorMessages = getBindingErrorMessages(errors, request.getLocale()).toArray(new String[]{});
+			response.setErrors(errorMessages);
+		} else {
+			try {
+				AccountTransaction transaction = 
+						transactionManager.saveAccountTransaction(
+								logged, 
+								form.getOriginAccountId(), 
+								form.getDestAccountId(), 
+								form.getDate(), 
+								form.getAmount(), 
+								form.getDescription());
+				response = new TransactionOperationResponse(true, transaction);
+			} catch (ConstraintViolationException e) {
+				e.printStackTrace();
+				response = new TransactionOperationResponse(e);
+			}
 		}
-		
 		return response;
+	}
+	
+	private List<String> getBindingErrorMessages(BindingResult errors, Locale locale) {
+		List<String> result = new ArrayList<String>();
+		for (ObjectError error : errors.getAllErrors()) {
+			result.add(messageSource.getMessage(error, locale));
+		}
+		return result;
 	}
 	
 	@RequestMapping(value = "/{transactionId}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
