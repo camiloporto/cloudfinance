@@ -25,7 +25,7 @@
 			</select>
 		</label>
 		<input name="date" type="text" placeholder="Data da transação">
-		<input name="amount" type="number" placeholder="Valor">
+		<input name="amount" type="text" placeholder="Valor">
 		<input name="description" type="text" placeholder="Descrição">
 		<input type="submit" value="Salvar">
 	</form>
