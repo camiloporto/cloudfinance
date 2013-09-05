@@ -9,6 +9,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileNewUserPage;
+
 public class AbstractWUITest {
 	
 	public static final String NEWUSER_PASS = "s3cret";
@@ -52,6 +55,12 @@ public class AbstractWUITest {
 	@AfterMethod
 	public void closeWebDriver() {
 		driver.close();
+	}
+
+	public void loginExistentUser() {
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
 	}
 
 }

@@ -1,6 +1,9 @@
 package br.com.camiloporto.cloudfinance.model;
 
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;

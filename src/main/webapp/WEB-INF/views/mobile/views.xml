@@ -13,6 +13,11 @@
 		<put-attribute name="header" value="/WEB-INF/views/mobile/header-in.jsp" />
 	    <put-attribute name="footer" value="/WEB-INF/views/mobile/footer.jsp" />
 	</definition>
+	
+	<definition name="mobile-logged-template-navigation" template="/WEB-INF/views/mobile/template.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/mobile/header-in-nav.jsp" />
+	    <put-attribute name="footer" value="/WEB-INF/views/mobile/footer.jsp" />
+	</definition>
 
 	<definition name="mobile-index" extends="mobile-template">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/index.jsp" />

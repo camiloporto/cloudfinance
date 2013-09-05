@@ -398,7 +398,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		response = mockMvc.perform(post("/transaction/delete")
 				.session(mockSession)
-				.param("id", txId.toString())
+				.param("transactionId", txId.toString())
 			);
 		
 		String expectedUrl = "/transaction";

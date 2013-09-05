@@ -5,22 +5,26 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TemplatePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionDetailPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionFormPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionHomePage;
+
 public class TransactionWUITest extends AbstractWUITest {
 	
-	@Override
-	protected WebDriver newWebDriver() {
-		return new FirefoxDriver();
-	}
-	
-	public void loginExistentUser() {
-		MobileHomePage mhp = PageFactory.initElements(driver,
-				MobileHomePage.class);
-		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
-	}
+//	@Override
+//	protected WebDriver newWebDriver() {
+//		return new FirefoxDriver();
+//	}
 	
 	@Test
 	public void shouldShowNewTransactionForm() {
 		loginExistentUser();
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver, RootAccountHomePage.class);
+		rootAccountPage.assertIsOnPage();
+		rootAccountPage.selectRootAccount(NEWUSER_GMAIL_COM);
+		
 		goToPath("/transaction/newForm");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		transactionFormPage.assertPageTitle("Nova Transação");
@@ -34,6 +38,10 @@ public class TransactionWUITest extends AbstractWUITest {
 	@Test
 	public void shouldAddNewTransaction() {
 		loginExistentUser();
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver, RootAccountHomePage.class);
+		rootAccountPage.assertIsOnPage();
+		rootAccountPage.selectRootAccount(NEWUSER_GMAIL_COM);
+		
 		//FIXME trabalhar melhor o locale. vide http://www.mkyong.com/spring-mvc/spring-mvc-internationalization-example/
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
@@ -80,13 +88,15 @@ public class TransactionWUITest extends AbstractWUITest {
 		loginExistentUser();
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
-		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+		String date = "28/08/2013";
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", date, "149,90", "pagamento de INSS").submit();
 
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
-		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		transactionHomePage.fillTransactionDateFilter(date, date).submitDateFilter();
+		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", date, "149,90", "pagamento de INSS");
 		
 		TransactionDetailPage detailPage = PageFactory.initElements(driver, TransactionDetailPage.class);
-		detailPage.assertTransactionsIs("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		detailPage.assertTransactionsIs("Receitas", "Despesas", date, "149,90", "pagamento de INSS");
 	}
 	
 	@Test
@@ -94,10 +104,12 @@ public class TransactionWUITest extends AbstractWUITest {
 		loginExistentUser();
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
-		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+		String date28082013 = "28/08/2013";
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", date28082013, "149,90", "pagamento de INSS").submit();
 
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
-		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+		transactionHomePage.fillTransactionDateFilter(date28082013, date28082013).submitDateFilter();
+		transactionHomePage.showDetailOfTransaction("Receitas", "Despesas", date28082013, "149,90", "pagamento de INSS");
 		
 		TransactionDetailPage detailPage = PageFactory.initElements(driver, TransactionDetailPage.class);
 		detailPage.deleteTransaction();
