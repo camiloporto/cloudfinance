@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileNewUserPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileStatusPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
 
 public class NewUserProfileMobileWUITest extends AbstractWUITest {
 	
@@ -14,13 +15,15 @@ public class NewUserProfileMobileWUITest extends AbstractWUITest {
 		MobileHomePage mhp = PageFactory.initElements(driver, MobileHomePage.class);
 		mhp.clickNewUserProfileLink();
 		MobileNewUserPage newUserPage = PageFactory.initElements(driver, MobileNewUserPage.class);
+		String newUser = "user@gmail.com";
 		newUserPage
-			.fillNewUserForm("user@gmail.com", "s3cret", "s3cret")
+			.fillNewUserForm(newUser, "s3cret", "s3cret")
 			.submit();
 		
-		MobileStatusPage statusPage = PageFactory.initElements(driver, MobileStatusPage.class);
-		statusPage.assertPageTitleEquals("Cadastro de Usuario");
-		statusPage.assertSuccess();
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver,
+				RootAccountHomePage.class);
+		rootAccountPage.assertIsOnPage();
+		rootAccountPage.checkRootAccountsArePresent(newUser);
 	}
 	
 	@Test
@@ -32,9 +35,12 @@ public class NewUserProfileMobileWUITest extends AbstractWUITest {
 			.fillNewUserForm("", "", "") //no input informed
 			.submit();
 		
-		MobileStatusPage statusPage = PageFactory.initElements(driver, MobileStatusPage.class);
-		statusPage.assertPageTitleEquals("Cadastro de Usuario");
-		statusPage.assertFail();
-		statusPage.assertHasErrorMessages();
+		newUserPage = PageFactory.initElements(driver, MobileNewUserPage.class);
+		newUserPage.assertHasErrorMessages();
+		
+//		MobileStatusPage statusPage = PageFactory.initElements(driver, MobileStatusPage.class);
+//		statusPage.assertPageTitleEquals("Cadastro de Usuario");
+//		statusPage.assertFail();
+//		statusPage.assertHasErrorMessages();
 	}
 }
