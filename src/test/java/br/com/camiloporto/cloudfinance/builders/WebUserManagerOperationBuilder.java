@@ -38,4 +38,10 @@ public class WebUserManagerOperationBuilder {
 		return this;
 	}
 
+	public WebUserManagerOperationBuilder logoutCurrentUser() throws Exception {
+		mockMvc.perform(post("/user/logoff")
+				.session(mockSession));
+		return this;
+	}
+
 }

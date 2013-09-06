@@ -4,7 +4,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
-public class MobileNewUserPage {
+public class MobileNewUserPage extends TemplatePage {
 	
 	@FindBy(how = How.NAME, name="userName")
 	private WebElement userNameEl;
@@ -28,6 +28,11 @@ public class MobileNewUserPage {
 	public MobileNewUserPage submit() {
 		submitEl.submit();
 		return this;
+	}
+
+	@Override
+	protected String getPageTitle() {
+		return "Novo Usuário";
 	}
 
 }

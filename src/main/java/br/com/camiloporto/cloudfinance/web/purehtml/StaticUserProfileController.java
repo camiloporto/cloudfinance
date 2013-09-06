@@ -1,15 +1,12 @@
 package br.com.camiloporto.cloudfinance.web.purehtml;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,11 +23,13 @@ public class StaticUserProfileController {
 	private UserProfileController jsonController;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
-	public ModelAndView signUp(String userName, String pass, String confirmPass) {
+	public ModelAndView signUp(String userName, String pass, String confirmPass, ModelMap map) {
 		UserOperationResponse response = (UserOperationResponse) jsonController.signUp(userName, pass, confirmPass);
-		ModelAndView mav = new ModelAndView("mobile-status");
+		ModelAndView mav = new ModelAndView("mobile-newUser");
+		if(response.isSuccess()) {
+			mav = login(userName, pass, map);
+		}
 		mav.addObject("response", response);
-		mav.addObject("operation", "Cadastro de Usuario");
 		return mav;
 	}
 	
