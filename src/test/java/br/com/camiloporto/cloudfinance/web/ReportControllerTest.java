@@ -185,6 +185,25 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGetAccountStatement_NoJS() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/statement")
+				.session(mockSession)
+				.param("accountId", bank.getId().toString())
+				.param("begin", "12/06/2013")
+				.param("end", "14/06/2013")
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		ReportOperationResponse ror = (ReportOperationResponse) mav.getModelMap().get("response");
+		
+		BigDecimal balanceBefore = ror.getAccountStatement().getBalanceBeforeInterval();
+		Assert.assertTrue(new BigDecimal("1000.0").compareTo(balanceBefore) == 0, "balance before did not match");
+		
+	}
+	
+	@Test
 	public void shouldGoToAccountStatementHomePage() throws Exception {
 		ResultActions response = mockMvc.perform(get("/report/statement")
 				.session(mockSession)
