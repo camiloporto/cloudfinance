@@ -27,7 +27,7 @@ public class ReportController {
 	@Autowired
 	private AccountStatementManager accountStatementManager;
 	
-	@RequestMapping(value = "/statement", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/statement", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody AbstractOperationResponse getAccountStatement(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
