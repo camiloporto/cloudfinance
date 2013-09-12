@@ -2,6 +2,8 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.PageFactory;
@@ -41,6 +43,24 @@ public class AbstractWUITest {
 		}
 	}
 	
+	protected void loginTestUser(String login, String pass) {
+		goToPath("/mobile");
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(login, pass);
+	}
+	
+	protected void createNewTestUser(String login, String pass) {
+		goToPath("/mobile");
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.clickNewUserProfileLink();
+		MobileNewUserPage newUserPage = PageFactory.initElements(driver,
+				MobileNewUserPage.class);
+		newUserPage.fillNewUserForm(login, pass,
+				pass).submit();
+	}
+	
 	protected WebDriver newWebDriver() {
 		return new HtmlUnitDriver();
 	}
@@ -61,6 +81,16 @@ public class AbstractWUITest {
 		MobileHomePage mhp = PageFactory.initElements(driver,
 				MobileHomePage.class);
 		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+	}
+	
+	public void logoutExistentUser() {
+		goToPath("/mobile");
+		try {
+			driver.findElement(By.id("logoffBtn")).submit();
+		} catch (NoSuchElementException e) {
+			//thats OK. user may not be logged in
+			e.printStackTrace();
+		}
 	}
 
 }

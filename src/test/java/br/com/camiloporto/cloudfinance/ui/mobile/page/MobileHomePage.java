@@ -27,9 +27,14 @@ public class MobileHomePage {
 	}
 
 	public void login(String userName, String pass) {
-		userNameEl.sendKeys(userName);
-		passwordEl.sendKeys(pass);
-		submitEl.submit();
+		try {
+			userNameEl.sendKeys(userName);
+			passwordEl.sendKeys(pass);
+			submitEl.submit();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	

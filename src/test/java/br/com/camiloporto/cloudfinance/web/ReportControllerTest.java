@@ -201,6 +201,9 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 		BigDecimal balanceBefore = ror.getAccountStatement().getBalanceBeforeInterval();
 		Assert.assertTrue(new BigDecimal("1000.0").compareTo(balanceBefore) == 0, "balance before did not match");
 		
+		Assert.assertNotNull(ror, "response object should be present");
+		Assert.assertNotNull(ror.getAccountList(), "account list for statement should be present");
+		
 	}
 	
 	@Test
@@ -209,9 +212,15 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 				.session(mockSession)
 			);
 		
-		response
+		ModelAndView mav = response
 			.andExpect(status().isOk())
-			.andExpect(view().name("mobile-statement"));
+			.andExpect(view().name("mobile-statement"))
+			.andReturn().getModelAndView();
+		
+		ReportOperationResponse ror = (ReportOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNotNull(ror, "response object should be present");
+		Assert.assertNotNull(ror.getAccountList(), "account list for statement should be present");
+		
 		
 	}
 	

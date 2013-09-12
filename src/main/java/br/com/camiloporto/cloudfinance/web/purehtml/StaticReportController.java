@@ -13,7 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.web.AccountController;
+import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
+import br.com.camiloporto.cloudfinance.web.AccountSystemController;
 import br.com.camiloporto.cloudfinance.web.ReportController;
+import br.com.camiloporto.cloudfinance.web.ReportOperationResponse;
 
 @RequestMapping("/report")
 @Controller
@@ -23,11 +27,19 @@ public class StaticReportController {
 	@Autowired
 	private ReportController jsonController;
 	
+	@Autowired
+	private AccountSystemController accountController;
+	
 	@RequestMapping(value = "/statement", method = RequestMethod.GET)
 	public ModelAndView getAccountStatementForm(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount) {
-		return new ModelAndView("mobile-statement");
+		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, rootAccount.getId());
+		ReportOperationResponse ror = new ReportOperationResponse(true);
+		ror.setAccountList(aor.getLeafAccounts());
+		ModelAndView mav = new ModelAndView("mobile-statement");
+		mav.getModelMap().addAttribute("response", ror);
+		return mav;
 	}
 	
 	
@@ -40,7 +52,10 @@ public class StaticReportController {
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
 		
 		ModelAndView mav = new ModelAndView("mobile-statement");
-		mav.getModelMap().addAttribute("response", jsonController.getAccountStatement(logged, rootAccount, accountId, begin, end));
+		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, rootAccount.getId());
+		ReportOperationResponse ror = jsonController.getAccountStatement(logged, rootAccount, accountId, begin, end);
+		ror.setAccountList(aor.getLeafAccounts());
+		mav.getModelMap().addAttribute("response", ror);
 		return mav;
 	}
 

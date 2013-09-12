@@ -1,7 +1,5 @@
 package br.com.camiloporto.cloudfinance.ui.mobile;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
