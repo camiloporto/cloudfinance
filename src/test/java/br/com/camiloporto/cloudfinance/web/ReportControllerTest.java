@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -169,16 +171,57 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 				.param("accountId", bank.getId().toString())
 				.param("begin", "12/06/2013")
 				.param("end", "14/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.success").value(true));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		Double balanceBefore = JsonPath.read(json, "$.accountStatement.balanceBeforeInterval");
 		Assert.assertTrue(new BigDecimal("1000.0").compareTo(new BigDecimal(balanceBefore)) == 0, "balance before did not match");
+	}
+	
+	@Test
+	public void shouldGetAccountStatement_NoJS() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/statement")
+				.session(mockSession)
+				.param("accountId", bank.getId().toString())
+				.param("begin", "12/06/2013")
+				.param("end", "14/06/2013")
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		ReportOperationResponse ror = (ReportOperationResponse) mav.getModelMap().get("response");
+		
+		BigDecimal balanceBefore = ror.getAccountStatement().getBalanceBeforeInterval();
+		Assert.assertTrue(new BigDecimal("1000.0").compareTo(balanceBefore) == 0, "balance before did not match");
+		
+		Assert.assertNotNull(ror, "response object should be present");
+		Assert.assertNotNull(ror.getAccountList(), "account list for statement should be present");
+		
+	}
+	
+	@Test
+	public void shouldGoToAccountStatementHomePage() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/statement")
+				.session(mockSession)
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andExpect(view().name("mobile-statement"))
+			.andReturn().getModelAndView();
+		
+		ReportOperationResponse ror = (ReportOperationResponse) mav.getModelMap().get("response");
+		Assert.assertNotNull(ror, "response object should be present");
+		Assert.assertNotNull(ror.getAccountList(), "account list for statement should be present");
+		
+		
 	}
 	
 	@Test
@@ -190,11 +233,12 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 				.param("accountId", emptyAccountId)
 				.param("begin", "12/06/2013")
 				.param("end", "14/06/2013")
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.success").value(false));
 		
 		new WebResponseChecker(response, mockSession)

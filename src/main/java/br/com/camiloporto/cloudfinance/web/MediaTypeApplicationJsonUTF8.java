@@ -11,7 +11,7 @@ public class MediaTypeApplicationJsonUTF8 extends MediaType {
 	public static final MediaType APPLICATION_JSON_UTF8;
 	static {
 		String type = MediaType.APPLICATION_JSON.getType();
-		String subtype = MediaType.APPLICATION_JSON.getType();
+		String subtype = MediaType.APPLICATION_JSON.getSubtype();
 		Charset utf8 = Charset.forName("UTF-8");
 		APPLICATION_JSON_UTF8 = new MediaTypeApplicationJsonUTF8(type, subtype, utf8);
 	}

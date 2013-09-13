@@ -6,7 +6,6 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +26,8 @@ public class ReportController {
 	@Autowired
 	private AccountStatementManager accountStatementManager;
 	
-	@RequestMapping(value = "/statement", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody AbstractOperationResponse getAccountStatement(
+	@RequestMapping(value = "/statement", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE, params={"accountId", "begin", "end"})
+	public @ResponseBody ReportOperationResponse getAccountStatement(
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
 			Long accountId,
