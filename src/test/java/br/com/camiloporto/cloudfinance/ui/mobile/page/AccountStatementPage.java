@@ -1,6 +1,9 @@
 package br.com.camiloporto.cloudfinance.ui.mobile.page;
 
+import java.util.List;
+
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.Select;
@@ -20,11 +23,16 @@ public class AccountStatementPage extends TemplatePage {
 	@FindBy(how=How.CSS, css="#statementForm input[type=submit]")
 	private WebElement submitBtn;
 	
-	@FindBy(how = How.CSS, css = "#statementTable thead th:last-child")
+	@FindBy(how = How.XPATH, xpath = "//table[@id='statementTable']/thead/tr/th[last()]")
 	private WebElement previousBalanceEl;
 	
-	@FindBy(how = How.CSS, css = "#statementTable tfoot th:last-child")
+	@FindBy(how = How.XPATH, xpath = "//table[@id='statementTable']/tfoot/tr/th[last()]")
 	private WebElement finalBalanceEl;
+	
+	@FindAll({
+		@FindBy(how = How.CSS, css = "#statementTable tbody tr")
+	})
+	private List<WebElement> statementListEl;
 
 	public AccountStatementPage selectAccount(String accountName) {
 		Select accountSelect = new Select(accountListElement);
@@ -56,8 +64,15 @@ public class AccountStatementPage extends TemplatePage {
 
 	public AccountStatementPage assertStatementEntryIsPresent(String date, String from, String to,
 			String desc, String value) {
-		// TODO Auto-generated method stub
-		Assert.fail("implement this logic");
+		boolean found = true;
+		for (WebElement statementEl : statementListEl) {
+			String text = statementEl.getText();
+			found &= text.contains(date);
+			found &= text.contains(desc);
+			found &= text.contains(value);
+			found &= (text.contains(from) || text.contains(to));
+		}
+		Assert.assertTrue(found, "expected transaction not found " + date +" ; " + from + " ; " + to + " ; " + desc + " ; " + value);
 		return this;
 	}
 

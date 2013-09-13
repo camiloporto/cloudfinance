@@ -53,28 +53,5 @@
 			</c:forEach>
 		</tbody>
 	</table>
-		<div id="statement" style="visibility: hidden;">
-			<!-- ESTRUTURAR O EXTRATO COMO UMA TABELA. -->
-			<p>Saldo Anterior: 
-				<span id="previousBalance">
-					<fmt:formatNumber value="${response.accountStatement.balanceBeforeInterval}" type="currency" pattern="#,#00.00#"/> 
-				</span>
-			</p>
-			<ul>
-				<c:forEach var="entry" items="${response.accountStatement.entries}">
-					<li> 
-						<p><fmt:formatDate value="${entry.date}" pattern="dd/MM/yyyy"/> </p>
-						<p><spring:message code="${entry.involvedAccount.name}"  text="${entry.involvedAccount.name}"></spring:message></p>
-						<p>${entry.description}</p>
-						<p><fmt:formatNumber value="${entry.amount}" type="currency" pattern="#,#00.00#"/> </p>
-					</li>
-				</c:forEach>
-			</ul>
-			<p>Saldo Final: 
-				<span id="finalBalance">
-					<fmt:formatNumber value="${response.accountStatement.balanceAfterInterval}" type="currency" pattern="#,#00.00#"/> 
-				</span>
-			</p>
-		</div>
 	</c:if>
 </section>

@@ -1,9 +1,6 @@
 package br.com.camiloporto.cloudfinance.ui.mobile;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -19,11 +16,6 @@ public class AccountStatementMobileWUITest extends AbstractWUITest {
 			{"Ativos", "Despesas", "28/08/2013", "500,00", "Aluguel"},
 			{"Receitas", "Ativos", "02/09/2013", "850,00", "Recebimento de salario"},
 		};
-	
-	@Override
-	protected WebDriver newWebDriver() {
-		return new FirefoxDriver();
-	}
 	
 	@BeforeClass
 	public void insertSomeTransactions() {
