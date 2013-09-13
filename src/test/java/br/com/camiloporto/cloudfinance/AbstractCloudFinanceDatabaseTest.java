@@ -9,12 +9,16 @@ import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
 import br.com.camiloporto.cloudfinance.repository.ProfileRepository;
+import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml"})
 @ActiveProfiles("unit-test")
 public abstract class AbstractCloudFinanceDatabaseTest extends
 		AbstractTestNGSpringContextTests {
+	
+	@Autowired
+	protected AccountManager accountManager;
 	
 	@Autowired
 	protected ProfileRepository profileRepository;

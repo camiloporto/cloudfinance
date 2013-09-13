@@ -21,5 +21,5 @@ public interface AccountManager {
 	void saveAccount(Profile profile, Account account);
 
 	List<Account> findAllLeavesFrom(Profile profile, Long accountId);
-	
+
 }
