@@ -122,15 +122,15 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 	private void checkGetAccountStatementEntries(Profile profile,
 			Long accountId, Date begin, Date end) {
 		
-		AccountStatementConstraint constraints = new AccountStatementConstraint();
+		ReportConstraint constraints = new ReportConstraint();
 		constraints.setProfile(profile);
 		constraints.setAccountId(accountId);
 		constraints.setBegin(begin);
 		constraints.setEnd(end);
 		
-		new ConstraintValidator<AccountStatementConstraint>()
+		new ConstraintValidator<ReportConstraint>()
 			.validateForGroups(constraints,
-				AccountStatementConstraint.ACCOUNT_STATEMENT.class);
+				ReportConstraint.ACCOUNT_STATEMENT.class);
 		
 	}
 

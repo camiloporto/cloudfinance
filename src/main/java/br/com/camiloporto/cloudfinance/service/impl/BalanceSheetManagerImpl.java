@@ -36,6 +36,7 @@ public class BalanceSheetManagerImpl implements BalanceSheetManager {
 	
 	@Override
 	public BalanceSheet getBalanceSheet(Profile profile, Long rootAccountId, Date date) {
+		checkGetBalanceSheetEntries(profile, rootAccountId, date);
 		AccountSystem accountSystem = accountSystemRepository.findByUserProfileAndRootAccountId(profile, rootAccountId);
 		Account asset = accountRepository.findByParentAccountAndName(accountSystem.getRootAccount(), Account.ASSET_NAME);
 		Account liability = accountRepository.findByParentAccountAndName(accountSystem.getRootAccount(), Account.LIABILITY_NAME);
@@ -47,6 +48,18 @@ public class BalanceSheetManagerImpl implements BalanceSheetManager {
 		BalanceSheetNode liabilityBalanceSheetNodes = createBalanceSheetTree(liabilityTree, date);
 		BalanceSheet balanceSheet = new BalanceSheet(assetBalanceSheetNodes, liabilityBalanceSheetNodes);
 		return balanceSheet;
+	}
+
+	private void checkGetBalanceSheetEntries(Profile profile,
+			Long rootAccountId, Date date) {
+		ReportConstraint constraints = new ReportConstraint();
+		constraints.setProfile(profile);
+		constraints.setAccountId(rootAccountId);
+		constraints.setBalanceSheetDate(date);
+		
+		new ConstraintValidator<ReportConstraint>()
+			.validateForGroups(constraints,
+				ReportConstraint.BALANCE_SHEET.class);
 	}
 
 	private BalanceSheetNode createBalanceSheetTree(

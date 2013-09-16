@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -16,6 +18,7 @@ import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
+import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
@@ -66,6 +69,53 @@ public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 		expectedAccountBalances.put(Account.LIABILITY_NAME, new BigDecimal("-25.00"));
 		expectedAccountBalances.put("Fundo BB DI", new BigDecimal("500.00"));
 		checkAccountBalances(balanceSheet, expectedAccountBalances);
+	}
+	
+	@Test
+	public void shouldRequireDateToGetBalanceSheet() throws ParseException {
+		Date date = null;
+		
+		try {
+			balanceSheetManager.getBalanceSheet(profile, root.getId(), date);
+			Assert.fail("should throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.report.balancesheet.DATE_REQUIRED}");
+		}
+	}
+	
+	@Test
+	public void shouldRequireProfileToGetBalanceSheet() throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = sdf.parse("20/09/2013");
+		Profile p = null;
+		try {
+			balanceSheetManager.getBalanceSheet(p, root.getId(), date);
+			Assert.fail("should throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.user.LOGGED_USER_REQUIRED}");
+		}
+	}
+	
+	@Test
+	public void shouldRequireRootAccountToGetBalanceSheet() throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = sdf.parse("20/09/2013");
+		Long nullRootAccountId = null;
+		try {
+			balanceSheetManager.getBalanceSheet(profile, nullRootAccountId, date);
+			Assert.fail("should throws expected exception");
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			new ExceptionChecker(e)
+				.assertExpectedErrorCountIs(1)
+				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.ROOT_ACCOUNT_REQUIRED}");
+		}
 	}
 	
 	private void checkAccountBalances(BalanceSheet balanceSheet,
