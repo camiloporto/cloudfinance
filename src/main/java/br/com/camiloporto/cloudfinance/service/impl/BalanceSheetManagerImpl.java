@@ -46,7 +46,7 @@ public class BalanceSheetManagerImpl implements BalanceSheetManager {
 		
 		BalanceSheetNode assetBalanceSheetNodes = createBalanceSheetTree(assetTree, date);
 		BalanceSheetNode liabilityBalanceSheetNodes = createBalanceSheetTree(liabilityTree, date);
-		BalanceSheet balanceSheet = new BalanceSheet(assetBalanceSheetNodes, liabilityBalanceSheetNodes);
+		BalanceSheet balanceSheet = new BalanceSheet(assetBalanceSheetNodes, liabilityBalanceSheetNodes, date);
 		return balanceSheet;
 	}
 
@@ -54,7 +54,7 @@ public class BalanceSheetManagerImpl implements BalanceSheetManager {
 			Long rootAccountId, Date date) {
 		ReportConstraint constraints = new ReportConstraint();
 		constraints.setProfile(profile);
-		constraints.setAccountId(rootAccountId);
+		constraints.setRootAccountId(rootAccountId);
 		constraints.setBalanceSheetDate(date);
 		
 		new ConstraintValidator<ReportConstraint>()

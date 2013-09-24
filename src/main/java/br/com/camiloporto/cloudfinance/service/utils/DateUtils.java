@@ -25,5 +25,8 @@ public class DateUtils {
 		
 		return max.getTime();
 	}
-
+	
+	public Date today() {
+		return Calendar.getInstance().getTime();
+	}
 }

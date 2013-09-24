@@ -5,6 +5,7 @@ package br.com.camiloporto.cloudfinance.service.impl;
 
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheetNode;
+import java.util.Date;
 
 privileged aspect BalanceSheet_Roo_JavaBean {
     
@@ -14,6 +15,10 @@ privileged aspect BalanceSheet_Roo_JavaBean {
     
     public BalanceSheetNode BalanceSheet.getLiabilityBalanceSheetTree() {
         return this.liabilityBalanceSheetTree;
+    }
+    
+    public Date BalanceSheet.getBalanceDate() {
+        return this.balanceDate;
     }
     
 }

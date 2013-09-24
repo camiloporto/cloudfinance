@@ -5,6 +5,7 @@ package br.com.camiloporto.cloudfinance.web;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.service.impl.AccountStatement;
+import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 import br.com.camiloporto.cloudfinance.web.ReportOperationResponse;
 
 privileged aspect ReportOperationResponse_Roo_JavaBean {
@@ -15,6 +16,14 @@ privileged aspect ReportOperationResponse_Roo_JavaBean {
     
     public void ReportOperationResponse.setAccountStatement(AccountStatement accountStatement) {
         this.accountStatement = accountStatement;
+    }
+    
+    public BalanceSheet ReportOperationResponse.getBalanceSheet() {
+        return this.balanceSheet;
+    }
+    
+    public void ReportOperationResponse.setBalanceSheet(BalanceSheet balanceSheet) {
+        this.balanceSheet = balanceSheet;
     }
     
     public Account[] ReportOperationResponse.getAccountList() {

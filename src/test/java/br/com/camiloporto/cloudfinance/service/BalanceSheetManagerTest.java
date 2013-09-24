@@ -27,8 +27,6 @@ import br.com.camiloporto.cloudfinance.service.impl.BalanceSheetNode;
 
 public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
-	private DataInsertionHelper accountInsertionHelper;
-	
 	@Autowired
 	private BalanceSheetManager balanceSheetManager;
 

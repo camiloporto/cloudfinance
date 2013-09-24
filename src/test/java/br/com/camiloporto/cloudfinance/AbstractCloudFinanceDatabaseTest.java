@@ -5,6 +5,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
+import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
@@ -34,6 +35,8 @@ public abstract class AbstractCloudFinanceDatabaseTest extends
 	
 	@Autowired
 	protected UserProfileManager userProfileManager;
+	
+	protected DataInsertionHelper accountInsertionHelper;
 	
 	protected void cleanUserData() {
 		accountTransactionRepository.deleteAll();

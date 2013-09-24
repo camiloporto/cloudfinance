@@ -1,7 +1,6 @@
 package br.com.camiloporto.cloudfinance.web;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,9 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
@@ -113,6 +113,10 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 		bank = getByName(rootBranch.getChildren(), Account.ASSET_NAME);
 		outgoings = getByName(rootBranch.getChildren(), Account.OUTGOING_NAME);
 		
+		accountInsertionHelper = new DataInsertionHelper(rootBranch.getAccount());
+		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
+		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
+		
 		prepareSampleTransactions();
 		
     }
@@ -185,6 +189,24 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGetBalanceSheet() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/balancesheet")
+				.session(mockSession)
+				.param("date", "20/09/2013")
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.success").value(true));
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		Double assetBalance = JsonPath.read(json, "$.balanceSheet.assetBalanceSheetTree.balance");
+		Assert.assertTrue(new BigDecimal("1200.0").compareTo(new BigDecimal(assetBalance)) == 0, "asset balance did not match");
+	}
+	
+	@Test
 	public void shouldGetAccountStatement_NoJS() throws Exception {
 		ResultActions response = mockMvc.perform(get("/report/statement")
 				.session(mockSession)
@@ -244,5 +266,23 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 		new WebResponseChecker(response, mockSession)
 			.assertOperationFail()
 			.assertErrorMessageIsPresent(ValidationMessages.ACCOUNT_REQUIRED);
+	}
+	
+	@Test
+	public void shouldSetDefaultDateIfNoneInformedOnGetBalanceSheet() throws Exception {
+		//no date informed for balance sheet. should set current date
+		ResultActions response = mockMvc.perform(get("/report/balancesheet")
+				.session(mockSession)
+				.accept(MediaType.APPLICATION_JSON)
+			);
+		
+		response
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.success").value(true));
+		
+		String json = response.andReturn().getResponse().getContentAsString();
+		Object balanceDate = JsonPath.read(json, "$.balanceSheet.balanceDate");
+		Assert.assertNotNull(balanceDate, "default date not setted");
 	}
 }
