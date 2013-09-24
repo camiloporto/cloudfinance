@@ -19,7 +19,7 @@ public class AccountManagerImpl implements AccountManager {
 	
 	public List<Account> findAllLeavesFrom(Profile profile, Long rootAccountId) {
 		checkFindAllLeavesEntries(profile, rootAccountId);
-		return accountRepository.findLeavesFrom(rootAccountId);
+		return accountRepository.findLeavesFromRootAccountId(rootAccountId);
 	}
 	
 	private void checkFindAllLeavesEntries(Profile profile, Long accountId) {
