@@ -12,4 +12,9 @@
 		<input name="balanceDate" placeholder="Data do Balanço" type="text">
 		<input type="submit" value="Balanço">
 	</form>
+	<c:if test="${not empty response.balanceSheet}">
+		<div id="balanceSheetDiv">
+			<cf:balanceSheet balanceSheet="${response.balanceSheet}"></cf:balanceSheet>
+		</div>
+	</c:if>
 </section>

@@ -46,7 +46,6 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 			accountHomePage.clickOnAccountLink(escapeRootAccounts(line[0].trim()));
 			FormNewAccountPage newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
 			newAccountForm.fillNewAccount(line[1].trim(), line[1] + " description").submitForm();
-			Thread.sleep(2000);
 		}
 		
 		List<String[]> transactionList = new DataInsertionHelper(null).getDataAsArray(DataInsertionHelper.TRANSACTION_UI_FORM_DATA);
@@ -85,14 +84,21 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 	}
 
 	@Test
-	public void shouldGetBalanceSheet() {
+	public void shouldDrawBalanceSheetOnScreen() {
 		//given a logged user and some transactions saved...
 		loginTestUser(sampleUserLogin, sampleUserPass);
 		goToPath("/report/balanceSheet");
 		BalanceSheetPage balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
 		balanceSheetPage.fillBalanceDate("20/09/2013");
 		balanceSheetPage.submit();
-		balanceSheetPage.assertIsOnPage();
 		
+		balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.assertIsOnPage();
+		balanceSheetPage.checkBalanceEntries()
+			.balanceEntry("Fundo BB DI", "500,00")
+			.balanceEntry("Cartao Credito", "-25,00")
+			.balanceEntry("Ativos", "1.200,00")
+			.balanceEntry("Passivos", "-25,00")
+			.arePresent();
 	}
 }
