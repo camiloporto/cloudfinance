@@ -2,6 +2,7 @@ package br.com.camiloporto.cloudfinance.helpers;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -34,6 +36,7 @@ public class DataInsertionHelper {
 	
 	public static final File ACCOUNT_DATA = new File("src/test/resources/br/com/camiloporto/cloudfinance/service/AccountInsertionTestData");
 	public static final File TRANSACTION_DATA = new File("src/test/resources/br/com/camiloporto/cloudfinance/service/TransactionInsertionTestData");
+	public static final File TRANSACTION_UI_FORM_DATA = new File("src/test/resources/br/com/camiloporto/cloudfinance/ui/mobile/TransactionFormTestData");
 	
 	@Autowired
 	private TransactionManager transactionManager;
@@ -78,6 +81,19 @@ public class DataInsertionHelper {
 		for (String[] fields : records) {
 			insertAccount(p, fields);
 		}
+	}
+	
+	public List<String[]> getDataAsArray(File file) throws FileNotFoundException {
+		Scanner scanner = new Scanner(new FileReader(file)).useDelimiter("\\n");
+		List<String[]> result = new ArrayList<String[]>();
+		while(scanner.hasNext()) {
+			String lineRead = scanner.next();
+			if(lineRead.startsWith("#")) {
+				continue;//ignore commented lines
+			}
+			result.add(lineRead.replace("\n", "").split(";"));
+		}
+		return result;
 	}
 
 	private void insertAccount(Profile p, String[] fields) {

@@ -30,6 +30,17 @@ public class StaticReportController {
 	@Autowired
 	private AccountSystemController accountController;
 	
+	@RequestMapping(value = "/balanceSheet", method = RequestMethod.GET)
+	public ModelAndView getBalanceSheet(
+			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@DateTimeFormat(pattern="dd/MM/yyyy") Date balanceDate) {
+		ModelAndView mav = new ModelAndView("mobile-balanceSheet");
+		ReportOperationResponse response = jsonController.getBalanceSheet(logged, rootAccount, balanceDate);
+		mav.getModelMap().addAttribute("response", response);
+		return mav;
+	}
+	
 	@RequestMapping(value = "/statement", method = RequestMethod.GET)
 	public ModelAndView getAccountStatementForm(
 			@ModelAttribute(value="logged") Profile logged, 

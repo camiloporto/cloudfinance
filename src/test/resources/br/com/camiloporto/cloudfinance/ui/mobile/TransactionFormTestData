@@ -1,0 +1,5 @@
+#from ; to ; date ; value ; description
+Salario ; Conta Corrente; 10/09/2013 ; 1500,00 ; Recebimento de Salario do Mes
+Conta Corrente ; Fundo BB DI; 12/09/2013 ; 500,00 ; Aplicacao Mensal
+Cartao Credito ; Alimentacao ; 15/09/2013 ; 25,00 ; Almoco CEPE
+Conta Corrente ; Aluguel ; 20/09/2013 ; 300,00 ; Aluguel Apartamento 
