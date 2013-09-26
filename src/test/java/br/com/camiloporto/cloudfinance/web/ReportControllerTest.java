@@ -37,6 +37,8 @@ import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.TransactionManager;
+import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
+import br.com.camiloporto.cloudfinance.service.utils.DateUtils;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -207,6 +209,23 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGetBalanceSheet_NoJs() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
+				.session(mockSession)
+				.param("date", "20/09/2013")
+			);
+		
+		ModelAndView modelAndView = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		
+		ReportOperationResponse ror = (ReportOperationResponse) modelAndView.getModelMap().get("response");
+		BalanceSheet balance = ror.getBalanceSheet();
+		Assert.assertNotNull(balance, "balance should not be null");
+		Assert.assertNotNull(balance.getBalanceDate(), "balance date should not be null");
+	}
+	
+	@Test
 	public void shouldGetAccountStatement_NoJS() throws Exception {
 		ResultActions response = mockMvc.perform(get("/report/statement")
 				.session(mockSession)
@@ -242,8 +261,35 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 		ReportOperationResponse ror = (ReportOperationResponse) mav.getModelMap().get("response");
 		Assert.assertNotNull(ror, "response object should be present");
 		Assert.assertNotNull(ror.getAccountList(), "account list for statement should be present");
+	}
+	
+	@Test
+	public void shouldGoToBalanceSheetHomePage() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
+				.session(mockSession)
+			);
 		
+		response
+			.andExpect(status().isOk())
+			.andExpect(view().name("mobile-balanceSheet"))
+			.andReturn().getModelAndView();
 		
+	}
+	
+	@Test
+	public void shouldShowBindingErrorsWhenGetBalanceSheet_NoJs() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
+				.session(mockSession)
+				.param("balanceDate", "InvalidDate")
+			);
+		
+		ModelAndView modelAndView = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		
+		ReportOperationResponse ror = (ReportOperationResponse) modelAndView.getModelMap().get("response");
+		Assert.assertFalse(ror.isSuccess(), "balance sheet should not succeed with invalid date");
+		Assert.assertEquals(ror.getErrors()[0], "Informe uma data válida para o balanço", "error message did not match");
 	}
 	
 	@Test

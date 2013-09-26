@@ -1,5 +1,6 @@
 package br.com.camiloporto.cloudfinance.ui.mobile;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -91,6 +92,22 @@ public class AbstractWUITest {
 			//thats OK. user may not be logged in
 			e.printStackTrace();
 		}
+	}
+
+	protected String generateSampleUserLogin() {
+		return randonString() + "@email.com";
+	}
+
+	private String randonString() {
+		StringBuilder random = new StringBuilder();
+//		for(int i = 0; i < 5; i++) {
+			random.append(new Random().nextInt());
+//		}
+		return random.toString();
+	}
+
+	protected String generateSampleUserPass() {
+		return randonString();
 	}
 
 }

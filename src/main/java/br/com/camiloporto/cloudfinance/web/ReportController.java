@@ -1,16 +1,22 @@
 package br.com.camiloporto.cloudfinance.web;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -32,6 +38,9 @@ public class ReportController {
 	
 	@Autowired
 	private BalanceSheetManager balanceSheetManager;
+	
+	@Autowired
+	private MessageSource messageSource;
 	
 	private Clock clock = new Clock();
 	
@@ -57,28 +66,46 @@ public class ReportController {
 	
 	@RequestMapping(value = "/balancesheet", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ReportOperationResponse getBalanceSheet(
+			HttpServletRequest request,
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
-			@RequestParam(required=false) @DateTimeFormat(pattern="dd/MM/yyyy") Date date) {
+			@ModelAttribute(value = "balanceSheetForm") BalanceSheetForm form, BindingResult errors) {
 
-		date = getDefaultDateIfNeeded(date);
 		ReportOperationResponse response = new ReportOperationResponse(false);
-		try {
-			BalanceSheet balanceSheet = balanceSheetManager.getBalanceSheet(logged, rootAccount.getId(), date);
-			response.setSuccess(true);
-			response.setBalanceSheet(balanceSheet);
-		} catch (ConstraintViolationException e) {
-			response = new ReportOperationResponse(e);
+		
+		if(errors.hasErrors()) {
+			String[] errorMessages = getBindingErrorMessages(errors, request.getLocale()).toArray(new String[]{});
+			response.setErrors(errorMessages);
+		} else {
+			Date date = getDefaultDateIfNeeded(form);
+			
+			try {
+				BalanceSheet balanceSheet = balanceSheetManager.getBalanceSheet(logged, rootAccount.getId(), date);
+				response.setSuccess(true);
+				response.setBalanceSheet(balanceSheet);
+			} catch (ConstraintViolationException e) {
+				response = new ReportOperationResponse(e);
+			}
+			
 		}
+		
 		
 		return response;
 	}
+	
+	private List<String> getBindingErrorMessages(BindingResult errors, Locale locale) {
+		List<String> result = new ArrayList<String>();
+		for (ObjectError error : errors.getAllErrors()) {
+			result.add(messageSource.getMessage(error, locale));
+		}
+		return result;
+	}
 
-	private Date getDefaultDateIfNeeded(Date date) {
-		if(date == null) {
+	private Date getDefaultDateIfNeeded(BalanceSheetForm form) {
+		if(form.getBalanceDate() == null) {
 			return clock.today().getTime();
 		}
-		return date;
+		return form.getBalanceDate();
 	}
 
 }
