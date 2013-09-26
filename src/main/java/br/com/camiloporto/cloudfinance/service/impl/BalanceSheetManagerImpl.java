@@ -16,6 +16,7 @@ import br.com.camiloporto.cloudfinance.repository.AccountEntryRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
+import br.com.camiloporto.cloudfinance.service.AccountStatementManager;
 import br.com.camiloporto.cloudfinance.service.BalanceSheetManager;
 import br.com.camiloporto.cloudfinance.service.utils.DateUtils;
 
@@ -33,6 +34,9 @@ public class BalanceSheetManagerImpl implements BalanceSheetManager {
 	
 	@Autowired
 	private AccountManager accountManager;
+	
+	@Autowired
+	private AccountStatementManager accountStatementManager;
 	
 	@Override
 	public BalanceSheet getBalanceSheet(Profile profile, Long rootAccountId, Date date) {
@@ -73,7 +77,7 @@ public class BalanceSheetManagerImpl implements BalanceSheetManager {
 			Date date) {
 		List<Account> childrenAccounts = accountRepository.findByParentAccount(sheetNode.getAccount());
 		if(childrenAccounts.isEmpty()) {
-			BigDecimal balance = accountEntryRepository.sumBetween(DateUtils.LOWEST_DATE, date, sheetNode.getAccount());
+			BigDecimal balance = accountStatementManager.getAccountBalanceOn(sheetNode.getAccount(), date);
 			sheetNode.setBalance(balance);
 		} else {
 			for (Account account : childrenAccounts) {
