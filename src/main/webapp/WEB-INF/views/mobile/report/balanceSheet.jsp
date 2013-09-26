@@ -9,6 +9,11 @@
 <section>
 	<h2>Balanço</h2>
 	<form id="balanceForm" action="${balanceUrl}" method="GET">
+		<ul id="errors">
+			<c:forEach var="error" items="${response.errors}">
+				<li>${error}</li>
+			</c:forEach>
+		</ul>
 		<input name="balanceDate" placeholder="Data do Balanço" type="text">
 		<input type="submit" value="Balanço">
 	</form>

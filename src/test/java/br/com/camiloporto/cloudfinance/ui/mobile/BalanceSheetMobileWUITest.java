@@ -101,4 +101,19 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 			.balanceEntry("Passivos", "-25,00")
 			.arePresent();
 	}
+	
+	@Test
+	public void shouldShowErrorsOnScreen() {
+		//given a logged user and some transactions saved...
+		loginTestUser(sampleUserLogin, sampleUserPass);
+		goToPath("/report/balanceSheet");
+		BalanceSheetPage balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.fillBalanceDate("invalidDate");
+		balanceSheetPage.submit();
+		
+		//FIXME fazer esse teste passar. capturar erro de binding do spring e converter em erro amigavel.
+		balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.assertIsOnPage();
+		balanceSheetPage.assertHasErrorMessages();
+	}
 }

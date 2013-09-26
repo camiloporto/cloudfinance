@@ -277,6 +277,22 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldShowBindingErrorsWhenGetBalanceSheet_NoJs() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
+				.session(mockSession)
+				.param("balanceDate", "InvalidDate")
+			);
+		
+		ModelAndView modelAndView = response
+			.andExpect(status().isOk())
+			.andReturn().getModelAndView();
+		
+		ReportOperationResponse ror = (ReportOperationResponse) modelAndView.getModelMap().get("response");
+		Assert.assertFalse(ror.isSuccess(), "balance sheet should not succeed with invalid date");
+		Assert.assertEquals(ror.getErrors()[0], "Informe uma data válida para o balanço", "error message did not match");
+	}
+	
+	@Test
 	public void shouldFailIfErrorOccurWhenGetAccountStatement() throws Exception {
 		final String emptyAccountId = "";
 		

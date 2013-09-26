@@ -2,9 +2,12 @@ package br.com.camiloporto.cloudfinance.web.purehtml;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,9 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.Profile;
-import br.com.camiloporto.cloudfinance.web.AccountController;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 import br.com.camiloporto.cloudfinance.web.AccountSystemController;
+import br.com.camiloporto.cloudfinance.web.BalanceSheetForm;
 import br.com.camiloporto.cloudfinance.web.ReportController;
 import br.com.camiloporto.cloudfinance.web.ReportOperationResponse;
 
@@ -32,11 +35,12 @@ public class StaticReportController {
 	
 	@RequestMapping(value = "/balanceSheet", method = RequestMethod.GET)
 	public ModelAndView getBalanceSheet(
+			HttpServletRequest request,
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="rootAccount") Account rootAccount,
-			@DateTimeFormat(pattern="dd/MM/yyyy") Date balanceDate) {
+			@ModelAttribute(value = "balanceSheetForm") BalanceSheetForm form, BindingResult errors) {
 		ModelAndView mav = new ModelAndView("mobile-balanceSheet");
-		ReportOperationResponse response = jsonController.getBalanceSheet(logged, rootAccount, balanceDate);
+		ReportOperationResponse response = jsonController.getBalanceSheet(request, logged, rootAccount, form, errors);
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
 	}
@@ -69,5 +73,5 @@ public class StaticReportController {
 		mav.getModelMap().addAttribute("response", ror);
 		return mav;
 	}
-
+	
 }
