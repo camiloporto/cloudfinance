@@ -1,6 +1,9 @@
 package br.com.camiloporto.cloudfinance.service;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -138,6 +142,34 @@ public class AccountStatementManagerTest extends AbstractCloudFinanceDatabaseTes
 				tx04Date.getTime(), tx04Amount, 
 				"t4");
 		
+	}
+	
+	@Test
+	public void shouldCalculateAccountBalanceOnDate() {
+		BigDecimal balance = accountStatementService.getAccountBalanceOn(bank, tx02Date.getTime());
+		Assert.assertEquals(balance, new BigDecimal("800.00"));
+	}
+	
+	
+	@Test
+	public void shouldGetZeroBalanceIfDoesNotHaveTransactionBeforeGivenDate() throws ParseException {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		Date old = df.parse("01/01/2000");
+		BigDecimal balance = accountStatementService.getAccountBalanceOn(bank, old);
+		Assert.assertEquals(balance, new BigDecimal("0.00"));
+	}
+	
+	@Test
+	public void shouldGetZeroAccountStatementIfDoesNotHaveTransactionOnGivenPeriod() throws ParseException {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		Date oldBegin = df.parse("01/01/2000");
+		Date oldEnd = df.parse("01/02/2000");
+		AccountStatement accountStatement = accountStatementService.getAccountStatement(profile, bank.getId(), oldBegin, oldEnd);
+		new AccountStatementChecker()
+			.forStatement(accountStatement)
+			.assertBalanceBefore(new BigDecimal("0.0"))
+			.assertBalanceAfter(new BigDecimal("0.00"))
+			.assertOperationalBalance(new BigDecimal("0.00"));
 	}
 	
 	@Test

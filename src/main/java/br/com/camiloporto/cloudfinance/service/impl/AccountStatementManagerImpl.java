@@ -83,8 +83,8 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 		begin = getDefaultBeginIfNeeded(begin);
 		end = getDefaultEndIfNeeded(end);
 		
-		BigDecimal balanceBefore = accountEntryRepository.sumBetween(LOWEST_DATE, getBefore(begin), account);
-		BigDecimal operationalBalance = accountEntryRepository.sumBetween(begin, end, account);
+		BigDecimal balanceBefore = getAccountBalanceOn(account, getBefore(begin));
+		BigDecimal operationalBalance = getAccountOperationalBalanceBetween(account, begin, end);
 		BigDecimal balanceAfter = balanceBefore.add(operationalBalance);
 		as.setBalanceBeforeInterval(balanceBefore);
 		as.setOperationalBalance(operationalBalance);
@@ -94,6 +94,22 @@ public class AccountStatementManagerImpl implements AccountStatementManager {
 		List<AccountTransaction> entries = accountTransactionRepository.findByAccountAndDateBetween(account, begin, end);
 		as.setTransactions(entries);
 		return as;
+	}
+	
+	public BigDecimal getAccountBalanceOn(Account a, Date date) {
+		BigDecimal balance = accountEntryRepository.sumBetween(LOWEST_DATE, date, a);
+		if(balance == null) {
+			balance = new BigDecimal("0.00");
+		}
+		return balance;
+	}
+	
+	public BigDecimal getAccountOperationalBalanceBetween(Account a, Date begin, Date end) {
+		BigDecimal balance = accountEntryRepository.sumBetween(begin, end, a);
+		if(balance == null) {
+			balance = new BigDecimal("0.00");
+		}
+		return balance;
 	}
 	
 	

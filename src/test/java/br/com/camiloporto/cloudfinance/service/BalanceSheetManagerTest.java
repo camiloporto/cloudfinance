@@ -70,6 +70,24 @@ public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldNotFailIfAnAccountDoNotHaveTransactionOnGivenBalanceInterval() throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		//no transactions until this date. All balances should be zero
+		Date date = sdf.parse("20/09/2001");
+		
+		BalanceSheet balanceSheet = balanceSheetManager.getBalanceSheet(profile, root.getId(), date);
+		Assert.assertNotNull(balanceSheet, "balance sheet should not be null");
+		Map<String, BigDecimal> expectedAccountBalances = new HashMap<String, BigDecimal>();
+		expectedAccountBalances.put("Conta Corrente", new BigDecimal("0.00"));
+		expectedAccountBalances.put("Cartao Credito", new BigDecimal("0.00"));
+		expectedAccountBalances.put(Account.ASSET_NAME, new BigDecimal("0.00"));
+		expectedAccountBalances.put(Account.LIABILITY_NAME, new BigDecimal("0.00"));
+		expectedAccountBalances.put("Fundo BB DI", new BigDecimal("0.00"));
+		checkAccountBalances(balanceSheet, expectedAccountBalances);
+	}
+	
+	@Test
 	public void shouldRequireDateToGetBalanceSheet() throws ParseException {
 		Date date = null;
 		
