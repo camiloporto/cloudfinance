@@ -266,6 +266,18 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGoToReportHomePage() throws Exception {
+		ResultActions response = mockMvc.perform(get("/report")
+				.session(mockSession)
+			);
+		
+		ModelAndView mav = response
+			.andExpect(status().isOk())
+			.andExpect(view().name("mobile-reportHome"))
+			.andReturn().getModelAndView();
+	}
+	
+	@Test
 	public void shouldGoToBalanceSheetHomePage() throws Exception {
 		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
 				.session(mockSession)

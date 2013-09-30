@@ -9,7 +9,10 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.ui.mobile.page.AccountHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.AccountStatementPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.BalanceSheetPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.FormNewAccountPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.ReportHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.TemplatePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionDetailPage;
@@ -19,7 +22,7 @@ import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionHomePage;
 public class NavigationMobileWUITest extends AbstractWUITest {
 	
 	@Test
-	public void shouldLandInRootAccountPageAfterLogin() {
+	public void shouldLandInAccountSystemPageAfterLogin() {
 		loginExistentUser();
 		TemplatePage rootAccountPage = PageFactory.initElements(driver, RootAccountHomePage.class);
 		rootAccountPage.assertIsOnPage();
@@ -103,7 +106,32 @@ public class NavigationMobileWUITest extends AbstractWUITest {
 		//from SISTEMA_CONTAS should go to root accounts home page
 		testData.add(new Object[] {TemplatePage.SISTEMA_DE_CONTAS, RootAccountHomePage.class});
 		testData.add(new Object[] {TemplatePage.TRANSACOES, TransactionHomePage.class});
+		testData.add(new Object[] {TemplatePage.RELATORIOS, ReportHomePage.class});
 		
 		return testData.iterator();
+	}
+	
+	@Test
+	public void reportPageSubMenuShouldHaveLinkToAccountStatementPage() {
+		loginExistentUser();
+		goToPath("/report");
+		
+		ReportHomePage reportHomePage = PageFactory.initElements(driver, ReportHomePage.class);
+		reportHomePage.clickAccountStatementMenuOption();
+		AccountStatementPage accountStatementPage = PageFactory.initElements(driver, AccountStatementPage.class);
+		accountStatementPage.assertIsOnPage();
+		
+	}
+	
+	@Test
+	public void reportPageSubMenuShouldHaveLinkToBalanceSheetPage() {
+		loginExistentUser();
+		goToPath("/report");
+		
+		ReportHomePage reportHomePage = PageFactory.initElements(driver, ReportHomePage.class);
+		reportHomePage.clickBalanceSheetMenuOption();
+		BalanceSheetPage balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.assertIsOnPage();
+		
 	}
 }
