@@ -9,6 +9,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.ui.mobile.page.AccountHomePage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.AccountStatementPage;
+import br.com.camiloporto.cloudfinance.ui.mobile.page.BalanceSheetPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.FormNewAccountPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.ReportHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
@@ -107,5 +109,29 @@ public class NavigationMobileWUITest extends AbstractWUITest {
 		testData.add(new Object[] {TemplatePage.RELATORIOS, ReportHomePage.class});
 		
 		return testData.iterator();
+	}
+	
+	@Test
+	public void reportPageSubMenuShouldHaveLinkToAccountStatementPage() {
+		loginExistentUser();
+		goToPath("/report");
+		
+		ReportHomePage reportHomePage = PageFactory.initElements(driver, ReportHomePage.class);
+		reportHomePage.clickAccountStatementMenuOption();
+		AccountStatementPage accountStatementPage = PageFactory.initElements(driver, AccountStatementPage.class);
+		accountStatementPage.assertIsOnPage();
+		
+	}
+	
+	@Test
+	public void reportPageSubMenuShouldHaveLinkToBalanceSheetPage() {
+		loginExistentUser();
+		goToPath("/report");
+		
+		ReportHomePage reportHomePage = PageFactory.initElements(driver, ReportHomePage.class);
+		reportHomePage.clickBalanceSheetMenuOption();
+		BalanceSheetPage balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.assertIsOnPage();
+		
 	}
 }
