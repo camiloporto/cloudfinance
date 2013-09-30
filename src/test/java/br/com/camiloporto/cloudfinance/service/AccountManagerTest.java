@@ -320,6 +320,14 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGetAccountSystemsbyId() {
+		List<AccountSystem> roots = accountManager.findAccountSystems(profile);
+		Long id = roots.get(0).getId();
+		AccountSystem as = accountManager.findAccountSystem(id);
+		Assert.assertEquals(as.getId(), id, "found id not match expected result");
+	}
+	
+	@Test
 	public void shouldListAllAccountSystemsOfAProfile() {
 		List<AccountSystem> roots = accountManager.findAccountSystems(profile);
 		

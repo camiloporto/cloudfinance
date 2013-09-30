@@ -81,16 +81,16 @@ public class AccountSystemController {
 		return response;
 	}
 
-	@RequestMapping(value = "/{rootAccountId}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody AccountOperationResponse setActiveRootAccount(
+	@RequestMapping(value = "/{activeAccountSystem}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody AccountOperationResponse setActiveAccountSystem(
 			@ModelAttribute(value="logged") Profile logged,
-			@PathVariable Long rootAccountId, 
+			@PathVariable Long activeAccountSystem, 
 			ModelMap map) {
-		Account a = accountManager.findAccount(rootAccountId);
+		AccountSystem as = accountManager.findAccountSystem(activeAccountSystem);
 		AccountOperationResponse response = new AccountOperationResponse(false);
-		if(a != null && isRoot(a)) {
-			map.addAttribute("rootAccount", a);
-			response.setAccount(a);
+		if(as != null) {
+			map.addAttribute("activeAccountSystem", as);
+			response.setAccountSystem(as);
 			response = new AccountOperationResponse(true);
 		}
 		return response;
@@ -99,12 +99,8 @@ public class AccountSystemController {
 	@RequestMapping(method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody AccountOperationResponse getRootAccountBranch(
 			@ModelAttribute(value="logged")  Profile logged,
-			@ModelAttribute(value="rootAccount")  Account rootAccount) {
-		return getAccountBranch(logged, rootAccount.getId());
-	}
-
-	private boolean isRoot(Account a) {
-		return a.getParentAccount() == null;
+			@ModelAttribute(value="activeAccountSystem")  AccountSystem activeAccountSystem) {
+		return getAccountBranch(logged, activeAccountSystem.getRootAccount().getId());
 	}
 
 }

@@ -35,6 +35,7 @@ import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -49,6 +50,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
     private MockMvc mockMvc;
     private MockHttpSession mockSession;
     private Integer rootAccountId;
+    private Integer accountSystemId;
 
     @BeforeMethod
     public void setup() throws Exception {
@@ -69,6 +71,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
+		accountSystemId = JsonPath.read(json, "$.accountSystems[0].id");
     }
 	
 	@Test
@@ -155,9 +158,9 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
-	public void shouldRedirectToAccountHomeAfterSelectRootAccount_NoJs() throws Exception {
+	public void shouldRedirectToAccountHomeAfterSelectActiveAccountSystem_NoJs() throws Exception {
 		//sets the active root accountId
-		ResultActions response = mockMvc.perform(get("/account/" + rootAccountId)
+		ResultActions response = mockMvc.perform(get("/account/" + this.accountSystemId)
 				.session(mockSession)
 			);
 		
@@ -185,9 +188,9 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
-	public void shouldRedirectToRootAccountHomeIfNoRootAccountSelectedTryingAccountHome_NoJs() throws Exception {
-		mockSession.removeAttribute("rootAccount");
-		//try to get account home, with no selected root account
+	public void shouldRedirectToAccountSystemHomeIfNoAccountSystemActivatedWhenTryingAccountHome_NoJs() throws Exception {
+		mockSession.removeAttribute("activeAccountSystem");
+		//try to get account home, with no active account system
 		ResultActions response = mockMvc.perform(get("/account")
 				.session(mockSession)
 			);

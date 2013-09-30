@@ -22,6 +22,10 @@ public class AccountManagerImpl implements AccountManager {
 		return accountRepository.findLeavesFromRootAccountId(rootAccountId);
 	}
 	
+	public AccountSystem findAccountSystem(Long id) {
+		return accountSystemRepository.findOne(id);
+	}
+	
 	private void checkFindAllLeavesEntries(Profile profile, Long accountId) {
 		AccountManagerConstraint constraints = new AccountManagerConstraint();
 		Account account = new Account();

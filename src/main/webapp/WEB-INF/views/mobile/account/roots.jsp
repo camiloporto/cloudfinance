@@ -5,8 +5,8 @@
 <section>
 	<h2>Sistemas de Contas</h2>
 	<ul id="rootAccountList">
-		<c:forEach var="account" items="${response.rootAccounts}">
-			<li><a href="${accountURL}/${account.id}">${account.name}</a></li>
+		<c:forEach var="accountSystem" items="${response.accountSystems}">
+			<li><a href="${accountURL}/${accountSystem.id}">${accountSystem.rootAccount.name}</a></li>
 		</c:forEach>
 	</ul>
 </section>

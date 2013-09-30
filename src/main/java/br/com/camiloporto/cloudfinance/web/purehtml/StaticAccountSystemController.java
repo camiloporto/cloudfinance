@@ -43,12 +43,12 @@ public class StaticAccountSystemController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/{rootAccountId}", method = RequestMethod.GET)
-	public ModelAndView setActiveRootAccount(
+	@RequestMapping(value = "/{accountSystemId}", method = RequestMethod.GET)
+	public ModelAndView setActiveAccountSystem(
 			@ModelAttribute(value="logged") Profile logged,
-			@PathVariable Long rootAccountId,
+			@PathVariable Long accountSystemId,
 			ModelMap map) {
-		AccountOperationResponse response = jsonController.setActiveRootAccount(logged, rootAccountId, map);
+		AccountOperationResponse response = jsonController.setActiveAccountSystem(logged, accountSystemId, map);
 		ModelAndView mav = new ModelAndView();
 		if(response.isSuccess()) {
 			mav.setViewName("redirect:/account");
@@ -60,9 +60,9 @@ public class StaticAccountSystemController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getRootAccountBranch(
 			@ModelAttribute(value="logged")  Profile logged,
-			@ModelAttribute(value="rootAccount")  Account rootAccount) {
+			@ModelAttribute(value="activeAccountSystem")  AccountSystem activeAccountSystem) {
 		ModelAndView mav =  new ModelAndView();
-		mav.setViewName("redirect:/account/tree/" + rootAccount.getId());
+		mav.setViewName("redirect:/account/tree/" + activeAccountSystem.getRootAccount().getId());
 		return mav;
 		
 	}
@@ -110,7 +110,7 @@ public class StaticAccountSystemController {
 	@ExceptionHandler(HttpSessionRequiredException.class)
 	public ModelAndView catchRootAccountSessionAttributeRequired(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
-		if(request.getSession().getAttribute("rootAccount") == null) {
+		if(request.getSession().getAttribute("activeAccountSystem") == null) {
 			AccountOperationResponse aor = new AccountOperationResponse(false);
 			aor.setErrors(new String[]{"Um sistema de contas deve ser selecionado"});
 			mav.getModelMap().addAttribute("response", aor);

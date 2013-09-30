@@ -20,6 +20,8 @@ public class AccountOperationResponse extends AbstractOperationResponse {
 	private AccountNode accountTree;
 	
 	private Account account;
+	
+	private AccountSystem accountSystem;
 
 	public AccountOperationResponse(boolean success) {
 		super(success);

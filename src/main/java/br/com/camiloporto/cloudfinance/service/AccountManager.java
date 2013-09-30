@@ -25,4 +25,6 @@ public interface AccountManager {
 
 	List<AccountSystem> findAccountSystems(Profile profile);
 
+	AccountSystem findAccountSystem(Long id);
+
 }

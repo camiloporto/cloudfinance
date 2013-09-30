@@ -52,6 +52,9 @@ public class DataInsertionHelper {
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	private AccountSystem accountSystem;
 	
+	public DataInsertionHelper() {
+	}
+	
 	public DataInsertionHelper(AccountSystem accountSystem) {
 		this.accountSystem = accountSystem;
 		this.rootAccount = accountSystem.getRootAccount();

@@ -50,4 +50,12 @@ privileged aspect AccountOperationResponse_Roo_JavaBean {
         this.account = account;
     }
     
+    public AccountSystem AccountOperationResponse.getAccountSystem() {
+        return this.accountSystem;
+    }
+    
+    public void AccountOperationResponse.setAccountSystem(AccountSystem accountSystem) {
+        this.accountSystem = accountSystem;
+    }
+    
 }
