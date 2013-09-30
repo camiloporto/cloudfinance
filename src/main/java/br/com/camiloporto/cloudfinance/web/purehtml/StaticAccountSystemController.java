@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
@@ -25,7 +26,7 @@ import br.com.camiloporto.cloudfinance.web.MediaTypeApplicationJsonUTF8;
 
 @RequestMapping("/account")
 @Controller
-@SessionAttributes(value = {"logged", "rootAccount"})
+@SessionAttributes(value = {"logged", "rootAccount", "activeAccountSystem"})
 public class StaticAccountSystemController {
 	
 	@Autowired
@@ -37,17 +38,17 @@ public class StaticAccountSystemController {
 	@RequestMapping(value = "/roots", method = RequestMethod.GET)
 	public ModelAndView getRootAccounts(@ModelAttribute(value="logged") Profile logged) {
 		ModelAndView mav = new ModelAndView("mobile-rootAccountHome");
-		AccountOperationResponse response = jsonController.getRootAccounts(logged);
+		AccountOperationResponse response = jsonController.getAccountSystems(logged);
 		mav.getModel().put("response", response);
 		return mav;
 	}
 	
-	@RequestMapping(value = "/{rootAccountId}", method = RequestMethod.GET)
-	public ModelAndView setActiveRootAccount(
+	@RequestMapping(value = "/{accountSystemId}", method = RequestMethod.GET)
+	public ModelAndView setActiveAccountSystem(
 			@ModelAttribute(value="logged") Profile logged,
-			@PathVariable Long rootAccountId,
+			@PathVariable Long accountSystemId,
 			ModelMap map) {
-		AccountOperationResponse response = jsonController.setActiveRootAccount(logged, rootAccountId, map);
+		AccountOperationResponse response = jsonController.setActiveAccountSystem(logged, accountSystemId, map);
 		ModelAndView mav = new ModelAndView();
 		if(response.isSuccess()) {
 			mav.setViewName("redirect:/account");
@@ -59,9 +60,9 @@ public class StaticAccountSystemController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getRootAccountBranch(
 			@ModelAttribute(value="logged")  Profile logged,
-			@ModelAttribute(value="rootAccount")  Account rootAccount) {
+			@ModelAttribute(value="activeAccountSystem")  AccountSystem activeAccountSystem) {
 		ModelAndView mav =  new ModelAndView();
-		mav.setViewName("redirect:/account/tree/" + rootAccount.getId());
+		mav.setViewName("redirect:/account/tree/" + activeAccountSystem.getRootAccount().getId());
 		return mav;
 		
 	}
@@ -80,12 +81,12 @@ public class StaticAccountSystemController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createAccount(
 			@ModelAttribute(value="logged")  Profile logged,
-			@ModelAttribute(value="rootAccount")  Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem")  AccountSystem activeAccountSystem,
 			Account account) {
 		ModelAndView mav = new ModelAndView();
-		AccountOperationResponse response = jsonController.createAccount(logged, rootAccount, account);
+		AccountOperationResponse response = jsonController.createAccount(logged, activeAccountSystem, account);
 		if(response.isSuccess()) {
-			mav.setViewName("redirect:/account/tree/" + rootAccount.getId());
+			mav.setViewName("redirect:/account/tree/" + activeAccountSystem.getRootAccount().getId());
 		} else {
 			mav = new ModelAndView("mobile-newAccountForm");
 		}
@@ -109,7 +110,7 @@ public class StaticAccountSystemController {
 	@ExceptionHandler(HttpSessionRequiredException.class)
 	public ModelAndView catchRootAccountSessionAttributeRequired(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
-		if(request.getSession().getAttribute("rootAccount") == null) {
+		if(request.getSession().getAttribute("activeAccountSystem") == null) {
 			AccountOperationResponse aor = new AccountOperationResponse(false);
 			aor.setErrors(new String[]{"Um sistema de contas deve ser selecionado"});
 			mav.getModelMap().addAttribute("response", aor);

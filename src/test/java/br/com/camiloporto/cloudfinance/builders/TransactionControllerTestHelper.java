@@ -44,7 +44,7 @@ public class TransactionControllerTestHelper {
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
 		
-		Integer rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		Integer rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		
 		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
 				.session(mockSession)

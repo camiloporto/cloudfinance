@@ -1,8 +1,6 @@
 package br.com.camiloporto.cloudfinance.web;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,16 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.TransactionManager;
 
 @RequestMapping("/transaction")
 @Controller
-@SessionAttributes(value = {"logged", "rootAccount"})
+@SessionAttributes(value = {"logged", "activeAccountSystem"})
 public class TransactionController {
 	
 	@Autowired
@@ -81,7 +78,7 @@ public class TransactionController {
 	@RequestMapping(value = "/{transactionId}", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody TransactionOperationResponse getById(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@PathVariable Long transactionId) {
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
 		try {
@@ -99,14 +96,14 @@ public class TransactionController {
 	@RequestMapping(method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody TransactionOperationResponse getTransactions(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
 		
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
 		try {
 			List<AccountTransaction> result = 
-					transactionManager.findAccountTransactionByDateBetween(logged, rootAccount.getId(), begin, end);
+					transactionManager.findAccountTransactionByDateBetween(logged, activeAccountSystem.getRootAccount().getId(), begin, end);
 			response = new TransactionOperationResponse(true, result);
 		} catch(ConstraintViolationException e) {
 			response = new TransactionOperationResponse(e);
@@ -117,13 +114,13 @@ public class TransactionController {
 	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody TransactionOperationResponse delete(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			Long id
 			) {
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
 		//FIXME verificar por que na remocao de uma transacao, a rootAccount eh alterada
 		try {
-			transactionManager.deleteAccountTransaction(logged, rootAccount.getId(), id);
+			transactionManager.deleteAccountTransaction(logged, activeAccountSystem.getRootAccount().getId(), id);
 			response.setSuccess(true);
 		} catch(ConstraintViolationException e) {
 			response = new TransactionOperationResponse(e);

@@ -82,7 +82,7 @@ public class TransactionControllerTest extends AbstractCloudFinanceDatabaseTest 
 				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
-		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		
 		testHelper = new TransactionControllerTestHelper(mockMvc, mockSession)
 			.signUpAndLogUser(userName, userPass, userConfirmPass);

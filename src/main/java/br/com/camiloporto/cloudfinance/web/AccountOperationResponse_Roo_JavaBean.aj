@@ -4,6 +4,7 @@
 package br.com.camiloporto.cloudfinance.web;
 
 import br.com.camiloporto.cloudfinance.model.AccountNode;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 
@@ -15,6 +16,14 @@ privileged aspect AccountOperationResponse_Roo_JavaBean {
     
     public void AccountOperationResponse.setRootAccounts(Account[] rootAccounts) {
         this.rootAccounts = rootAccounts;
+    }
+    
+    public AccountSystem[] AccountOperationResponse.getAccountSystems() {
+        return this.accountSystems;
+    }
+    
+    public void AccountOperationResponse.setAccountSystems(AccountSystem[] accountSystems) {
+        this.accountSystems = accountSystems;
     }
     
     public Account[] AccountOperationResponse.getLeafAccounts() {
@@ -39,6 +48,14 @@ privileged aspect AccountOperationResponse_Roo_JavaBean {
     
     public void AccountOperationResponse.setAccount(Account account) {
         this.account = account;
+    }
+    
+    public AccountSystem AccountOperationResponse.getAccountSystem() {
+        return this.accountSystem;
+    }
+    
+    public void AccountOperationResponse.setAccountSystem(AccountSystem accountSystem) {
+        this.accountSystem = accountSystem;
     }
     
 }

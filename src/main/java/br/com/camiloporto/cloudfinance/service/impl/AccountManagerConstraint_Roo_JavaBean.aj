@@ -42,4 +42,12 @@ privileged aspect AccountManagerConstraint_Roo_JavaBean {
         this.account = account;
     }
     
+    public Account AccountManagerConstraint.getRootAccount() {
+        return this.rootAccount;
+    }
+    
+    public void AccountManagerConstraint.setRootAccount(Account rootAccount) {
+        this.rootAccount = rootAccount;
+    }
+    
 }

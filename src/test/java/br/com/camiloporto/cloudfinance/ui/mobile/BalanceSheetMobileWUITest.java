@@ -3,8 +3,6 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,7 +38,7 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 		loginTestUser(sampleUserLogin, sampleUserPass);
 		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver, RootAccountHomePage.class);
 		rootAccountPage.selectRootAccount(sampleUserLogin);
-		List<String[]> accountList = new DataInsertionHelper(null).getDataAsArray(DataInsertionHelper.ACCOUNT_DATA);
+		List<String[]> accountList = new DataInsertionHelper().getDataAsArray(DataInsertionHelper.ACCOUNT_DATA);
 		for (String[] line : accountList) {
 			AccountHomePage accountHomePage = PageFactory.initElements(driver, AccountHomePage.class);
 			accountHomePage.clickOnAccountLink(escapeRootAccounts(line[0].trim()));
@@ -48,7 +46,7 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 			newAccountForm.fillNewAccount(line[1].trim(), line[1] + " description").submitForm();
 		}
 		
-		List<String[]> transactionList = new DataInsertionHelper(null).getDataAsArray(DataInsertionHelper.TRANSACTION_UI_FORM_DATA);
+		List<String[]> transactionList = new DataInsertionHelper().getDataAsArray(DataInsertionHelper.TRANSACTION_UI_FORM_DATA);
 		
 		for (String[] data : transactionList) {
 			goToPath("/transaction/newForm?lang=pt_BR");

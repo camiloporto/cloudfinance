@@ -12,7 +12,7 @@ public interface AccountRepository {
 
 	List<Account> findByParentAccount(Account parentAccount);
 
-	Account findByName(String name);
+	Account findByNameAndRootAccount(String name, Account rootAccount);
 	
 	@Query("SELECT a FROM Account a WHERE a.rootAccount.id = ?1 AND a.id NOT IN (" +
 			" SELECT DISTINCT a2.parentAccount.id FROM Account a2 WHERE a2.parentAccount.id IS NOT NULL" +

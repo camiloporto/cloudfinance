@@ -2,7 +2,6 @@ package br.com.camiloporto.cloudfinance.web;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
 
@@ -16,14 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @RequestMapping("/user")
 @Controller
-@SessionAttributes(value={"logged", "rootAccount"})
+@SessionAttributes(value={"logged", "activeAccountSystem"})
 public class UserProfileController {
 	
 	@Autowired
@@ -76,7 +75,7 @@ public class UserProfileController {
 	}
 
 	private void setDefaultRootAccount(Profile logged, ModelMap map) {
-		List<Account> rootAccounts = accountManager.findRootAccounts(logged);
-		map.addAttribute("rootAccount", rootAccounts.get(0));
+		List<AccountSystem> accountSystems = accountManager.findAccountSystems(logged);
+		map.addAttribute("activeAccountSystem", accountSystems.get(0));
 	}
 }

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountRepository;
@@ -49,9 +50,14 @@ public class DataInsertionHelper {
 	
 	private Account rootAccount;
 	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private AccountSystem accountSystem;
 	
-	public DataInsertionHelper(Account rootAccount) {
-		this.rootAccount = rootAccount;
+	public DataInsertionHelper() {
+	}
+	
+	public DataInsertionHelper(AccountSystem accountSystem) {
+		this.accountSystem = accountSystem;
+		this.rootAccount = accountSystem.getRootAccount();
 	}
 	
 	public void insertTransactionsFromFile(Profile p, File file) throws IOException, ParseException {
@@ -68,8 +74,8 @@ public class DataInsertionHelper {
 		String amount = fields[TRANSACTION_AMOUNT_INDEX].trim();
 		String description = fields[TRANSACTION_DESCRIPTION_INDEX].trim();
 		
-		Account origin = accountRepository.findByName(originAccountName);
-		Account dest = accountRepository.findByName(destAccountName);
+		Account origin = accountRepository.findByNameAndRootAccount(originAccountName, this.rootAccount);
+		Account dest = accountRepository.findByNameAndRootAccount(destAccountName, this.rootAccount);
 		Date date = simpleDateFormat.parse(dateStr);
 		BigDecimal value = new BigDecimal(amount);
 		
@@ -99,10 +105,10 @@ public class DataInsertionHelper {
 	private void insertAccount(Profile p, String[] fields) {
 		String fatherName = fields[PARENT_NAME_INDEX].trim();
 		String accountName = fields[ACCOUNT_NAME_INDEX].trim();
-		Account fatherAccount = accountRepository.findByName(fatherName);
+		Account fatherAccount = accountRepository.findByNameAndRootAccount(fatherName, this.rootAccount);
 		Account a = new Account(accountName, fatherAccount);
 		a.setRootAccount(rootAccount);
-		accountManager.saveAccount(p, a);
+		accountManager.saveAccount(p, a, accountSystem);
 	}
 
 	private List<String[]> scanFile(File file, final String fieldPatternSeparator) throws IOException {

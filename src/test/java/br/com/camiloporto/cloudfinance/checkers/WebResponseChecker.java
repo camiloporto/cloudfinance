@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.testng.Assert;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
@@ -57,9 +58,9 @@ public class WebResponseChecker {
 		Assert.assertNull(logged, "user should not be in session");
 	}
 
-	public void assertDefaultAccountTreeWasSetInSession() {
-		Account rootAccount = (Account) mockSession.getAttribute("rootAccount");
-		Assert.assertNotNull(rootAccount, "default root account should be set");
+	public void assertDefaultAccountSystemWasActivatedInSession() {
+		AccountSystem activeAccountSystem = (AccountSystem) mockSession.getAttribute("activeAccountSystem");
+		Assert.assertNotNull(activeAccountSystem, "default account system should be activated");
 	}
 
 }

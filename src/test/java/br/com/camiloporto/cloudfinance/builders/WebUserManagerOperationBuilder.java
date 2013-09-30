@@ -25,6 +25,7 @@ public class WebUserManagerOperationBuilder {
 				.param("userName", userName)
 				.param("pass", userPass)
 				.param("confirmPass", userConfirmPass)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		return this;
 	}
@@ -34,6 +35,7 @@ public class WebUserManagerOperationBuilder {
 				.session(mockSession)
 				.param("userName", userName)
 				.param("pass", userPass)
+				.accept(MediaType.APPLICATION_JSON)
 			);
 		return this;
 	}

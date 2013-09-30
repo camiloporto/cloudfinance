@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 import br.com.camiloporto.cloudfinance.web.AccountSystemController;
@@ -25,7 +25,7 @@ import br.com.camiloporto.cloudfinance.web.TransactionOperationResponse;
 
 @RequestMapping("/transaction")
 @Controller
-@SessionAttributes(value = {"logged", "rootAccount"})
+@SessionAttributes(value = {"logged", "activeAccountSystem"})
 public class StaticTransactionController {
 	
 	@Autowired
@@ -37,11 +37,11 @@ public class StaticTransactionController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTransactions(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
 
-		TransactionOperationResponse response = jsonController.getTransactions(logged, rootAccount, begin, end);
+		TransactionOperationResponse response = jsonController.getTransactions(logged, activeAccountSystem, begin, end);
 		ModelAndView mav = new ModelAndView("mobile-transaction");
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
@@ -50,9 +50,9 @@ public class StaticTransactionController {
 	@RequestMapping(value = "/{transactionId}", method = RequestMethod.GET)
 	public ModelAndView showTransactionDetail(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@PathVariable Long transactionId) {
-		TransactionOperationResponse response = jsonController.getById(logged, rootAccount, transactionId);
+		TransactionOperationResponse response = jsonController.getById(logged, activeAccountSystem, transactionId);
 		ModelAndView mav = new ModelAndView("mobile-transactionDetail");
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
@@ -61,10 +61,10 @@ public class StaticTransactionController {
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public ModelAndView delete(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			Long transactionId
 			) {
-		TransactionOperationResponse response = jsonController.delete(logged, rootAccount, transactionId);
+		TransactionOperationResponse response = jsonController.delete(logged, activeAccountSystem, transactionId);
 		ModelAndView mav = new ModelAndView();
 		if(response.isSuccess()) {
 			mav.setViewName("redirect:/transaction");
@@ -98,8 +98,8 @@ public class StaticTransactionController {
 	@RequestMapping(value = "/newForm", method = RequestMethod.GET)
 	public ModelAndView showNewForm(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount) {
-		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, rootAccount.getId());
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem) {
+		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, activeAccountSystem.getRootAccount().getId());
 		TransactionOperationResponse tor = new TransactionOperationResponse(true);
 		tor.setDestAccountList(aor.getLeafAccounts());
 		tor.setOriginAccountList(aor.getLeafAccounts());

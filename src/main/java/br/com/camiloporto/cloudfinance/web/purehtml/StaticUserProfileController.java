@@ -16,7 +16,7 @@ import br.com.camiloporto.cloudfinance.web.UserProfileController;
 
 @RequestMapping("/user")
 @Controller
-@SessionAttributes(value={"logged", "rootAccount"})
+@SessionAttributes(value={"logged", "activeAccountSystem"})
 public class StaticUserProfileController {
 	
 	@Autowired

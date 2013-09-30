@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
@@ -34,11 +33,11 @@ import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.TransactionManager;
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
-import br.com.camiloporto.cloudfinance.service.utils.DateUtils;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -58,6 +57,8 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
     private WebApplicationContext wac;
 	
 	private Integer rootAccountId;
+	
+	private AccountSystem accountSystem;
 	
 	private MockMvc mockMvc;
     private MockHttpSession mockSession;
@@ -102,20 +103,21 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 		profile = super.userProfileManager.signUp(p);
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
 			.login(userName, userPass);
+		accountSystem = accountManager.findAccountSystems(profile).get(0);
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
 				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
-		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, new Long(rootAccountId));
 		incomes = getByName(rootBranch.getChildren(), Account.INCOME_NAME);
 		bank = getByName(rootBranch.getChildren(), Account.ASSET_NAME);
 		outgoings = getByName(rootBranch.getChildren(), Account.OUTGOING_NAME);
 		
-		accountInsertionHelper = new DataInsertionHelper(rootBranch.getAccount());
+		accountInsertionHelper = new DataInsertionHelper(accountSystem);
 		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
 		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
 		

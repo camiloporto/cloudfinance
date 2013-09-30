@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 import br.com.camiloporto.cloudfinance.web.AccountSystemController;
@@ -24,7 +24,7 @@ import br.com.camiloporto.cloudfinance.web.ReportOperationResponse;
 
 @RequestMapping("/report")
 @Controller
-@SessionAttributes(value = {"logged", "rootAccount"})
+@SessionAttributes(value = {"logged", "activeAccountSystem"})
 public class StaticReportController {
 	
 	@Autowired
@@ -37,10 +37,10 @@ public class StaticReportController {
 	public ModelAndView getBalanceSheet(
 			HttpServletRequest request,
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@ModelAttribute(value = "balanceSheetForm") BalanceSheetForm form, BindingResult errors) {
 		ModelAndView mav = new ModelAndView("mobile-balanceSheet");
-		ReportOperationResponse response = jsonController.getBalanceSheet(request, logged, rootAccount, form, errors);
+		ReportOperationResponse response = jsonController.getBalanceSheet(request, logged, activeAccountSystem, form, errors);
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
 	}
@@ -48,8 +48,8 @@ public class StaticReportController {
 	@RequestMapping(value = "/statement", method = RequestMethod.GET)
 	public ModelAndView getAccountStatementForm(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount) {
-		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, rootAccount.getId());
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem) {
+		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, activeAccountSystem.getRootAccount().getId());
 		ReportOperationResponse ror = new ReportOperationResponse(true);
 		ror.setAccountList(aor.getLeafAccounts());
 		ModelAndView mav = new ModelAndView("mobile-statement");
@@ -61,14 +61,14 @@ public class StaticReportController {
 	@RequestMapping(value = "/statement", method = RequestMethod.GET, params={"accountId", "begin", "end"})
 	public ModelAndView getAccountStatement(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			Long accountId,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
 		
 		ModelAndView mav = new ModelAndView("mobile-statement");
-		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, rootAccount.getId());
-		ReportOperationResponse ror = jsonController.getAccountStatement(logged, rootAccount, accountId, begin, end);
+		AccountOperationResponse aor = accountController.getLeavesAccounts(logged, activeAccountSystem.getRootAccount().getId());
+		ReportOperationResponse ror = jsonController.getAccountStatement(logged, activeAccountSystem, accountId, begin, end);
 		ror.setAccountList(aor.getLeafAccounts());
 		mav.getModelMap().addAttribute("response", ror);
 		return mav;
