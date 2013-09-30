@@ -15,6 +15,7 @@ import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
 import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
 public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
@@ -26,9 +27,13 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	private UserProfileManager userProfileManager;
 	
 	private Account root;
-
+	private Account otherRoot;
 
 	private Profile profile;
+	private Profile otherProfile;
+	
+	private AccountSystem accountSystem;
+	private AccountSystem otherAccountSystem;
 	
 	@BeforeMethod
 	public void clearUserData() {
@@ -42,9 +47,20 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.comSenha(senha)
 			.create();
 		profile = userProfileManager.signUp(p);
+		otherProfile = userProfileManager.signUp(
+				new ProfileBuilder()
+					.newProfile()
+					.comEmail("other@email.com")
+					.comSenha("otherpass")
+					.create());
 		
-		List<Account> roots = accountManager.findRootAccounts(profile);
-		this.root = roots.get(0);
+		
+		this.accountSystem = accountManager.findAccountSystems(profile).get(0);
+		this.root = this.accountSystem.getRootAccount();
+		
+		this.otherAccountSystem = accountManager.findAccountSystems(otherProfile).get(0);
+		this.otherRoot = this.otherAccountSystem.getRootAccount();
+		
 	}
 	
 	@Test
@@ -59,7 +75,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		Account toSave = new Account(name, parentAccount);
 		toSave.setDescription(desc);
 		toSave.setRootAccount(root);
-		accountManager.saveAccount(profile, toSave);
+		accountManager.saveAccount(profile, toSave, accountSystem);
 		
 		Assert.assertNotNull(toSave.getId(), "did not assign account id");
 		Account saved = accountManager.findAccount(toSave.getId());
@@ -81,7 +97,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.getAccount();
 
 		try {
-			accountManager.saveAccount(profile, toSave);
+			accountManager.saveAccount(profile, toSave, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -105,7 +121,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.getAccount();
 
 		try {
-			accountManager.saveAccount(profile, toSave);
+			accountManager.saveAccount(profile, toSave, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -130,7 +146,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.getAccount();
 
 		try {
-			accountManager.saveAccount(profile, toSave);
+			accountManager.saveAccount(profile, toSave, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -155,7 +171,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		toSave.setDescription(desc);
 
 		try {
-			accountManager.saveAccount(profile, toSave);
+			accountManager.saveAccount(profile, toSave, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -182,7 +198,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.getAccount();
 
 		try {
-			accountManager.saveAccount(profile, toSave);
+			accountManager.saveAccount(profile, toSave, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -209,7 +225,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.getAccount();
 
 		try {
-			accountManager.saveAccount(profile, toSave);
+			accountManager.saveAccount(profile, toSave, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -237,7 +253,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	//FIXME internacionalizar mensagens de AccountManager
 	@Test
-	public void childrenAccountNameShouldBeUnique() {
+	public void childrenAccountNameShouldBeUniqueOnSameAccountSystem() {
 		
 		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
 		
@@ -251,7 +267,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.belongingToTreeRootAccount(root)
 			.getAccount();
 		
-		accountManager.saveAccount(profile, toSave);
+		accountManager.saveAccount(profile, toSave, accountSystem);
 
 		try {
 			Account childWithRepeatedName = new AccountBuilder()
@@ -259,7 +275,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 				.withParent(parentAccount)
 				.belongingToTreeRootAccount(root)
 				.getAccount();
-			accountManager.saveAccount(profile, childWithRepeatedName);
+			accountManager.saveAccount(profile, childWithRepeatedName, accountSystem);
 			Assert.fail("did not throws expected exception");
 		} catch (ConstraintViolationException e) {
 			e.printStackTrace();
@@ -267,12 +283,45 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 				.assertExpectedErrorCountIs(1)
 				.assertContainsMessageTemplate("{br.com.camiloporto.cloudfinance.account.NAME_ALREADY_EXISTS}");
 		}
+	}
+	
+	//FIXME fazer esse teste passar
+	@Test
+	public void shouldAddAccountsWithSameNameOnDifferentAccountSystem() {
 		
+		AccountNode rootBranch = accountManager.getAccountBranch(profile, root.getId());
+		AccountNode otherRootBranch = accountManager.getAccountBranch(otherProfile, otherRoot.getId());
+		
+		final String name = "Account Name";
+		final String desc = "Account desc";
+		Account parentAccount = rootBranch.getChildren().get(0).getAccount();
+		Account otherParentAccount = otherRootBranch.getChildren().get(0).getAccount();
+		
+		Account toSave = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(parentAccount)
+			.belongingToTreeRootAccount(root)
+			.getAccount();
+		
+		Account toSaveSame = new AccountBuilder()
+			.newAccount(name, desc)
+			.withParent(otherParentAccount)
+			.belongingToTreeRootAccount(otherRoot)
+			.getAccount();
+		
+		accountManager.saveAccount(profile, toSave, accountSystem);
+	
+		//should not throws exception
+		accountManager.saveAccount(otherProfile, toSaveSame, otherAccountSystem);
+		Assert.assertNotNull(toSaveSame.getId(), "did not assign account id");
+		Account saved = accountManager.findAccount(toSaveSame.getId());
+		Assert.assertEquals(saved.getParentAccount().getId(), otherParentAccount.getId(), "father id not match");
+		Assert.assertEquals(saved.getRootAccount().getId(), otherRoot.getId(), "tree id not match");
 	}
 	
 	@Test
-	public void shouldListAllRootAccountOfAProfile() {
-		List<Account> roots = accountManager.findRootAccounts(profile);
+	public void shouldListAllAccountSystemsOfAProfile() {
+		List<AccountSystem> roots = accountManager.findAccountSystems(profile);
 		
 		int EXPECTED_ACCOUNT_COUNT = 1;
 		Assert.assertEquals(roots.size(), EXPECTED_ACCOUNT_COUNT, "count of root accountes not as expected");
@@ -289,7 +338,7 @@ public class AccountManagerTest extends AbstractCloudFinanceDatabaseTest {
 		Account toSave = new Account(name, parentAccount);
 		toSave.setDescription(desc);
 		toSave.setRootAccount(root);
-		accountManager.saveAccount(profile, toSave);
+		accountManager.saveAccount(profile, toSave, accountSystem);
 		
 		List<Account> leaves = accountManager.findAllLeavesFrom(profile, root.getId());
 		

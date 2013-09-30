@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -21,6 +20,7 @@ import br.com.camiloporto.cloudfinance.builders.ProfileBuilder;
 import br.com.camiloporto.cloudfinance.checkers.ExceptionChecker;
 import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheetNode;
@@ -31,6 +31,8 @@ public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 	private BalanceSheetManager balanceSheetManager;
 
 	private Profile profile;
+	
+	private AccountSystem accountSystem;
 
 	private Account root;
 	
@@ -45,10 +47,10 @@ public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 			.comSenha(senha)
 			.create();
 		profile = userProfileManager.signUp(p);
+		accountSystem = accountManager.findAccountSystems(profile).get(0);
 		
-		List<Account> roots = super.accountManager.findRootAccounts(profile);
-		root = roots.get(0);
-		accountInsertionHelper = new DataInsertionHelper(root);
+		root = accountSystem.getRootAccount();
+		accountInsertionHelper = new DataInsertionHelper(accountSystem);
 		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
 		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
 	}
@@ -156,7 +158,7 @@ public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 	public void shouldGetLeafAccountBalanceOnDate() throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = sdf.parse("20/09/2013");
-		Account anAccount = accountRepository.findByName("Conta Corrente");
+		Account anAccount = accountRepository.findByNameAndRootAccount("Conta Corrente", this.root);
 		
 		BigDecimal balance = balanceSheetManager.getAccountBalance(profile, anAccount, date);
 		BigDecimal expectedBalance = new BigDecimal("700.00");

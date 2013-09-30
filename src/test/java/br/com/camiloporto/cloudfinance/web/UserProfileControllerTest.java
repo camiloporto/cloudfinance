@@ -226,7 +226,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		new WebResponseChecker(response, mockSession)
 			.assertOperationSuccess()
 			.assertUserIsInSession(userName)
-			.assertDefaultAccountTreeWasSetInSession();
+			.assertDefaultAccountSystemWasActivatedInSession();
 		
 	}
 	
@@ -252,7 +252,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		new WebResponseChecker(response, mockSession)
 			.assertOperationSuccess()
 			.assertUserIsInSession(userName)
-			.assertDefaultAccountTreeWasSetInSession();
+			.assertDefaultAccountSystemWasActivatedInSession();
 		
 		response = mockMvc.perform(post("/user/logoff")
 				.session(mockSession)
@@ -291,7 +291,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		new WebResponseChecker(response, mockSession)
 			.assertOperationSuccess()
 			.assertUserIsInSession(userName)
-			.assertDefaultAccountTreeWasSetInSession();
+			.assertDefaultAccountSystemWasActivatedInSession();
 		
 		
 		//logoff
@@ -330,7 +330,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		new WebResponseChecker(response, mockSession)
 			.assertUserIsInSession(userName)
-			.assertDefaultAccountTreeWasSetInSession();
+			.assertDefaultAccountSystemWasActivatedInSession();
 		
 	}
 	
@@ -388,7 +388,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 		new WebResponseChecker(response, mockSession)
 			.assertUserIsInSession(userName)
-			.assertDefaultAccountTreeWasSetInSession();
+			.assertDefaultAccountSystemWasActivatedInSession();
 		
 	}
 	

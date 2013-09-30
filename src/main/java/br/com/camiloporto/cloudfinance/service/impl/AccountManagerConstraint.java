@@ -42,6 +42,9 @@ public class AccountManagerConstraint {
 	@Valid
 	private Account account;
 	
+	@Valid
+	private Account rootAccount;
+	
 	@AssertTrue(message = "{br.com.camiloporto.cloudfinance.account.PARENT_ACCOUNT_REQUIRED}",
     		groups={AccountManagerConstraint.CREATE_NEW_ACCOUNT.class})
 	public boolean isParentAccountIdNotNull() {
@@ -58,7 +61,7 @@ public class AccountManagerConstraint {
 			groups = {CREATE_NEW_ACCOUNT.class})
 	public boolean isAccountNameUniqueWithinItsSisters() {
 		if(account != null && account.getName() != null){
-			return accountRepository.findByName(account.getName()) == null; 
+			return accountRepository.findByNameAndRootAccount(account.getName(), rootAccount) == null; 
 		}
 		//if get here, the rule is not applicable
 		return true;

@@ -35,9 +35,9 @@ public class AccountManagerImpl implements AccountManager {
 			.validateForGroups(constraints,
 				AccountManagerConstraint.FIND_LEAVES_ACCOUNTS.class);
 	}
-
-	public void saveAccount(Profile profile, Account account) {
-		checkCreateNewAccountEntries(profile, account);
+	
+	public void saveAccount(Profile profile, Account account, AccountSystem accountSystem) {
+		checkCreateNewAccountEntries(profile, account, accountSystem);
 		Account parent = accountRepository.findOne(account.getParentAccount().getId());
 		Account treeRoot = accountRepository.findOne(account.getRootAccount().getId());
 		account.setParentAccount(parent);
@@ -45,10 +45,11 @@ public class AccountManagerImpl implements AccountManager {
 		accountRepository.save(account);
 	}
 	
-	private void checkCreateNewAccountEntries(Profile profile, Account account) {
+	private void checkCreateNewAccountEntries(Profile profile, Account account, AccountSystem accountSystem) {
 		AccountManagerConstraint constraints = new AccountManagerConstraint();
 		constraints.setAccount(account);
 		constraints.setProfile(profile);
+		constraints.setRootAccount(accountSystem.getRootAccount());
 		
 		new ConstraintValidator<AccountManagerConstraint>()
 			.validateForGroups(constraints,
@@ -61,6 +62,12 @@ public class AccountManagerImpl implements AccountManager {
 		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(profile);
 		List<Account> roots = createRootAccountList(accountSystems);
 		return roots;
+	}
+	
+	public List<AccountSystem> findAccountSystems(Profile profile) {
+		checkProfileRequired(profile);
+		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(profile);
+		return accountSystems;
 	}
 	
 	@Override

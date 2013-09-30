@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
@@ -25,7 +26,7 @@ import br.com.camiloporto.cloudfinance.web.MediaTypeApplicationJsonUTF8;
 
 @RequestMapping("/account")
 @Controller
-@SessionAttributes(value = {"logged", "rootAccount"})
+@SessionAttributes(value = {"logged", "rootAccount", "activeAccountSystem"})
 public class StaticAccountSystemController {
 	
 	@Autowired
@@ -37,7 +38,7 @@ public class StaticAccountSystemController {
 	@RequestMapping(value = "/roots", method = RequestMethod.GET)
 	public ModelAndView getRootAccounts(@ModelAttribute(value="logged") Profile logged) {
 		ModelAndView mav = new ModelAndView("mobile-rootAccountHome");
-		AccountOperationResponse response = jsonController.getRootAccounts(logged);
+		AccountOperationResponse response = jsonController.getAccountSystems(logged);
 		mav.getModel().put("response", response);
 		return mav;
 	}
@@ -80,12 +81,12 @@ public class StaticAccountSystemController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createAccount(
 			@ModelAttribute(value="logged")  Profile logged,
-			@ModelAttribute(value="rootAccount")  Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem")  AccountSystem activeAccountSystem,
 			Account account) {
 		ModelAndView mav = new ModelAndView();
-		AccountOperationResponse response = jsonController.createAccount(logged, rootAccount, account);
+		AccountOperationResponse response = jsonController.createAccount(logged, activeAccountSystem, account);
 		if(response.isSuccess()) {
-			mav.setViewName("redirect:/account/tree/" + rootAccount.getId());
+			mav.setViewName("redirect:/account/tree/" + activeAccountSystem.getRootAccount().getId());
 		} else {
 			mav = new ModelAndView("mobile-newAccountForm");
 		}

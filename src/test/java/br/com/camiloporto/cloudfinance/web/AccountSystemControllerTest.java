@@ -68,11 +68,11 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
-		rootAccountId = JsonPath.read(json, "$.rootAccounts[0].id");
+		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
     }
 	
 	@Test
-	public void shouldGetUsersRootAccounts() throws Exception {
+	public void shouldGetUsersAccountSystems() throws Exception {
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
@@ -82,14 +82,15 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		response
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.rootAccounts").exists());
+			.andExpect(jsonPath("$.accountSystems").exists());
 		
 		String json = response.andReturn().getResponse().getContentAsString();
-		JSONArray accounts = JsonPath.read(json, "$.rootAccounts");
+		JSONArray accountSystems = JsonPath.read(json, "$.accountSystems");
 		
-		final int EXPECTED_ACCOUNT_COUNTS = 1;
-		Assert.assertEquals(accounts.size(), EXPECTED_ACCOUNT_COUNTS, "accounts count not match");
-		Assert.assertNotNull(JsonPath.read(json, "$.rootAccounts[0].id"), "id of root account should not be null");
+		final int EXPECTED_ACCOUNT_SYSTEM_COUNTS = 1;
+		Assert.assertEquals(accountSystems.size(), EXPECTED_ACCOUNT_SYSTEM_COUNTS, "account systems count not match");
+		Assert.assertNotNull(JsonPath.read(json, "$.accountSystems[0].id"), "id of account system should not be null");
+		Assert.assertNotNull(JsonPath.read(json, "$.accountSystems[0].rootAccount.id"), "account system root account should not be null");
 		
 		//XXX Improve data transfer excluding properties not worth for operation requested
 		
@@ -97,7 +98,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	}
 	
 	@Test
-	public void shouldGetUsersRootAccountsWithNoJs() throws Exception {
+	public void shouldGetUsersAccountsSystemsWithNoJs() throws Exception {
 		
 		ResultActions response = mockMvc.perform(get("/account/roots")
 				.session(mockSession)
@@ -107,7 +108,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		response
 			.andExpect(status().isOk())
 			.andExpect(view().name("mobile-rootAccountHome"))
-			.andExpect(model().attribute("response", Matchers.hasProperty("rootAccounts", Matchers.arrayWithSize(EXPECTED_ACCOUNT_COUNTS))));
+			.andExpect(model().attribute("response", Matchers.hasProperty("accountSystems", Matchers.arrayWithSize(EXPECTED_ACCOUNT_COUNTS))));
 		
 	}
 	

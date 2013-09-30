@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import br.com.camiloporto.cloudfinance.model.Account;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.AccountStatementManager;
 import br.com.camiloporto.cloudfinance.service.BalanceSheetManager;
@@ -30,7 +30,7 @@ import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 
 @RequestMapping("/report")
 @Controller
-@SessionAttributes(value = {"logged", "rootAccount"})
+@SessionAttributes(value = {"logged", "activeAccountSystem"})
 public class ReportController {
 	
 	@Autowired
@@ -47,12 +47,13 @@ public class ReportController {
 	@RequestMapping(value = "/statement", method = RequestMethod.GET, produces = MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE, params={"accountId", "begin", "end"})
 	public @ResponseBody ReportOperationResponse getAccountStatement(
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			Long accountId,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
 
 		ReportOperationResponse response = new ReportOperationResponse(false);
+		//FIXME account should belong to activeAccountSystem. Fix this
 		try {
 			AccountStatement statement = accountStatementManager.getAccountStatement(logged, accountId, begin, end);
 			response.setSuccess(true);
@@ -68,7 +69,7 @@ public class ReportController {
 	public @ResponseBody ReportOperationResponse getBalanceSheet(
 			HttpServletRequest request,
 			@ModelAttribute(value="logged") Profile logged, 
-			@ModelAttribute(value="rootAccount") Account rootAccount,
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@ModelAttribute(value = "balanceSheetForm") BalanceSheetForm form, BindingResult errors) {
 
 		ReportOperationResponse response = new ReportOperationResponse(false);
@@ -80,7 +81,7 @@ public class ReportController {
 			Date date = getDefaultDateIfNeeded(form);
 			
 			try {
-				BalanceSheet balanceSheet = balanceSheetManager.getBalanceSheet(logged, rootAccount.getId(), date);
+				BalanceSheet balanceSheet = balanceSheetManager.getBalanceSheet(logged, activeAccountSystem.getRootAccount().getId(), date);
 				response.setSuccess(true);
 				response.setBalanceSheet(balanceSheet);
 			} catch (ConstraintViolationException e) {
