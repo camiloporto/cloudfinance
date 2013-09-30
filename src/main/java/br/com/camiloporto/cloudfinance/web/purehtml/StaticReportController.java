@@ -33,6 +33,11 @@ public class StaticReportController {
 	@Autowired
 	private AccountSystemController accountController;
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView reportHome() {
+		return new ModelAndView("mobile-reportHome");
+	}
+	
 	@RequestMapping(value = "/balanceSheet", method = RequestMethod.GET)
 	public ModelAndView getBalanceSheet(
 			HttpServletRequest request,

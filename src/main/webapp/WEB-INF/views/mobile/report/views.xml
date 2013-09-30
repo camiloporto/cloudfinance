@@ -5,6 +5,10 @@
 
 <tiles-definitions>
 	
+	<definition name="mobile-reportHome" extends="mobile-logged-template-navigation">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/report/index.jsp" />
+	</definition>
+	
 	<definition name="mobile-statement" extends="mobile-logged-template-navigation">
 		<put-attribute name="body" value="/WEB-INF/views/mobile/report/statement.jsp" />
 	</definition>
