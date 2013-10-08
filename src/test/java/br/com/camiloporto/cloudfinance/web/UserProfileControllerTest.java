@@ -13,6 +13,8 @@ import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,9 +34,17 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
 
-@ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
+@ContextConfiguration(locations = {
+		"classpath:/META-INF/spring/applicationContext*.xml", 
+		"classpath:/META-INF/spring/webmvc-*.xml",
+		"classpath:/META-INF/spring/spring-security*.xml"})
 @WebAppConfiguration
 public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest {
+	
+	private static String SEC_CONTEXT_ATTR = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+
+	@Autowired
+	private FilterChainProxy springSecurityFilterChain;
 	
 	@Autowired
     private WebApplicationContext wac;
@@ -51,10 +61,12 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
     @BeforeMethod
     public void setup() {
     	cleanUserData();
-    	if(this.mockSession != null) {
+    	if(this.mockSession != null && !this.mockSession.isInvalid()) {
     		this.mockSession.invalidate();
     	}
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
+        		.addFilters(springSecurityFilterChain)
+        		.build();
         this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
     
@@ -204,7 +216,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			.assertErrorMessageIsPresent(ValidationMessages.USER_PASS_REQUIRED);
 	}
 	
-	@Test
+	@Test(enabled=false)
+	@Deprecated
+	//now using spring security for Authentication process
 	public void shouldAuthenticateRegisteredUser() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -392,7 +406,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled=false)
+	@Deprecated
+	//now using spring security for authentication
 	public void shouldFailAuthenticationWithWrongPassword() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -417,7 +433,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled=false)
+	@Deprecated
+	//now using spring security for authentication
 	public void shouldFailAuthenticationWithWrongUsername() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -442,7 +460,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled=false)
+	@Deprecated
+	//now using spring security for authentication
 	public void shouldFailAuthenticationWithEmptyCredentials() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
