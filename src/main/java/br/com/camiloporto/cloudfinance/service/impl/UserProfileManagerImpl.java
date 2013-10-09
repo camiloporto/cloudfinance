@@ -38,4 +38,10 @@ public class UserProfileManagerImpl implements UserProfileManager {
 					new UserProfileManagerConstraint(profile),
 					UserProfileManagerConstraint.SIGNUP_RULES.class);
 	}
+
+	@Override
+	public Profile findByUsername(String userName) {
+		Profile profile = profileRepository.findByUserId(userName);
+		return profile;
+	}
 }

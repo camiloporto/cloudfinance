@@ -6,10 +6,14 @@
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 	
 	<http entry-point-ref="restAuthenticationEntrypoint">
+		<intercept-url pattern="/user/signup*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 		<intercept-url pattern="/**" access="ROLE_USER"/>
 		<form-login 
 			authentication-success-handler-ref="restfulAuthenticationSuccessHandler"
-			authentication-failure-handler-ref="restfulAuthenticationFailureHandler"/>
+			authentication-failure-handler-ref="restfulAuthenticationFailureHandler"
+			username-parameter="userName"
+			password-parameter="pass"
+			login-processing-url="/user/login"/>
 		<logout/>
 	</http>
 	
@@ -17,6 +21,7 @@
 		<authentication-provider>
 			<user-service>
 				<user name="camiloporto" authorities="ROLE_USER" password="s3cret"/>
+				<user name="some@email.com" authorities="ROLE_USER" password="1234"/>
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
@@ -24,7 +29,11 @@
 	<beans:bean id="restAuthenticationEntrypoint" class="br.com.camiloporto.cloudfinance.security.RestAuthenticationEntryPoint">
 	</beans:bean>
 	
-	<beans:bean id="restfulAuthenticationSuccessHandler" class="br.com.camiloporto.cloudfinance.security.RestfullSavedRequestAwareAuthenticationSuccessHandler" />
+	<beans:bean id="restfulAuthenticationSuccessHandler" class="br.com.camiloporto.cloudfinance.security.MyAuthenticationSuccessHandler">
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true" />
+		<beans:property name="defaultTargetUrl" value="/user/postLogin" />
+	</beans:bean>
+	
 	<beans:bean id="restfulAuthenticationFailureHandler" class="br.com.camiloporto.cloudfinance.security.RestfulExceptionMappingAuthenticationFailureHandler" />
 	
 </beans:beans>

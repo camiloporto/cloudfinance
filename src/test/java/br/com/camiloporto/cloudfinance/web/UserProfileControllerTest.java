@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -244,7 +247,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled=false)
+	@Deprecated
+	//now using spring security for Authentication process
 	public void shouldLogoffLoggedUser() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -283,7 +288,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled=false)
+	@Deprecated
+	//now using spring security for Authentication process
 	public void shouldLogoffLoggedUser_noJS() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -299,8 +306,7 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 			);
 		
 		response
-			.andExpect(status().isOk())
-			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+			.andExpect(status().isOk());
 		
 		new WebResponseChecker(response, mockSession)
 			.assertOperationSuccess()
@@ -348,7 +354,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled = false)
+	@Deprecated
+	//now using spring security for Authentication process
 	public void shouldNotRedirectIfFailAuthenticationWithNoJS() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -374,7 +382,9 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		
 	}
 	
-	@Test
+	@Test(enabled = false)
+	@Deprecated
+	//now using spring security for Authentication process
 	public void shouldRedirectToRootAccountsPageIfHasAlreadyALoggedUser_WithNoJS() throws Exception {
 		final String userName ="some@email.com";
 		final String userPass ="1234";
@@ -382,15 +392,17 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
 			.signup(userName, userPass, userConfirmPass);
 		
+		
 		ResultActions response = mockMvc.perform(post("/user/login")
 						.session(mockSession)
 						.param("userName", userName)
 						.param("pass", userPass)
-					); 
+					);
+		HttpSession session = response.andReturn().getRequest().getSession();
 		
 		//already logged user try to access home page again
 		response = mockMvc.perform(get("/mobile")
-				.session(mockSession)
+				.session((MockHttpSession) session)
 				.param("userName", userName)
 				.param("pass", userPass)
 			); 

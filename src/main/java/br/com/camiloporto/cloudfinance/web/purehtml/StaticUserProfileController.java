@@ -1,5 +1,7 @@
 package br.com.camiloporto.cloudfinance.web.purehtml;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,14 @@ public class StaticUserProfileController {
 			mav = login(userName, pass, map);
 		}
 		mav.addObject("response", response);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/logonFailed", method = RequestMethod.GET)
+	public ModelAndView logonFailed(ModelMap map) {
+		UserOperationResponse response = new UserOperationResponse(false);
+		ModelAndView mav = new ModelAndView("mobile-index");
+		mav.getModelMap().put("response", response);
 		return mav;
 	}
 	
