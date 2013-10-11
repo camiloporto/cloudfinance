@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 privileged aspect ProfileRepository_Roo_Jpa_Repository {
     
-    declare parents: ProfileRepository extends JpaRepository<Profile, Long>;
+    declare parents: ProfileRepository extends JpaRepository<Profile, String>;
     
     declare parents: ProfileRepository extends JpaSpecificationExecutor<Profile>;
     

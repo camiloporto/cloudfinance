@@ -23,8 +23,8 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void deveCadastrarPerfilDeUsuario() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
+		final String camiloporto = "newemail@email.com";
+		final String senha = "s3cret";
 		
 		Profile p = new ProfileBuilder()
 			.newProfile()

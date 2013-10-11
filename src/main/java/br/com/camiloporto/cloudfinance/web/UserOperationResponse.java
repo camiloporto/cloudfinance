@@ -7,7 +7,7 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 @RooJavaBean
 public class UserOperationResponse extends AbstractOperationResponse {
 	
-	private Long userId;
+	private String userId;
 
 	public UserOperationResponse(boolean success) {
 		super(success);

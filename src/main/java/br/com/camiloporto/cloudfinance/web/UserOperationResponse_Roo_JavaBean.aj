@@ -7,11 +7,11 @@ import br.com.camiloporto.cloudfinance.web.UserOperationResponse;
 
 privileged aspect UserOperationResponse_Roo_JavaBean {
     
-    public Long UserOperationResponse.getUserId() {
+    public String UserOperationResponse.getUserId() {
         return this.userId;
     }
     
-    public void UserOperationResponse.setUserId(Long userId) {
+    public void UserOperationResponse.setUserId(String userId) {
         this.userId = userId;
     }
     

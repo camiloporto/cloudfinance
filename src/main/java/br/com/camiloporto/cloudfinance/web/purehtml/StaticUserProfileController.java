@@ -1,7 +1,5 @@
 package br.com.camiloporto.cloudfinance.web.purehtml;
 
-import java.security.Principal;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;

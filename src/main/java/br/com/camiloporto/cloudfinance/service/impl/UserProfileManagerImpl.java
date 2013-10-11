@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.model.UserRole;
 import br.com.camiloporto.cloudfinance.repository.ProfileRepository;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
@@ -19,8 +20,12 @@ public class UserProfileManagerImpl implements UserProfileManager {
 	private AccountManager accountManager;
 	
 	@Override
+	@Transactional
 	public Profile signUp(Profile newProfile) {
 		checkSignUpConstraints(newProfile);
+		UserRole role = new UserRole();
+		role.setAuthority("ROLE_USER");
+		newProfile.getAuthorities().add(role);
 		Profile saved = profileRepository.save(newProfile);
 		accountManager.createAccountSystemFor(saved);
 		return saved;

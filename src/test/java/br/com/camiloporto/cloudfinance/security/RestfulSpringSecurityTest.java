@@ -69,8 +69,11 @@ public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest 
 	
 	@Test
 	public void shouldLogoffLoggedUser() throws Exception {
-		final String username = "camiloporto";
+		final String username = "camiloporto@email.com";
 		final String password = "s3cret";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(username, password, password);
+		
 		mockMvc.perform(post("/user/login").param("userName", username).param("pass", password).accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk());
 		
@@ -132,6 +135,11 @@ public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest 
 	public void shouldAuthenticateExistentUser() throws Exception {
 		final String username = "camiloporto";
 		final String password = "s3cret";
+		final String userConfirmPass ="s3cret";
+		
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(username, password, userConfirmPass);
+		
 		mockMvc.perform(post("/user/login").param("userName", username).param("pass", password).accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(new ResultMatcher() {
@@ -141,6 +149,31 @@ public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest 
 					Assert.assertEquals(securityContext.getAuthentication().getName(), username);
 				}
 			});
+	}
+	
+	@Test
+	public void shouldAuthenticateRegisteredUserWithNoJS() throws Exception {
+		final String userName ="some@email.com";
+		final String userPass ="1234";
+		final String userConfirmPass ="1234";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(userName, userPass, userConfirmPass);
+		
+		ResultActions response = mockMvc.perform(post("/user/login")
+				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			);
+		
+		String expectedRedirectedUrl = "/account/roots";
+		response
+			.andExpect(status().isMovedTemporarily()) //redirected
+			.andExpect(MockMvcResultMatchers.redirectedUrl(expectedRedirectedUrl));
+		
+		new WebResponseChecker(response, mockSession)
+			.assertUserIsInSession(userName)
+			.assertDefaultAccountSystemWasActivatedInSession();
+		
 	}
 	
 	@Test

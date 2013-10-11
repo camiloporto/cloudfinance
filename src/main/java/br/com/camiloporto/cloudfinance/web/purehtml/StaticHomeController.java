@@ -7,7 +7,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,15 +27,15 @@ public class StaticHomeController {
 		if(isAuthenticated(session)) {
 			mav.setViewName("redirect:/account/roots");
 		}
-//		if(session.getAttribute("logged") != null) {
-//			mav.setViewName("redirect:/account/roots");
-//		}
 		return mav;
 	}
 	
 	private boolean isAuthenticated(HttpSession session) {
 		SecurityContext securityContext = (SecurityContext) session.getAttribute(SEC_CONTEXT_ATTR);
-		Authentication authentication =securityContext.getAuthentication();
+		if(securityContext == null) {
+			return false;
+		}
+		Authentication authentication = securityContext.getAuthentication();
         if (authentication == null) {
             return false;
         }

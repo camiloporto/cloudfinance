@@ -23,10 +23,13 @@
 	
 	<authentication-manager>
 		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"/>
+			<!-- 
 			<user-service>
 				<user name="camiloporto" authorities="ROLE_USER" password="s3cret"/>
 				<user name="some@email.com" authorities="ROLE_USER" password="1234"/>
 			</user-service>
+			 -->
 		</authentication-provider>
 	</authentication-manager>
 	
