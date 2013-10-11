@@ -156,27 +156,6 @@ public class UserProfileManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
-	public void shouldFindProfileByCredentials() {
-		final String camiloporto = "some@email.com";
-		final String senha = "1234";
-		
-		Profile p = new ProfileBuilder()
-			.newProfile()
-			.comEmail(camiloporto)
-			.comSenha(senha)
-			.create();
-		
-		userProfileManager.signUp(p);
-		
-		Profile logged = userProfileManager.login(camiloporto, senha);
-		
-		new ProfileChecker(logged)
-			.assertUserNameEquals(camiloporto)
-			.assertPasswordIsEmpty();
-		//FIXME Knowing bug. the password should not go within the Profile Object. turn authentication process more secure (Spring Security?)
-	}
-	
-	@Test
 	public void shouldReturnNullIfDoNotFoundByCredentials() {
 		final String camiloporto = "some@email.com";
 		final String senha = "1234";

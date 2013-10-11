@@ -21,7 +21,7 @@
 			success-handler-ref="myLogoutSuccessHandler"/>
 	</http>
 	
-	<authentication-manager>
+	<authentication-manager alias="authenticationManager">
 		<authentication-provider>
 			<jdbc-user-service data-source-ref="dataSource"/>
 			<!-- 

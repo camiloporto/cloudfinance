@@ -37,16 +37,9 @@ public class Profile implements UserDetails {
 	@Column(name = "enabled")
 	private boolean enabled = true;
 	
-	//FIXME mapear lista de Authortities do Profile.
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name = "username")
 	private List<UserRole> authorities = new ArrayList<UserRole>();
-
-//	@Override
-//	public Collection<? extends GrantedAuthority> getAuthorities() {
-//		// TODO Auto-generated method stub
-//		return Collections.EMPTY_LIST;
-//	}
 
 	@Override
 	public String getPassword() {

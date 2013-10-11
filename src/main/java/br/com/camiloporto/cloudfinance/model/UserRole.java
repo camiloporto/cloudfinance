@@ -14,10 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 @RooSerializable
 public class UserRole implements GrantedAuthority  {
 	
-//	@NotNull
-//    @ManyToOne
-//    private Profile userProfile;
-	
 	@NotNull
 	private String authority;
 

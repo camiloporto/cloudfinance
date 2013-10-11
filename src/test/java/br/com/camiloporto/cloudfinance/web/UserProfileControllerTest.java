@@ -32,8 +32,7 @@ import com.jayway.jsonpath.JsonPath;
 
 @ContextConfiguration(locations = {
 		"classpath:/META-INF/spring/applicationContext*.xml", 
-		"classpath:/META-INF/spring/webmvc-*.xml",
-		"classpath:/META-INF/spring/spring-security*.xml"})
+		"classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
 public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
@@ -59,7 +58,6 @@ public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest 
         this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
     
-    //FIXME precisa se autenticar antes de redirecionar...
     @Test
 	public void shouldRedirectToRootAccountHomeWhenUserSignUpWithNoJS() throws Exception {
 		final String userName ="some@email.com";

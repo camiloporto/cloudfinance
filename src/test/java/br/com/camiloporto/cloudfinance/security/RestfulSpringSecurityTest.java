@@ -34,8 +34,7 @@ import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 
 @ContextConfiguration(locations = {
 		"classpath:/META-INF/spring/applicationContext*.xml",
-		"classpath:/META-INF/spring/webmvc-*.xml",
-		"classpath:/META-INF/spring/spring-security*.xml"})
+		"classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
 public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest {
 	
