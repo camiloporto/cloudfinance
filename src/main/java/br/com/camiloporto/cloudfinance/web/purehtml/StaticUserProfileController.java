@@ -79,6 +79,7 @@ public class StaticUserProfileController {
 	
 	private void setDefaultRootAccount(String userName, ModelMap map) {
 		Profile profile = userProfileManager.findByUsername(userName);
+		map.addAttribute("logged", profile);
 		List<AccountSystem> accountSystems = accountManager.findAccountSystems(profile);
 		map.addAttribute("activeAccountSystem", accountSystems.get(0));
 	}

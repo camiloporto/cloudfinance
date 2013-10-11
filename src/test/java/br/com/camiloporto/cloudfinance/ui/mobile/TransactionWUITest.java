@@ -99,7 +99,7 @@ public class TransactionWUITest extends AbstractWUITest {
 	
 	@Test
 	public void shouldDeleteTransaction() {
-		loginExistentUser();
+		createNewTestUser(generateSampleUserLogin(), generateSampleUserPass());
 		goToPath("/transaction/newForm?lang=pt_BR");
 		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
 		String date28082013 = "28/08/2013";

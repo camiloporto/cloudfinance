@@ -10,8 +10,8 @@ import br.com.camiloporto.cloudfinance.ui.mobile.page.TransactionFormPage;
 
 public class AccountStatementMobileWUITest extends AbstractWUITest {
 	
-	private final String TEST_USER_LOGIN = "reportUser@email.com";
-	private final String TEST_USER_PASS = "report";
+	private final String TEST_USER_LOGIN = generateSampleUserLogin();
+	private final String TEST_USER_PASS = generateSampleUserPass();
 	private final String[][] transactionData = new String[][] {
 			{"Ativos", "Despesas", "28/08/2013", "500,00", "Aluguel"},
 			{"Receitas", "Ativos", "02/09/2013", "850,00", "Recebimento de salario"},
