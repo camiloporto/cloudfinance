@@ -3,72 +3,61 @@ package br.com.camiloporto.cloudfinance.web;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-import java.util.UUID;
-
 import net.minidev.json.JSONArray;
 
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
+import br.com.camiloporto.cloudfinance.AbstractWebMvcCloudFinanceTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
-import br.com.camiloporto.cloudfinance.model.AccountSystem;
 
 import com.jayway.jsonpath.JsonPath;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
-public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTest {
+public class AccountSystemControllerTest extends AbstractWebMvcCloudFinanceTest {
 	
-	@Autowired
-    private WebApplicationContext wac;
-	
-
-    private MockMvc mockMvc;
-    private MockHttpSession mockSession;
     private Integer rootAccountId;
     private Integer accountSystemId;
 
+
     @BeforeMethod
     public void setup() throws Exception {
+    	super.init();
     	cleanUserData();
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
-        
+    	
         final String userName ="some@email.com";
 		final String userPass ="1234";
 		final String userConfirmPass ="1234";
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(userName, userPass, userConfirmPass)
-			.login(userName, userPass);
-		
-		ResultActions response = mockMvc.perform(get("/account/roots")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
+			.signup(userName, userPass, userConfirmPass);
+
+		ResultActions response = mockMvc.perform(prepareHtmlPostRequest("/user/login", mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
 			);
+		
+		authenticatedSession = response.andReturn().getRequest().getSession();
+		
+		response = mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession));
+		
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		accountSystemId = JsonPath.read(json, "$.accountSystems[0].id");
@@ -76,15 +65,11 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	
 	@Test
 	public void shouldGetUsersAccountSystems() throws Exception {
-		
-		ResultActions response = mockMvc.perform(get("/account/roots")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession));
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8_VALUE))
 			.andExpect(jsonPath("$.accountSystems").exists());
 		
 		String json = response.andReturn().getResponse().getContentAsString();
@@ -103,9 +88,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldGetUsersAccountsSystemsWithNoJs() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/roots")
-				.session(mockSession)
-			);
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/account/roots", (MockHttpSession) authenticatedSession));
 		final int EXPECTED_ACCOUNT_COUNTS = 1;
 		
 		response
@@ -120,14 +103,11 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldGetRootAccountWholeTree() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/tree/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.accountTree").exists());
 		
 		String json = response.andReturn().getResponse().getContentAsString();
@@ -140,14 +120,11 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldGetRootAccountLeaves() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/leaf/" + rootAccountId)
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/leaf/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.leafAccounts").exists());
 		
 		String json = response.andReturn().getResponse().getContentAsString();
@@ -160,9 +137,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldRedirectToAccountHomeAfterSelectActiveAccountSystem_NoJs() throws Exception {
 		//sets the active root accountId
-		ResultActions response = mockMvc.perform(get("/account/" + this.accountSystemId)
-				.session(mockSession)
-			);
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/account/" + this.accountSystemId, (MockHttpSession) authenticatedSession));
 		
 		//should redirect get to /account
 		response
@@ -170,15 +145,12 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 			.andExpect(redirectedUrl("/account"));
 		
 		//following redirect... should redirect to /account/tree/<rootAccountPreviousSelected>
-		response = mockMvc.perform(get("/account")
-				.session(mockSession))
+		response = mockMvc.perform(prepareHtmlGetRequest("/account", (MockHttpSession) authenticatedSession))
 				.andExpect(status().isMovedTemporarily())
 				.andExpect(redirectedUrl("/account/tree/" + rootAccountId));
 		
 		//following redirect should return <selectedRootAccount> hierarchy
-		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
-			);
+		response = mockMvc.perform(prepareHtmlGetRequest("/account/tree/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		
 		ModelAndView mav = response.andReturn().getModelAndView();
 		AccountOperationResponse aor = (AccountOperationResponse) mav.getModel().get("response");
@@ -189,11 +161,9 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	
 	@Test
 	public void shouldRedirectToAccountSystemHomeIfNoAccountSystemActivatedWhenTryingAccountHome_NoJs() throws Exception {
-		mockSession.removeAttribute("activeAccountSystem");
+		authenticatedSession.removeAttribute("activeAccountSystem");
 		//try to get account home, with no active account system
-		ResultActions response = mockMvc.perform(get("/account")
-				.session(mockSession)
-			);
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/account", (MockHttpSession) authenticatedSession));
 		
 		//should redirect get to /account/roots
 		response
@@ -209,14 +179,11 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldGetEmptyTreeIfAccountIdDoNotExists() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/tree/9999")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/tree/9999", (MockHttpSession) authenticatedSession));
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.accountTree").doesNotExist());
 		
@@ -225,10 +192,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 	@Test
 	public void shouldAddNewAccount() throws Exception {
 		
-		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/tree/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		
@@ -236,9 +200,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		final String accountDescription ="short description";
 		
 		final Integer parentId = JsonPath.read(json, "$.accountTree.children[0].account.id");
-		response = mockMvc.perform(post("/account")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
+		response = mockMvc.perform(prepareJsonPostRequest("/account", (MockHttpSession) authenticatedSession)
 				.param("name", accountName)
 				.param("description", accountDescription)
 				.param("parentAccount.id", parentId.toString())
@@ -247,7 +209,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.account.id").exists());
 		
@@ -269,16 +231,12 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		String expectedRedirectedUrl = "/account/tree/" + rootAccountId;
 		ModelAndView mav;
 		
-		ResultActions response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/tree/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		json = response.andReturn().getResponse().getContentAsString();
 		parentId = JsonPath.read(json, "$.accountTree.children[0].account.id");
 		
 		//navigate to 'showForm' page to insert new account
-		response = mockMvc.perform(get("/account/showForm/" + parentId)
-				.session(mockSession));
+		response = mockMvc.perform(prepareHtmlGetRequest("/account/showForm/" + parentId, (MockHttpSession) authenticatedSession));
 		mav = response.andExpect(status().isOk())
 			.andReturn()
 			.getModelAndView();
@@ -288,8 +246,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		Assert.assertEquals(aor.getAccount().getId().toString(), parentId.toString(), "parent account id did not match wth the requested");
 		
 		//insert new account as child of the requested parent in 'showForm' page
-		response = mockMvc.perform(post("/account")
-				.session(mockSession)
+		response = mockMvc.perform(prepareHtmlPostRequest("/account", (MockHttpSession) authenticatedSession)
 				.param("name", newAccountName)
 				.param("description", newAccountDescription)
 				.param("parentAccount.id", parentId.toString())
@@ -305,16 +262,14 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		final String accountName = "NewAccount";
 		final String accountDescription ="short description";
 		
-		ResultActions response = mockMvc.perform(post("/account")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
+		ResultActions response = mockMvc.perform(prepareJsonPostRequest("/account", (MockHttpSession) authenticatedSession)
 				.param("name", accountName)
 				.param("description", accountDescription)
 			);
 		
 		response
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentType(MediaTypeApplicationJsonUTF8.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.success").value(false));
 		
 		new WebResponseChecker(response, mockSession)
@@ -329,8 +284,7 @@ public class AccountSystemControllerTest extends AbstractCloudFinanceDatabaseTes
 		final String accountName = "NewAccount";
 		final String accountDescription ="short description";
 		
-		ResultActions response = mockMvc.perform(post("/account")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareHtmlPostRequest("/account", (MockHttpSession) authenticatedSession)
 				.param("name", accountName)
 				.param("description", accountDescription)
 			);

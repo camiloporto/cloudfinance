@@ -29,20 +29,19 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
+import br.com.camiloporto.cloudfinance.AbstractWebMvcCloudFinanceTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.model.Profile;
 
 @ContextConfiguration(locations = {
 		"classpath:/META-INF/spring/applicationContext*.xml",
 		"classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
-public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest {
+public class RestfulSpringSecurityTest extends AbstractWebMvcCloudFinanceTest {
 	
 	private static String SEC_CONTEXT_ATTR = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
-	@Autowired
-	private FilterChainProxy springSecurityFilterChain;
-	
 	@Autowired
     private WebApplicationContext wac;
 	private MockMvc mockMvc;
@@ -60,6 +59,18 @@ public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest 
     }
 	
 	@Test
+	public void shouldEncryptRegisteredUserPassword() throws Exception {
+		final String username = "camiloporto@email.com";
+		final String password = "plaintext";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(username, password, password);
+		
+		Profile saved = userProfileManager.findByUsername(username);
+		String databasePassword = saved.getPassword();
+		Assert.assertNotEquals(databasePassword, password, "database password should not be equals to its plain text. it should be encrypted");
+	}
+	
+	@Test
 	public void shouldNotAuthorizeAccessForUnauthenticatedUserOnRestrictedUrls() throws Exception {
 		mockMvc.perform(get("/account/roots")
 				.accept(MediaType.APPLICATION_JSON))
@@ -74,6 +85,13 @@ public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest 
 			.signup(username, password, password);
 		
 		mockMvc.perform(post("/user/login").param("userName", username).param("pass", password).accept(MediaType.APPLICATION_JSON))
+			.andExpect(new ResultMatcher() {
+				public void match(MvcResult mvcResult) throws Exception {
+					HttpSession session = mvcResult.getRequest().getSession();
+					SecurityContext securityContext = (SecurityContext) session.getAttribute(SEC_CONTEXT_ATTR);
+					Assert.assertEquals(securityContext.getAuthentication().getName(), username);
+				}
+			})
 			.andExpect(status().isOk());
 		
 		ResultActions response = mockMvc.perform(post("/user/logoff")
@@ -148,6 +166,8 @@ public class RestfulSpringSecurityTest extends AbstractCloudFinanceDatabaseTest 
 					Assert.assertEquals(securityContext.getAuthentication().getName(), username);
 				}
 			});
+		Profile saved = userProfileManager.findByUsername(username);
+		saved.getPassword();
 	}
 	
 	@Test

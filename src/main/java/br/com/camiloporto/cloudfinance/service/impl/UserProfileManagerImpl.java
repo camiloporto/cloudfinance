@@ -1,6 +1,7 @@
 package br.com.camiloporto.cloudfinance.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +20,15 @@ public class UserProfileManagerImpl implements UserProfileManager {
 	@Autowired
 	private AccountManager accountManager;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
 	@Override
 	@Transactional
 	public Profile signUp(Profile newProfile) {
 		checkSignUpConstraints(newProfile);
+		String encryptedPassword = passwordEncoder.encode(newProfile.getPassword());
+		newProfile.setPass(encryptedPassword);
 		UserRole role = new UserRole();
 		role.setAuthority("ROLE_USER");
 		newProfile.getAuthorities().add(role);
