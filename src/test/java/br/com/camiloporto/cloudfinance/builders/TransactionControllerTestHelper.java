@@ -8,7 +8,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpSession;
 
 import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;

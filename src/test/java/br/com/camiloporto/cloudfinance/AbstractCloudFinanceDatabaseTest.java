@@ -1,7 +1,6 @@
 package br.com.camiloporto.cloudfinance;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -12,6 +11,7 @@ import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
 import br.com.camiloporto.cloudfinance.repository.ProfileRepository;
 import br.com.camiloporto.cloudfinance.service.AccountManager;
+import br.com.camiloporto.cloudfinance.service.TransactionManager;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml",
@@ -19,6 +19,9 @@ import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 @ActiveProfiles("unit-test")
 public abstract class AbstractCloudFinanceDatabaseTest extends
 		AbstractTestNGSpringContextTests {
+	
+	@Autowired
+	protected TransactionManager transactionManager;
 	
 	@Autowired
 	protected AccountManager accountManager;
