@@ -18,5 +18,6 @@
         <class>br.com.camiloporto.cloudfinance.model.AccountSystem</class>
         <class>br.com.camiloporto.cloudfinance.model.AccountTransaction</class>
         <class>br.com.camiloporto.cloudfinance.model.Profile</class>
+        <class>br.com.camiloporto.cloudfinance.model.UserRole</class>
     </persistence-unit>
 </persistence>

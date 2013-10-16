@@ -56,7 +56,7 @@ public class ProfileChecker {
 	}
 
 	private void checkIdAssigned() {
-		Assert.assertNotNull(profile.getId(), "id not assigned");
+		Assert.assertNotNull(profile.getUserId(), "id not assigned");
 	}
 
 	public ProfileChecker assertUserNameEquals(String userName) {

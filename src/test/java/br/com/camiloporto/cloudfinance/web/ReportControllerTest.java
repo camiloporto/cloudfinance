@@ -1,6 +1,5 @@
 package br.com.camiloporto.cloudfinance.web;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,24 +9,17 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
-import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
+import br.com.camiloporto.cloudfinance.AbstractWebMvcCloudFinanceTest;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
@@ -35,8 +27,6 @@ import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
 import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
-import br.com.camiloporto.cloudfinance.service.AccountManager;
-import br.com.camiloporto.cloudfinance.service.TransactionManager;
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 
 import com.jayway.jsonpath.JsonPath;
@@ -45,23 +35,11 @@ import com.jayway.jsonpath.JsonPath;
 		"classpath:/META-INF/spring/applicationContext*.xml",
 		"classpath:/META-INF/spring/webmvc-*.xml" })
 @WebAppConfiguration
-public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
-	
-	@Autowired
-	private TransactionManager transactionManager;
-	
-	@Autowired
-	private AccountManager accountManager;
-	
-	@Autowired
-    private WebApplicationContext wac;
+public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 	
 	private Integer rootAccountId;
-	
+
 	private AccountSystem accountSystem;
-	
-	private MockMvc mockMvc;
-    private MockHttpSession mockSession;
 
 	private Account incomes;
 
@@ -89,26 +67,27 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 
 	@BeforeMethod
     public void setup() throws Exception {
+		super.init();
 		cleanUserData();
-		
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
-        
         final String userName ="some@email.com";
 		final String userPass ="1234";
+		
 		Profile p = new Profile();
 		p.setPass(userPass);
 		p.setUserId(userName);
 		
 		profile = super.userProfileManager.signUp(p);
-		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.login(userName, userPass);
+		
+		ResultActions response = mockMvc.perform(prepareHtmlPostRequest("/user/login", mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			);
+		authenticatedSession = response.andReturn().getRequest().getSession();
+		
 		accountSystem = accountManager.findAccountSystems(profile).get(0);
 		
-		ResultActions response = mockMvc.perform(get("/account/roots")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		response = mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession));
+		
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		
@@ -174,12 +153,10 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetAccountStatement() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/statement")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/report/statement", (MockHttpSession) authenticatedSession)
 				.param("accountId", bank.getId().toString())
 				.param("begin", "12/06/2013")
 				.param("end", "14/06/2013")
-				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -194,10 +171,8 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetBalanceSheet() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/balancesheet")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/report/balancesheet", (MockHttpSession) authenticatedSession)
 				.param("date", "20/09/2013")
-				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -212,8 +187,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetBalanceSheet_NoJs() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report/balanceSheet", (MockHttpSession) authenticatedSession)
 				.param("date", "20/09/2013")
 			);
 		
@@ -229,8 +203,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGetAccountStatement_NoJS() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/statement")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report/statement", (MockHttpSession) authenticatedSession)
 				.param("accountId", bank.getId().toString())
 				.param("begin", "12/06/2013")
 				.param("end", "14/06/2013")
@@ -251,9 +224,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGoToAccountStatementHomePage() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/statement")
-				.session(mockSession)
-			);
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report/statement", (MockHttpSession) authenticatedSession));
 		
 		ModelAndView mav = response
 			.andExpect(status().isOk())
@@ -267,9 +238,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGoToReportHomePage() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report")
-				.session(mockSession)
-			);
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report", (MockHttpSession) authenticatedSession));
 		
 		ModelAndView mav = response
 			.andExpect(status().isOk())
@@ -279,9 +248,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldGoToBalanceSheetHomePage() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
-				.session(mockSession)
-			);
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report/balanceSheet", (MockHttpSession) authenticatedSession));
 		
 		response
 			.andExpect(status().isOk())
@@ -292,8 +259,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	
 	@Test
 	public void shouldShowBindingErrorsWhenGetBalanceSheet_NoJs() throws Exception {
-		ResultActions response = mockMvc.perform(get("/report/balanceSheet")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report/balanceSheet", (MockHttpSession) authenticatedSession)
 				.param("balanceDate", "InvalidDate")
 			);
 		
@@ -310,12 +276,10 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	public void shouldFailIfErrorOccurWhenGetAccountStatement() throws Exception {
 		final String emptyAccountId = "";
 		
-		ResultActions response = mockMvc.perform(get("/report/statement")
-				.session(mockSession)
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/report/statement", (MockHttpSession) authenticatedSession)
 				.param("accountId", emptyAccountId)
 				.param("begin", "12/06/2013")
 				.param("end", "14/06/2013")
-				.accept(MediaType.APPLICATION_JSON)
 			);
 		
 		response
@@ -331,10 +295,7 @@ public class ReportControllerTest extends AbstractCloudFinanceDatabaseTest {
 	@Test
 	public void shouldSetDefaultDateIfNoneInformedOnGetBalanceSheet() throws Exception {
 		//no date informed for balance sheet. should set current date
-		ResultActions response = mockMvc.perform(get("/report/balancesheet")
-				.session(mockSession)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/report/balancesheet", (MockHttpSession) authenticatedSession));
 		
 		response
 			.andExpect(status().isOk())

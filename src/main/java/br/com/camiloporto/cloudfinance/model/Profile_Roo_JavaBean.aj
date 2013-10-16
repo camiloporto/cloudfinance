@@ -4,6 +4,8 @@
 package br.com.camiloporto.cloudfinance.model;
 
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.model.UserRole;
+import java.util.List;
 
 privileged aspect Profile_Roo_JavaBean {
     
@@ -21,6 +23,18 @@ privileged aspect Profile_Roo_JavaBean {
     
     public void Profile.setPass(String pass) {
         this.pass = pass;
+    }
+    
+    public void Profile.setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
+    public List<UserRole> Profile.getAuthorities() {
+        return this.authorities;
+    }
+    
+    public void Profile.setAuthorities(List<UserRole> authorities) {
+        this.authorities = authorities;
     }
     
 }

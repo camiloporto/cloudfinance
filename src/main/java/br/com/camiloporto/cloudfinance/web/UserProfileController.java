@@ -40,7 +40,7 @@ public class UserProfileController {
 		UserOperationResponse response = new UserOperationResponse(true);
 		try {
 			saved = userProfileManager.signUp(newProfile);
-			response.setUserId(saved.getId());
+			response.setUserId(saved.getUserId());
 		} catch (ConstraintViolationException e) {
 			response = new UserOperationResponse(e);
 			e.printStackTrace();

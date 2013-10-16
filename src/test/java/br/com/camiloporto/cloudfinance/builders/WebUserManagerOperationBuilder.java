@@ -1,13 +1,10 @@
 package br.com.camiloporto.cloudfinance.builders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 public class WebUserManagerOperationBuilder {
 
@@ -20,7 +17,7 @@ public class WebUserManagerOperationBuilder {
 	}
 
 	public WebUserManagerOperationBuilder signup(String userName, String userPass, String userConfirmPass) throws Exception {
-		ResultActions response = mockMvc.perform(post("/user/signup")
+		mockMvc.perform(post("/user/signup")
 				.session(mockSession)
 				.param("userName", userName)
 				.param("pass", userPass)
@@ -31,12 +28,7 @@ public class WebUserManagerOperationBuilder {
 	}
 
 	public WebUserManagerOperationBuilder login(String userName, String userPass) throws Exception {
-		ResultActions response = mockMvc.perform(post("/user/login")
-				.session(mockSession)
-				.param("userName", userName)
-				.param("pass", userPass)
-				.accept(MediaType.APPLICATION_JSON)
-			);
+		mockMvc.perform(post("/user/login").param("userName", userName).param("pass", userPass).accept(MediaType.APPLICATION_JSON).session(mockSession));
 		return this;
 	}
 

@@ -5,7 +5,6 @@ import org.testng.annotations.Test;
 
 import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileNewUserPage;
-import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileStatusPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.RootAccountHomePage;
 
 public class NewUserProfileMobileWUITest extends AbstractWUITest {
@@ -15,7 +14,7 @@ public class NewUserProfileMobileWUITest extends AbstractWUITest {
 		MobileHomePage mhp = PageFactory.initElements(driver, MobileHomePage.class);
 		mhp.clickNewUserProfileLink();
 		MobileNewUserPage newUserPage = PageFactory.initElements(driver, MobileNewUserPage.class);
-		String newUser = "user@gmail.com";
+		String newUser = generateSampleUserLogin();
 		newUserPage
 			.fillNewUserForm(newUser, "s3cret", "s3cret")
 			.submit();

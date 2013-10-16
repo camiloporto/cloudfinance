@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	
+	<http entry-point-ref="restAuthenticationEntrypoint" use-expressions="true">
+		<intercept-url pattern="/user/signup*" access="permitAll"/>
+		<intercept-url pattern="/user/logonFailed*" access="permitAll"/>
+		<intercept-url pattern="/mobile" access="permitAll"/>
+		<intercept-url pattern="/mobile/newUser*" access="permitAll"/>
+		<intercept-url pattern="/**" access="isAuthenticated()"/>
+		<form-login 
+			authentication-success-handler-ref="restfulAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="restfulAuthenticationFailureHandler"
+			username-parameter="userName"
+			password-parameter="pass"
+			login-processing-url="/user/login"/>
+		<logout 
+			logout-url="/user/logoff" 
+			success-handler-ref="myLogoutSuccessHandler"/>
+	</http>
+	
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider>
+			<password-encoder ref="bcryptEncoder"/>
+			<jdbc-user-service data-source-ref="dataSource"/>
+		</authentication-provider>
+	</authentication-manager>
+	
+	<beans:bean name="bcryptEncoder"
+    	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+    </beans:bean>
+	
+	<beans:bean id="restAuthenticationEntrypoint" class="br.com.camiloporto.cloudfinance.security.RestAuthenticationEntryPoint" />
+	
+	<beans:bean id="myLogoutSuccessHandler" class="br.com.camiloporto.cloudfinance.security.MyLogoutSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/mobile" />
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true" />
+	</beans:bean>
+	
+	<beans:bean id="restfulAuthenticationSuccessHandler" class="br.com.camiloporto.cloudfinance.security.MyAuthenticationSuccessHandler">
+		<beans:property name="alwaysUseDefaultTargetUrl" value="true" />
+		<beans:property name="defaultTargetUrl" value="/account/roots" />
+	</beans:bean>
+	
+	<beans:bean id="restfulAuthenticationFailureHandler" class="br.com.camiloporto.cloudfinance.security.RestfulExceptionMappingAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl" value="/user/logonFailed" />
+	</beans:bean>
+	
+</beans:beans>
