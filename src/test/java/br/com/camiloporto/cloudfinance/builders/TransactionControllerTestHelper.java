@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpSession;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -35,11 +37,18 @@ public class TransactionControllerTestHelper {
 	public TransactionControllerTestHelper signUpAndLogUser(String userName, String userPass,
 			String userConfirmPass) throws Exception {
 		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(userName, userPass, userConfirmPass)
-			.login(userName, userPass);
-		
-		ResultActions response = mockMvc.perform(get("/account/roots")
+			.signup(userName, userPass, userConfirmPass);
+
+		ResultActions response = mockMvc.perform(post("/user/login")
 				.session(mockSession)
+				.param("userName", userName)
+				.param("pass", userPass)
+			);
+		
+		HttpSession session = response.andReturn().getRequest().getSession();
+		
+		response = mockMvc.perform(get("/account/roots")
+				.session((MockHttpSession) session)
 				.accept(MediaType.APPLICATION_JSON)
 			);
 		String json = response.andReturn().getResponse().getContentAsString();
@@ -47,7 +56,7 @@ public class TransactionControllerTestHelper {
 		Integer rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		
 		response = mockMvc.perform(get("/account/tree/" + rootAccountId)
-				.session(mockSession)
+				.session((MockHttpSession) session)
 				.accept(MediaType.APPLICATION_JSON)
 			);
 		
