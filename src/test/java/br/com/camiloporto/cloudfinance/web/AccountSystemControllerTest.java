@@ -10,7 +10,6 @@ import net.minidev.json.JSONArray;
 
 import org.hamcrest.Matchers;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -27,7 +26,6 @@ import br.com.camiloporto.cloudfinance.model.Account;
 
 import com.jayway.jsonpath.JsonPath;
 
-@ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
 public class AccountSystemControllerTest extends AbstractWebMvcCloudFinanceTest {
 	

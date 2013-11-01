@@ -15,7 +15,7 @@ import br.com.camiloporto.cloudfinance.service.TransactionManager;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml",
-		"classpath:/META-INF/spring/spring-security*.xml"})
+		"classpath:/META-INF/spring/spring-security-config.xml"})
 @ActiveProfiles("unit-test")
 public abstract class AbstractCloudFinanceDatabaseTest extends
 		AbstractTestNGSpringContextTests {

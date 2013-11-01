@@ -3,6 +3,7 @@ package br.com.camiloporto.cloudfinance.service;
 import java.util.List;
 
 import org.springframework.roo.addon.layers.service.RooService;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountNode;
@@ -17,6 +18,7 @@ public interface AccountManager {
 	@Deprecated
 	List<Account> findRootAccounts(Profile profile);
 
+	@PreAuthorize("hasPermission(#accountId, 'Account.read')")
 	AccountNode getAccountBranch(Profile profile, Long accountId);
 	
 	void saveAccount(Profile profile, Account account, AccountSystem accountSystem);

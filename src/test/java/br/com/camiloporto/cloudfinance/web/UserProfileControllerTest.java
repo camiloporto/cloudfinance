@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,18 +22,15 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
+import br.com.camiloporto.cloudfinance.AbstractWebMvcCloudFinanceTest;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
 
-@ContextConfiguration(locations = {
-		"classpath:/META-INF/spring/applicationContext*.xml", 
-		"classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
-public class UserProfileControllerTest extends AbstractCloudFinanceDatabaseTest {
+public class UserProfileControllerTest extends AbstractWebMvcCloudFinanceTest {
 	
 
 	@Autowired

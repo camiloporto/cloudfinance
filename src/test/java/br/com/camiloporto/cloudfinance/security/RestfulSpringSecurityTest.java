@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -13,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,15 +27,12 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import br.com.camiloporto.cloudfinance.AbstractCloudFinanceDatabaseTest;
 import br.com.camiloporto.cloudfinance.AbstractWebMvcCloudFinanceTest;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
+import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
 
-@ContextConfiguration(locations = {
-		"classpath:/META-INF/spring/applicationContext*.xml",
-		"classpath:/META-INF/spring/webmvc-*.xml"})
 @WebAppConfiguration
 public class RestfulSpringSecurityTest extends AbstractWebMvcCloudFinanceTest {
 	
@@ -289,5 +285,28 @@ public class RestfulSpringSecurityTest extends AbstractWebMvcCloudFinanceTest {
 					Assert.assertNull(securityContext);
 				}
 			});
+	}
+	
+	@Test
+	public void oneUserShouldNotAccessOtherUserInformations() throws Exception {
+		final String username = "oneuser@email.com";
+		final String password = "onepass";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(username, password, password);
+		
+		final String otherUsername = "otheruser@email.com";
+		final String otherPassword = "otherpass";
+		new WebUserManagerOperationBuilder(mockMvc, mockSession)
+			.signup(otherUsername, otherPassword, otherPassword);
+		
+		ResultActions perform = mockMvc.perform(post("/user/login").param("userName", username).param("pass", password).accept(MediaType.APPLICATION_JSON));
+		HttpSession session = perform.andReturn().getRequest().getSession();
+		
+		Profile other = profileRepository.findByUserId(otherUsername);
+		List<AccountSystem> accountSystem = accountManager.findAccountSystems(other);
+		Long otherRootAccountId = accountSystem.get(0).getRootAccount().getId();
+		
+		mockMvc.perform(prepareJsonGetRequest("/account/tree/" + otherRootAccountId, (MockHttpSession) session))
+			.andExpect(status().isUnauthorized());
 	}
 }
