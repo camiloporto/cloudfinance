@@ -287,26 +287,4 @@ public class RestfulSpringSecurityTest extends AbstractWebMvcCloudFinanceTest {
 			});
 	}
 	
-	@Test
-	public void oneUserShouldNotAccessOtherUserInformations() throws Exception {
-		final String username = "oneuser@email.com";
-		final String password = "onepass";
-		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(username, password, password);
-		
-		final String otherUsername = "otheruser@email.com";
-		final String otherPassword = "otherpass";
-		new WebUserManagerOperationBuilder(mockMvc, mockSession)
-			.signup(otherUsername, otherPassword, otherPassword);
-		
-		ResultActions perform = mockMvc.perform(post("/user/login").param("userName", username).param("pass", password).accept(MediaType.APPLICATION_JSON));
-		HttpSession session = perform.andReturn().getRequest().getSession();
-		
-		Profile other = profileRepository.findByUserId(otherUsername);
-		List<AccountSystem> accountSystem = accountManager.findAccountSystems(other);
-		Long otherRootAccountId = accountSystem.get(0).getRootAccount().getId();
-		
-		mockMvc.perform(prepareJsonGetRequest("/account/tree/" + otherRootAccountId, (MockHttpSession) session))
-			.andExpect(status().isUnauthorized());
-	}
 }

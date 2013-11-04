@@ -21,12 +21,15 @@ public interface AccountManager {
 	@PreAuthorize("hasPermission(#accountId, 'Account.read')")
 	AccountNode getAccountBranch(Profile profile, Long accountId);
 	
+	@PreAuthorize("hasPermission(#account, 'Account.read')")
 	void saveAccount(Profile profile, Account account, AccountSystem accountSystem);
 
 	List<Account> findAllLeavesFrom(Profile profile, Long accountId);
 
+	@PreAuthorize("hasPermission(#profile, 'Profile.read')")
 	List<AccountSystem> findAccountSystems(Profile profile);
 
+	@PreAuthorize("hasPermission(#id, 'AccountSystem.read')")
 	AccountSystem findAccountSystem(Long id);
 
 }

@@ -108,9 +108,10 @@ public class DataInsertionHelper {
 		Account fatherAccount = accountRepository.findByNameAndRootAccount(fatherName, this.rootAccount);
 		Account a = new Account(accountName, fatherAccount);
 		a.setRootAccount(rootAccount);
-		accountManager.saveAccount(p, a, accountSystem);
+//		accountManager.saveAccount(p, a, accountSystem);
+		accountRepository.save(a);
 	}
-
+	
 	private List<String[]> scanFile(File file, final String fieldPatternSeparator) throws IOException {
 		BufferedReader in = new BufferedReader(
 				new FileReader(file));

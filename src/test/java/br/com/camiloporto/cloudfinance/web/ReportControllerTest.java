@@ -13,6 +13,7 @@ import java.util.List;
 import net.minidev.json.JSONArray;
 
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,7 +32,6 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 
 import com.jayway.jsonpath.JsonPath;
-
 
 @WebAppConfiguration
 public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
@@ -83,7 +83,7 @@ public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 			);
 		authenticatedSession = response.andReturn().getRequest().getSession();
 		
-		accountSystem = accountManager.findAccountSystems(profile).get(0);
+		accountSystem = accountSystemRepository.findByUserProfile(profile).get(0);
 		
 		response = mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession));
 		
@@ -102,7 +102,7 @@ public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 		accountInsertionHelper = new DataInsertionHelper(accountSystem);
 		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
 		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
-		
+
 		prepareSampleTransactions();
 		
     }

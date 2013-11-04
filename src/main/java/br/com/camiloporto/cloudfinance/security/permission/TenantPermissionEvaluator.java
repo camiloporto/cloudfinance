@@ -3,10 +3,7 @@ package br.com.camiloporto.cloudfinance.security.permission;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,58 +11,110 @@ import org.springframework.stereotype.Component;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
-import br.com.camiloporto.cloudfinance.service.AccountManager;
+import br.com.camiloporto.cloudfinance.repository.AccountRepository;
+import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @Component
 public class TenantPermissionEvaluator implements PermissionEvaluator {
 	
-//	@Autowired
-	private AccountManager accountManager;
+	@Autowired
+	private AccountSystemRepository accountSystemRepository;
 	
-	@Autowired 
-	private ApplicationContext applicationContext;
+	@Autowired
+	private AccountRepository accountRepository;
 	
 	@Autowired
 	private UserProfileManager userProfileManager;
 	
-	@PostConstruct
-	public void init() {
-		//FIXME improve this dependency inject. Autowire is causing cirular dependency
-		accountManager = (AccountManager) applicationContext.getBean("accountManagerImpl");
-	}
-
 	@Override
 	public boolean hasPermission(Authentication authentication,
 			Object targetDomainObject, Object permission) {
 		String permissionStr = (String) permission;
 		boolean result = false;
-		if(permissionStr.startsWith(Account.class.getSimpleName())) {
+		if(permissionStr.startsWith(Account.class.getSimpleName() + ".")) {
 			result = hasAccountPermission(authentication, targetDomainObject, permissionStr);
+		} else if(permissionStr.startsWith(Profile.class.getSimpleName())) {
+			result = hasProfilePermission(authentication, targetDomainObject, permissionStr);
+		} else if(permissionStr.startsWith(AccountSystem.class.getSimpleName() + ".")) {
+			result = hasAccountSystemPermission(authentication, targetDomainObject, permissionStr);
 		}
+		
+		return result;
+	}
+
+	private boolean hasAccountSystemPermission(Authentication authentication,
+			Object targetDomainObject, String permissionStr) {
+		boolean result = false;
+		AccountSystem targetAccountSystem = null;
+		Long targetAccountSystemId = null;
+		if(targetDomainObject instanceof Long) {
+			targetAccountSystemId = (Long) targetDomainObject;
+			targetAccountSystem = accountSystemRepository.findOne(targetAccountSystemId);
+		}
+		if(targetAccountSystem == null) {
+			return true;
+		}
+		Profile authenticatedProfile = getAuthenticatedProfile(authentication);
+		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(authenticatedProfile);
+		result = isTargetAccountSystemInAuthenticatedProfileAccountSystemList(targetAccountSystem, accountSystems);
+		return result;
+	}
+
+	private boolean isTargetAccountSystemInAuthenticatedProfileAccountSystemList(
+			AccountSystem targetAccountSystem,
+			List<AccountSystem> accountSystems) {
+		for (AccountSystem accountSystem : accountSystems) {
+			if(targetAccountSystem.getId().equals(accountSystem.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean hasProfilePermission(Authentication authentication,
+			Object targetDomainObject, String permissionStr) {
+		boolean result = false;
+		Profile targetProfile = null;
+		if(targetDomainObject instanceof Profile) {
+			targetProfile = (Profile) targetDomainObject;
+		}
+		Profile authenticatedProfile = getAuthenticatedProfile(authentication);
+		result = authenticatedProfile.getUsername().equals(targetProfile.getUsername());
 		return result;
 	}
 
 	private boolean hasAccountPermission(Authentication authentication,
 			Object targetDomainObject, String permissionStr) {
 		boolean result = false;
+		Long accountId = null;
+		Account targetAccount = null;
 		if(targetDomainObject instanceof Number) {
-			Long accountId = (Long) targetDomainObject;
-			Account targetAccount = accountManager.findAccount(accountId);
-			if(targetAccount == null) {
-				return true;
-			}
-			Account rootAccount = targetAccount;
-			if(targetAccount.getRootAccount() != null) {
-				Long rootAccountId = targetAccount.getRootAccount().getId();
-				rootAccount = accountManager.findAccount(rootAccountId);
-			}
-			String principal = authentication.getName();
-			Profile profile = userProfileManager.findByUsername(principal);
-			List<AccountSystem> accountSystems = accountManager.findAccountSystems(profile);
-			result = isRootAccountBelongToAnyAccountSystem(rootAccount, accountSystems);
+			accountId = (Long) targetDomainObject;
+			targetAccount = accountRepository.findOne(accountId);
+		} else if (targetDomainObject instanceof Account) {
+			targetAccount = (Account) targetDomainObject;
+			accountId = targetAccount.getId();
 		}
+		
+		if(targetAccount == null) {
+			return true;
+		}
+		Account rootAccount = targetAccount;
+		if(targetAccount.getRootAccount() != null) {
+			Long rootAccountId = targetAccount.getRootAccount().getId();
+			rootAccount = accountRepository.findOne(rootAccountId);
+		}
+		Profile profile = getAuthenticatedProfile(authentication);
+		List<AccountSystem> accountSystems = accountSystemRepository.findByUserProfile(profile);
+		result = isRootAccountBelongToAnyAccountSystem(rootAccount, accountSystems);
 		return result;
+	}
+
+	public Profile getAuthenticatedProfile(Authentication authentication) {
+		String principal = authentication.getName();
+		Profile profile = userProfileManager.findByUsername(principal);
+		return profile;
 	}
 
 	private boolean isRootAccountBelongToAnyAccountSystem(
