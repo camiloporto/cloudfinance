@@ -17,9 +17,9 @@ public class AccountManagerImpl implements AccountManager {
 	@Autowired
 	private AccountSystemRepository accountSystemRepository;
 	
-	public List<Account> findAllLeavesFrom(Profile profile, Long rootAccountId) {
-		checkFindAllLeavesEntries(profile, rootAccountId);
-		return accountRepository.findLeavesFromRootAccountId(rootAccountId);
+	public List<Account> findAllLeavesFrom(Profile profile, Long accountId) {
+		checkFindAllLeavesEntries(profile, accountId);
+		return accountRepository.findLeavesFromRootAccountId(accountId);
 	}
 	
 	public AccountSystem findAccountSystem(Long id) {

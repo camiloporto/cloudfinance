@@ -138,6 +138,17 @@ public class AccountSystemAccessControlTest extends
 			.andExpect(status().isUnauthorized());
 	}
 	
+	@Test
+	public void oneUserShouldNotAccessOtherUserLeavesAccounts() throws Exception {
+		Profile otherUserProfile = userProfileManager.findByUsername(otherUsername);
+		
+		AccountSystem otherUserAccountSystem = accountSystemRepository.findByUserProfile(otherUserProfile).get(0);
+		
+		//trying to access other user internal leaves account
+		mockMvc.perform(prepareJsonGetRequest("/account/leaf/" + otherUserAccountSystem.getRootAccount().getId(), (MockHttpSession) authenticatedSession))
+			.andExpect(status().isUnauthorized());
+	}
+	
 	private void assertAccountSystemIdsIsNotInJSONArray(
 			List<AccountSystem> accountSystems, JSONArray jsonArray) {
 		for (AccountSystem as : accountSystems) {

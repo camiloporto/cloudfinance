@@ -24,6 +24,7 @@ public interface AccountManager {
 	@PreAuthorize("hasPermission(#account, 'Account.read')")
 	void saveAccount(Profile profile, Account account, AccountSystem accountSystem);
 
+	@PreAuthorize("hasPermission(#accountId, 'Account.read')")
 	List<Account> findAllLeavesFrom(Profile profile, Long accountId);
 
 	@PreAuthorize("hasPermission(#profile, 'Profile.read')")

@@ -130,8 +130,7 @@ public class TenantPermissionEvaluator implements PermissionEvaluator {
 	@Override
 	public boolean hasPermission(Authentication authentication,
 			Serializable targetId, String targetType, Object permission) {
-		System.out.println("TenantPermissionEvaluator.hasPermission() " + targetId + " " + targetType);
-		return true;
+		throw new UnsupportedOperationException();
 	}
 
 }
