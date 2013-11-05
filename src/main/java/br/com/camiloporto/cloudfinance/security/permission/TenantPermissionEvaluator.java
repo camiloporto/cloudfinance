@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountSystem;
+import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Profile;
 import br.com.camiloporto.cloudfinance.repository.AccountRepository;
 import br.com.camiloporto.cloudfinance.repository.AccountSystemRepository;
+import br.com.camiloporto.cloudfinance.repository.AccountTransactionRepository;
 import br.com.camiloporto.cloudfinance.service.UserProfileManager;
 
 @Component
@@ -27,9 +29,15 @@ public class TenantPermissionEvaluator implements PermissionEvaluator {
 	@Autowired
 	private UserProfileManager userProfileManager;
 	
+	@Autowired
+	private AccountTransactionRepository accountTransactionRepository;
+	
 	@Override
 	public boolean hasPermission(Authentication authentication,
 			Object targetDomainObject, Object permission) {
+		if(targetDomainObject == null) {
+			return true;
+		}
 		String permissionStr = (String) permission;
 		boolean result = false;
 		if(permissionStr.startsWith(Account.class.getSimpleName() + ".")) {
@@ -38,7 +46,25 @@ public class TenantPermissionEvaluator implements PermissionEvaluator {
 			result = hasProfilePermission(authentication, targetDomainObject, permissionStr);
 		} else if(permissionStr.startsWith(AccountSystem.class.getSimpleName() + ".")) {
 			result = hasAccountSystemPermission(authentication, targetDomainObject, permissionStr);
+		} else if(permissionStr.startsWith(AccountTransaction.class.getSimpleName() + ".")) {
+			result = hasAccountTransactionPermission(authentication, targetDomainObject, permissionStr);
 		}
+		
+		return result;
+	}
+
+	private boolean hasAccountTransactionPermission(
+			Authentication authentication, Object targetDomainObject,
+			String permissionStr) {
+		boolean result = false;
+		AccountTransaction targetAccountTransaction = null;
+		Long targetAccountTransactionId = null;
+		if(targetDomainObject instanceof Long) {
+			targetAccountTransactionId = (Long) targetDomainObject;
+			targetAccountTransaction = accountTransactionRepository.findOne(targetAccountTransactionId);
+		}
+		
+		result = hasAccountPermission(authentication, targetAccountTransaction.getOrigin().getAccount(), permissionStr);
 		
 		return result;
 	}

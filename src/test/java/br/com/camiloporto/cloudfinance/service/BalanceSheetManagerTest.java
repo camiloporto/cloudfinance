@@ -50,7 +50,7 @@ public class BalanceSheetManagerTest extends AbstractCloudFinanceDatabaseTest {
 		accountSystem = accountManager.findAccountSystems(profile).get(0);
 		
 		root = accountSystem.getRootAccount();
-		accountInsertionHelper = new DataInsertionHelper(accountSystem);
+		accountInsertionHelper = new DataInsertionHelper(accountSystem, camiloporto, senha);
 		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
 		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
 	}

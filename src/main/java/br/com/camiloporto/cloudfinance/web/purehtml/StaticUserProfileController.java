@@ -64,6 +64,8 @@ public class StaticUserProfileController {
 		return mav;
 	}
 	
+	@Deprecated
+	//FIXME remove this method. use spring security directly instead
 	private void authenticateUserAndSetSession(String userName, String password, HttpServletRequest request) {
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
 	            userName, password);

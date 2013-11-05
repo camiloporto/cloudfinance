@@ -13,7 +13,10 @@ import java.util.List;
 import net.minidev.json.JSONArray;
 
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.ModelAndView;
@@ -99,7 +102,7 @@ public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 		bank = getAccountFromJSON(accounts, Account.ASSET_NAME);
 		outgoings = getAccountFromJSON(accounts, Account.OUTGOING_NAME);
 		
-		accountInsertionHelper = new DataInsertionHelper(accountSystem);
+		accountInsertionHelper = new DataInsertionHelper(accountSystem, userName, userPass);
 		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
 		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
 
