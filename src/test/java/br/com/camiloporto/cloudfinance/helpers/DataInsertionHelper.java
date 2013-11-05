@@ -15,6 +15,10 @@ import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountSystem;
@@ -60,7 +64,16 @@ public class DataInsertionHelper {
 		this.rootAccount = accountSystem.getRootAccount();
 	}
 	
+	public DataInsertionHelper(AccountSystem accountSystem, String userName,
+			String userPass) {
+		this(accountSystem);
+		Authentication auth = new UsernamePasswordAuthenticationToken(userName, userPass);
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		securityContext.setAuthentication(auth);
+	}
+
 	public void insertTransactionsFromFile(Profile p, File file) throws IOException, ParseException {
+
 		List<String[]> records = scanFile(file, ";");
 		for (String[] fields : records) {
 			insertTransaction(p, fields);
@@ -108,9 +121,10 @@ public class DataInsertionHelper {
 		Account fatherAccount = accountRepository.findByNameAndRootAccount(fatherName, this.rootAccount);
 		Account a = new Account(accountName, fatherAccount);
 		a.setRootAccount(rootAccount);
-		accountManager.saveAccount(p, a, accountSystem);
+//		accountManager.saveAccount(p, a, accountSystem);
+		accountRepository.save(a);
 	}
-
+	
 	private List<String[]> scanFile(File file, final String fieldPatternSeparator) throws IOException {
 		BufferedReader in = new BufferedReader(
 				new FileReader(file));

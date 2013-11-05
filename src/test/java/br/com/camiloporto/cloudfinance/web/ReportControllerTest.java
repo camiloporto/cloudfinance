@@ -10,9 +10,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import net.minidev.json.JSONArray;
+
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
@@ -31,10 +31,6 @@ import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 
 import com.jayway.jsonpath.JsonPath;
 
-@ContextConfiguration(locations = {
-		"classpath:/META-INF/spring/applicationContext*.xml",
-		"classpath:/META-INF/spring/webmvc-*.xml" })
-@WebAppConfiguration
 public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 	
 	private Integer rootAccountId;
@@ -84,25 +80,45 @@ public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 			);
 		authenticatedSession = response.andReturn().getRequest().getSession();
 		
-		accountSystem = accountManager.findAccountSystems(profile).get(0);
+		accountSystem = accountSystemRepository.findByUserProfile(profile).get(0);
 		
 		response = mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession));
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
 		
-		AccountNode rootBranch = accountManager.getAccountBranch(profile, new Long(rootAccountId));
-		incomes = getByName(rootBranch.getChildren(), Account.INCOME_NAME);
-		bank = getByName(rootBranch.getChildren(), Account.ASSET_NAME);
-		outgoings = getByName(rootBranch.getChildren(), Account.OUTGOING_NAME);
+		response = mockMvc.perform(prepareJsonGetRequest("/account/tree/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		
-		accountInsertionHelper = new DataInsertionHelper(accountSystem);
+		json = response.andReturn().getResponse().getContentAsString();
+		
+		JSONArray accounts = JsonPath.read(json, "$.accountTree.children[*].account");
+		incomes = getAccountFromJSON(accounts, Account.INCOME_NAME);
+		bank = getAccountFromJSON(accounts, Account.ASSET_NAME);
+		outgoings = getAccountFromJSON(accounts, Account.OUTGOING_NAME);
+		
+		accountInsertionHelper = new DataInsertionHelper(accountSystem, userName, userPass);
 		accountInsertionHelper.insertAccountsFromFile(profile, DataInsertionHelper.ACCOUNT_DATA);
 		accountInsertionHelper.insertTransactionsFromFile(profile, DataInsertionHelper.TRANSACTION_DATA);
-		
+
 		prepareSampleTransactions();
 		
     }
+	
+	private Account getAccountFromJSON(JSONArray accounts, String accountName) {
+		for (Object account : accounts) {
+			String name = JsonPath.read(account, "name");
+			if(name.equalsIgnoreCase(accountName)) {
+				return createAccountFromJson(account);
+			}
+		}
+		return null;
+	}
+	
+	private Account createAccountFromJson(Object account) {
+		Account a = new Account("", new Account());
+		a.setId(new Long((Integer) JsonPath.read(account, "id")));
+		return a;
+	}
 	
 	Account getByName(List<AccountNode> nodes, String name) {
 		for (AccountNode accountNode : nodes) {
