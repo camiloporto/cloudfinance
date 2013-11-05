@@ -6,18 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -29,29 +20,12 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
 
-@WebAppConfiguration
 public class UserProfileControllerTest extends AbstractWebMvcCloudFinanceTest {
-	
-
-	@Autowired
-	private FilterChainProxy springSecurityFilterChain;
-	
-	@Autowired
-    private WebApplicationContext wac;
-	
-    private MockMvc mockMvc;
-    private MockHttpSession mockSession;
 
     @BeforeMethod
     public void setup() {
     	cleanUserData();
-    	if(this.mockSession != null && !this.mockSession.isInvalid()) {
-    		this.mockSession.invalidate();
-    	}
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
-        		.addFilters(springSecurityFilterChain)
-        		.build();
-        this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
+    	init();
     }
     
     @Test
@@ -101,7 +75,6 @@ public class UserProfileControllerTest extends AbstractWebMvcCloudFinanceTest {
 		Assert.assertTrue(uor.getErrors().length > 0, "should have errors");
 	}
     
-    //FIXME Integrar cadastro de usuário ao Spring Security
 	@Test
 	public void shouldInsertNewAccountSystemWhenUserSignUp() throws Exception {
 		final String userName ="some@email.com";

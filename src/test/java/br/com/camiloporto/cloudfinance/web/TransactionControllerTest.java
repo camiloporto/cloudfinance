@@ -10,10 +10,7 @@ import java.util.Locale;
 
 import net.minidev.json.JSONArray;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,24 +25,14 @@ import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
-import br.com.camiloporto.cloudfinance.service.TransactionManager;
 
 import com.jayway.jsonpath.JsonPath;
 
-@ContextConfiguration(locations = {"classpath:/META-INF/spring/applicationContext*.xml", "classpath:/META-INF/spring/webmvc-*.xml"})
-@WebAppConfiguration
 public class TransactionControllerTest extends AbstractWebMvcCloudFinanceTest {
-	
-	@Autowired
-	private TransactionManager transactionManager;
 	
 	private Account originAccount;
 	private Account destAccount;
 	private Integer rootAccountId;
-	private Integer accountSystemId;
-	
-	private TransactionControllerTestHelper testHelper;
-
 	
 	@BeforeMethod
     public void setup() throws Exception {
@@ -70,7 +57,7 @@ public class TransactionControllerTest extends AbstractWebMvcCloudFinanceTest {
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
-		accountSystemId = JsonPath.read(json, "$.accountSystems[0].id");
+		JsonPath.read(json, "$.accountSystems[0].id");
 		
 		response = mockMvc.perform(prepareJsonGetRequest("/account/tree/" + rootAccountId, (MockHttpSession) authenticatedSession));
 		

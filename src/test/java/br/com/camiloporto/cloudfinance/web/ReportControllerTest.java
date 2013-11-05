@@ -13,11 +13,6 @@ import java.util.List;
 import net.minidev.json.JSONArray;
 
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
@@ -36,7 +31,6 @@ import br.com.camiloporto.cloudfinance.service.impl.BalanceSheet;
 
 import com.jayway.jsonpath.JsonPath;
 
-@WebAppConfiguration
 public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 	
 	private Integer rootAccountId;

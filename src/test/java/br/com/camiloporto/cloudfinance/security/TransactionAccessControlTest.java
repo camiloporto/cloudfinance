@@ -5,16 +5,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -27,14 +21,7 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
 
-@WebAppConfiguration
-public class TransactionAccessControlTest extends
-		AbstractWebMvcCloudFinanceTest {
-
-	@Autowired
-	private WebApplicationContext wac;
-	private MockMvc mockMvc;
-	private MockHttpSession mockSession;
+public class TransactionAccessControlTest extends AbstractWebMvcCloudFinanceTest {
 
 	private final String username = "oneuser@email.com";
 	private final String password = "onepass";
@@ -43,8 +30,6 @@ public class TransactionAccessControlTest extends
 	private final String otherPassword = "otherpass";
 	
 	private Long rootAccountId;
-
-	private Integer accountSystemId;
 
 	private Long otherRootAccountId;
 	private Account otherIncome;
@@ -55,11 +40,7 @@ public class TransactionAccessControlTest extends
 	@BeforeMethod
     public void setup() throws Exception {
 		cleanUserData();
-		
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
-        		.addFilters(springSecurityFilterChain)
-        		.build();
-        this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
+		init();
         
         new WebUserManagerOperationBuilder(mockMvc, mockSession)
 			.signup(username, password, password);
@@ -74,7 +55,6 @@ public class TransactionAccessControlTest extends
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = new Long((Integer) JsonPath.read(json, "$.accountSystems[0].rootAccount.id"));
-		accountSystemId = JsonPath.read(json, "$.accountSystems[0].id");
 		
 		Profile other = profileRepository.findByUserId(otherUsername);
 		List<AccountSystem> accountSystem = accountSystemRepository.findByUserProfile(other);

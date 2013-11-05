@@ -4,19 +4,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import java.util.UUID;
 
 import net.minidev.json.JSONArray;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -28,16 +21,9 @@ import br.com.camiloporto.cloudfinance.model.Profile;
 
 import com.jayway.jsonpath.JsonPath;
 
-@WebAppConfiguration
 public class AccountSystemAccessControlTest extends
 		AbstractWebMvcCloudFinanceTest {
 	
-	private static String SEC_CONTEXT_ATTR = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
-
-	@Autowired
-    private WebApplicationContext wac;
-	private MockMvc mockMvc;
-	private MockHttpSession mockSession;
 
 	private final String username = "oneuser@email.com";
 	private final String password = "onepass";
@@ -47,18 +33,13 @@ public class AccountSystemAccessControlTest extends
 
 	private Integer rootAccountId;
 
-	private Integer accountSystemId;
-
 	private Long otherRootAccountId;
+	private Profile otherProfile;
 	
 	@BeforeMethod
     public void setup() throws Exception {
 		cleanUserData();
-		
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
-        		.addFilters(springSecurityFilterChain)
-        		.build();
-        this.mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
+		init();
         
         new WebUserManagerOperationBuilder(mockMvc, mockSession)
 			.signup(username, password, password);
@@ -73,17 +54,14 @@ public class AccountSystemAccessControlTest extends
 		
 		String json = response.andReturn().getResponse().getContentAsString();
 		rootAccountId = JsonPath.read(json, "$.accountSystems[0].rootAccount.id");
-		accountSystemId = JsonPath.read(json, "$.accountSystems[0].id");
+		JsonPath.read(json, "$.accountSystems[0].id");
 		
-		Profile other = profileRepository.findByUserId(otherUsername);
-		List<AccountSystem> accountSystem = accountSystemRepository.findByUserProfile(other);
+		otherProfile = profileRepository.findByUserId(otherUsername);
+		List<AccountSystem> accountSystem = accountSystemRepository.findByUserProfile(otherProfile);
 		otherRootAccountId = accountSystem.get(0).getRootAccount().getId();
 		
     }
 
-	//FIXME implementar mais testes de controle de acesso para outras operacoes do AccountManager
-	//proximo: createAccountSystem
-	
 	@Test
 	public void onlyAccountSystemOwnerCanCreateAccountOnIt() throws Exception {
 		
@@ -109,20 +87,12 @@ public class AccountSystemAccessControlTest extends
 	@Test
 	public void oneUserShouldOnlyHaveAccessToItsAccountSystems() throws Exception {
 		
-		ResultActions response = mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession))
-			.andExpect(status().isOk());
+		//forcing use other user profile to try access to other users account systems
+		authenticatedSession.setAttribute("logged", otherProfile);
 		
-		String json = response.andReturn().getResponse().getContentAsString();
-		Profile loggedUserProfile = userProfileManager.findByUsername(username);
-		Profile otherUserProfile = userProfileManager.findByUsername(otherUsername);
+		mockMvc.perform(prepareJsonGetRequest("/account/roots", (MockHttpSession) authenticatedSession))
+			.andExpect(status().isUnauthorized());
 		
-		List<AccountSystem> userAccountSystems = accountSystemRepository.findByUserProfile(loggedUserProfile);
-		List<AccountSystem> otherUserAccountSystems = accountSystemRepository.findByUserProfile(otherUserProfile);
-		
-		JSONArray returnedAccountSystemIds = JsonPath.read(json, "$.accountSystems[*].id");
-		
-		assertAccountSystemIdsIsInJSONArray(userAccountSystems, returnedAccountSystemIds);
-		assertAccountSystemIdsIsNotInJSONArray(otherUserAccountSystems, returnedAccountSystemIds);
 	}
 	
 	@Test
@@ -177,7 +147,7 @@ public class AccountSystemAccessControlTest extends
 	}
 	
 	@Test
-	public void oneUserShouldNotAccessOtherUserInformations() throws Exception {
+	public void oneUserShouldNotAccessOtherUserAccountTree() throws Exception {
 		
 		mockMvc.perform(prepareJsonGetRequest("/account/tree/" + otherRootAccountId, (MockHttpSession) authenticatedSession))
 			.andExpect(status().isUnauthorized());
