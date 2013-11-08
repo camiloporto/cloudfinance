@@ -1,0 +1,29 @@
+.benefit-list {
+	padding-left: 1.3em;
+}
+
+.btn-convert {
+	margin: 0 0 1em 0;
+}
+
+.copyright {
+	
+}
+
+.logo {
+	background: url("/cloudfinance/resources/images/logo-bufunfa.png") no-repeat;
+	display : inline-block;
+	height : 60px;
+	text-indent: -1000em;
+	width : 240px; 		/*		adapt size of image logo to this sizes */
+	margin: 0; 
+	border : 0;
+}
+
+.headline {
+	margin :0;
+}
+
+.lead {
+	margin-bottom: 10px;
+}

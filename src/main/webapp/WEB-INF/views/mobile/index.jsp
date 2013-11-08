@@ -3,22 +3,25 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:url value="/mobile/newUser" var="newUser"></c:url>
 <c:url value="/user/login" var="loginUser"></c:url>
-<section>
-	<h2>Tenha dinheiro ate o ultimo dia do mes</h2>
-	<p>Controle seu dinheiro sem complicacao e passe o mes inteiro sem
+<section class="main">
+	<h2 class="headline">Dinheiro até o último dia do mês</h2>
+	<p class="lead">Controle seu dinheiro sem complicação e passe o mês inteiro sem
 		aperto</p>
-	<ul>
-		<li>Saiba, antes, se o seu dinheiro chegara ate o final do mes</li>
-		<li>Descubra para onde o seu dinheiro esta indo</li>
+	<a class="btn btn-lg btn-success btn-convert" href="${newUser}">Experimentar Sem Pagar</a>
+	
+	<ul class="benefit-list">
+		<li>Saiba, antes, se o seu dinheiro chegará até o final do mês</li>
+		<li>Descubra para onde o seu dinheiro está indo</li>
 		<li>Nada de planilhas ou controles complicados</li>
 	</ul>
-	<a href="${newUser}">Quero Experimentar, Sem Pagar</a>
+	
+	<h3>Efetuar Login:</h3>
 	<form action="${loginUser}" method="POST">
 		<c:if test="${not empty response && not response.success}">
 			<p id="loginStatus">Login failed</p>
 		</c:if>
-		<input type="text" placeholder="Nome de Usuario" name="userName"> 
-		<input type="password" placeholder="Senha" name="pass"> 
-		<input type="submit" value="Login" id="btnSubmit">
+		<input class="form-control" type="text" placeholder="Email" name="userName"> 
+		<input class="form-control" type="password" placeholder="Senha" name="pass"> 
+		<input class="btn btn-default" type="submit" value="Entrar" id="btnSubmit">
 	</form>
 </section>

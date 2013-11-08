@@ -15,6 +15,7 @@
 		<intercept-url pattern="/user/logonFailed*" access="permitAll"/>
 		<intercept-url pattern="/mobile" access="permitAll"/>
 		<intercept-url pattern="/mobile/newUser*" access="permitAll"/>
+		<intercept-url pattern="/resources/**" access="permitAll"/>
 		<intercept-url pattern="/**" access="isAuthenticated()"/>
 		<form-login 
 			authentication-success-handler-ref="restfulAuthenticationSuccessHandler"
