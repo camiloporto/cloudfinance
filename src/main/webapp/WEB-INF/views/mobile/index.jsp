@@ -18,7 +18,7 @@
 	<h3>Efetuar Login:</h3>
 	<form action="${loginUser}" method="POST">
 		<c:if test="${not empty response && not response.success}">
-			<p id="loginStatus">Login failed</p>
+			<p id="loginStatus" class="error-list">Login failed</p>
 		</c:if>
 		<input class="form-control form-group" type="text" placeholder="Email" name="userName"> 
 		<input class="form-control form-group" type="password" placeholder="Senha" name="pass"> 
