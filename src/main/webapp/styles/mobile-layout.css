@@ -1,0 +1,16 @@
+/*
+	Color Pallete of green based on: http://www.colourlovers.com/palette/59642/Color_of_Money
+	Collors inspired on quiet, calm.. http://www.colourlovers.com/palette/2040/quiet_mind
+*/
+
+body {
+	background-color: #EEFAA8;
+}
+
+.btn-success {
+	background-color: #35794B;
+	border-color: #A6CE95;
+}
+.btn-success:hover {
+	background-color: #234214;
+}

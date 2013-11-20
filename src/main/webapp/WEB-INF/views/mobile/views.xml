@@ -6,7 +6,7 @@
 <tiles-definitions>
 	<definition name="mobile-template" template="/WEB-INF/views/mobile/template.jsp">
 		<put-attribute name="header" value="/WEB-INF/views/mobile/header.jsp" />
-	    <put-attribute name="footer" value="/WEB-INF/views/mobile/footer.jsp" />
+<!-- 	    <put-attribute name="footer" value="/WEB-INF/views/mobile/footer.jsp" /> -->
 	</definition>
 	
 	<definition name="mobile-logged-template" template="/WEB-INF/views/mobile/template.jsp">
