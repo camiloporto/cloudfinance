@@ -59,7 +59,7 @@ public class LoginUserMobileWUITest extends AbstractWUITest {
 		rootAccountPage.checkRootAccountsArePresent(NEWUSER_GMAIL_COM);
 		
 		//goto home page again
-		driver.get("http://localhost:8080/cloudfinance/mobile");
+		goToPath("/mobile");
 		
 		//should redirect to root accounts page
 		rootAccountPage = PageFactory.initElements(driver,

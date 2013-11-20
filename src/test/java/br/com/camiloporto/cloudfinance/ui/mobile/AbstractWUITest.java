@@ -22,10 +22,10 @@ public class AbstractWUITest {
 	
 	protected WebDriver driver;
 	private boolean userCreated = false;
-	private String domainPath = "http://localhost:8080/cloudfinance";
+	protected String rootApplicationContextPath = "http://localhost:8080/";
 	
 	protected void goToPath(String path) {
-		driver.get(domainPath + path);
+		driver.get(rootApplicationContextPath + path);
 	}
 	
 	@BeforeClass

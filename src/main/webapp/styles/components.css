@@ -11,12 +11,12 @@
 }
 
 .logo {
-	background: url("/cloudfinance/resources/images/logo-bufunfa.png") no-repeat;
+	background: url("/resources/images/logo-bufunfa.png") no-repeat;
 	display : inline-block;
 	height : 60px;
 	text-indent: -1000em;
 	width : 240px; 		/*		adapt size of image logo to this sizes */
-	margin: 0; 
+	margin: 10 0; 
 	border : 0;
 }
 
