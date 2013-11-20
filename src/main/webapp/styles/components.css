@@ -10,6 +10,17 @@
 	
 }
 
+.error-list {
+	background:#ffecec;
+	border:1px solid #f5aca6;
+	border-radius:10px;
+    padding:1em;
+    color: #8a1f11;
+}
+.error-list li {
+	margin-left: 1em;
+}
+
 .logo {
 	background: url("/resources/images/logo-bufunfa.png") no-repeat;
 	display : inline-block;
