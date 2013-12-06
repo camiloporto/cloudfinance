@@ -47,19 +47,21 @@
         <context:exclude-filter expression=".*_Roo_.*" type="regex"/>
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
+    
     <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
-        <property name="driverClassName" value="${database.driverClassName}"/>
-        <property name="url" value="${database.url}"/>
-        <property name="username" value="${database.username}"/>
-        <property name="password" value="${database.password}"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="testOnReturn" value="true"/>
-        <property name="testWhileIdle" value="true"/>
-        <property name="timeBetweenEvictionRunsMillis" value="1800000"/>
-        <property name="numTestsPerEvictionRun" value="3"/>
-        <property name="minEvictableIdleTimeMillis" value="1800000"/>
-<!--         <property name="validationQuery" value="SELECT version();"/> -->
-    </bean>
+	        <property name="driverClassName" value="${database.driverClassName}"/>
+	        <property name="url" value="${database.url}"/>
+	        <property name="username" value="${database.username}"/>
+	        <property name="password" value="${database.password}"/>
+	        <property name="testOnBorrow" value="true"/>
+	        <property name="testOnReturn" value="true"/>
+	        <property name="testWhileIdle" value="true"/>
+	        <property name="timeBetweenEvictionRunsMillis" value="1800000"/>
+	        <property name="numTestsPerEvictionRun" value="3"/>
+	        <property name="minEvictableIdleTimeMillis" value="1800000"/>
+	<!--         <property name="validationQuery" value="SELECT version();"/> -->
+	    </bean>
+    
     <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
@@ -69,6 +71,27 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+    
+    <!-- Heroku Profile -->
+    <beans profile="heroku">
+	    <bean class="java.net.URI" id="dbUrl">
+	    	<constructor-arg value="${CLOUDFINANCE_DATABASE_URL}"/>
+		</bean>
+		<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
+	        <property name="driverClassName" value="org.postgresql.Driver"/>
+	        <property name="url" value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() }"/>
+	        <property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }"/>
+    		<property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }"/>
+	        <property name="testOnBorrow" value="true"/>
+	        <property name="testOnReturn" value="true"/>
+	        <property name="testWhileIdle" value="true"/>
+	        <property name="timeBetweenEvictionRunsMillis" value="1800000"/>
+	        <property name="numTestsPerEvictionRun" value="3"/>
+	        <property name="minEvictableIdleTimeMillis" value="1800000"/>
+		<!--         <property name="validationQuery" value="SELECT version();"/> -->
+	    </bean>
+    </beans>
+    
     <beans profile="unit-test">
     	<context:property-placeholder location="classpath*:META-INF/spring/*test.properties" order="1"/>
     	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">
