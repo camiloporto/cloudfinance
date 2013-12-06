@@ -69,6 +69,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+    
     <beans profile="unit-test">
     	<context:property-placeholder location="classpath*:META-INF/spring/*test.properties" order="1"/>
     	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="entityManagerFactory">

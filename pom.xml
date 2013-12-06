@@ -54,16 +54,19 @@
 	        <groupId>org.seleniumhq.selenium</groupId>
 	        <artifactId>selenium-firefox-driver</artifactId>
 	        <version>2.33.0</version>
+			<scope>test</scope>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.seleniumhq.selenium</groupId>
 	        <artifactId>selenium-htmlunit-driver</artifactId>
 	        <version>2.33.0</version>
+			<scope>test</scope>
 	    </dependency>
 	    <dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
 			<version>2.33.0</version>
+			<scope>test</scope>
 		</dependency>
             
     	<dependency>
@@ -76,6 +79,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>1.9.0</version>
+			<scope>test</scope>
         </dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
