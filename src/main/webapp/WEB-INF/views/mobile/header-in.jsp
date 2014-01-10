@@ -5,9 +5,9 @@
 <c:url value="/account" var="accountHome"></c:url>
 <c:url value="/transaction" var="transactionHome"></c:url>
 <c:url value="/report" var="reportHome"></c:url>
-<header>
-	<h1>CloudFinance</h1>
+<header class="navbar navbar-default navbar-fixed-top">
+	<a href="#" class="navbar-brand">Bufunfa</a>
 	<form action="${logoff}" method="POST">
-		<input type="submit" value="Logout" id="logoffBtn">
+		<input class="btn btn-link navbar-btn navbar-right" type="submit" value="Sair" id="logoffBtn">
 	</form>
 </header>

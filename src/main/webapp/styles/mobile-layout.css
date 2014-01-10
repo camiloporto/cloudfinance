@@ -14,3 +14,8 @@ body {
 .btn-success:hover {
 	background-color: #234214;
 }
+
+.navbar-default {
+	background-color: #A6CE95;
+	border-color: #234214;
+}
