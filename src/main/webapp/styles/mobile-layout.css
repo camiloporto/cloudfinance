@@ -19,3 +19,7 @@ body {
 	background-color: #A6CE95;
 	border-color: #234214;
 }
+
+.content-inner {
+	padding-top : 40px;
+}

@@ -6,8 +6,10 @@
 <c:url value="/transaction" var="transactionHome"></c:url>
 <c:url value="/report" var="reportHome"></c:url>
 <header class="navbar navbar-default navbar-fixed-top">
-	<a href="#" class="navbar-brand">Bufunfa</a>
-	<form action="${logoff}" method="POST">
-		<input class="btn btn-link navbar-btn navbar-right" type="submit" value="Sair" id="logoffBtn">
-	</form>
+	<div class="container">
+		<a href="#" class="navbar-brand">Bufunfa</a>
+		<form action="${logoff}" method="POST">
+			<input class="btn btn-link navbar-btn navbar-right" type="submit" value="Sair" id="logoffBtn">
+		</form>
+	</div>
 </header>
