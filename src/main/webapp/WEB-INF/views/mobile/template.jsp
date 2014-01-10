@@ -8,7 +8,7 @@
 		<c:url value="/resources/styles" var="css_resource_url"></c:url>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<title>CloudFinance - Tranquilidade para sua vida e suas financas</title>
+		<title>Bufunfa - Tranquilidade para sua vida e suas financas</title>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 <%-- 		<link rel="stylesheet" type="text/css" media="screen" href="${css_resource_url}/reset.css" /> --%>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">

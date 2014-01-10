@@ -1,3 +1,13 @@
+.accountSystem-list li a {
+	border-bottom :solid 1px #CCC;
+	cursor:pointer;
+	display:block;
+	line-height : 50px;
+}
+
+.accountSystem-list li a:hover {
+}
+
 .benefit-list {
 	padding-left: 1.3em;
 }
