@@ -8,8 +8,8 @@
 .accountSystem-list li a:hover {
 }
 
-.accountTree {
-}
+/* adiciona uma linha vertical para identificar o nivel das contas */
+/* verificar essa construcao somente em CSS http://cssdeck.com/labs/pure-css-tree-menu-framework */
 .accountTree ul {
 	list-style-type: none;
 	background: url(/resources/images/vline.png) repeat-y;
