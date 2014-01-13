@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <c:url var="showFormNewAccount" value="/account/showForm"></c:url>
-<ul>
+<ul class="accountTree">
 	<li>
 		<h3>
 			<c:if test="${not empty topNode.account.parentAccount}">

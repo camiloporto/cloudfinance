@@ -8,6 +8,13 @@
 .accountSystem-list li a:hover {
 }
 
+.accountTree {
+}
+.accountTree ul {
+	list-style-type: none;
+	background: url(/resources/images/vline.png) repeat-y;
+}
+
 .benefit-list {
 	padding-left: 1.3em;
 }
