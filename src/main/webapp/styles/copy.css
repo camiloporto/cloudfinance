@@ -9,3 +9,11 @@ a, a:hover, a:active, a:visited {
 .navbar-default  .navbar-brand {
 	color: #234214;
 }
+
+.navbar-default .navbar-nav>li>a  {
+	color: #428bca;
+}
+
+.navbar-default .navbar-nav>li>a:hover  {
+	color: #2a6496;
+}
