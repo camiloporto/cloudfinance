@@ -3,6 +3,7 @@ package br.com.camiloporto.cloudfinance.ui.mobile;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.Test;
 
+import br.com.camiloporto.cloudfinance.helpers.DataInsertionHelper;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.AccountHomePage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.FormNewAccountPage;
 import br.com.camiloporto.cloudfinance.ui.mobile.page.MobileHomePage;
@@ -78,5 +79,34 @@ public class AccountPageWUITest extends AbstractWUITest {
 		
 		newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
 		newAccountForm.assertHasErrors();
+	}
+	
+	@Test
+	public void shouldAddAccountAfterErrorsOn1stAttemptS() {
+		MobileHomePage mhp = PageFactory.initElements(driver,
+				MobileHomePage.class);
+		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
+		RootAccountHomePage rootAccountPage = PageFactory.initElements(driver,
+				RootAccountHomePage.class);
+		rootAccountPage.selectRootAccount(NEWUSER_GMAIL_COM);
+		AccountHomePage accountHomePage = PageFactory.initElements(driver, AccountHomePage.class);
+		accountHomePage.clickOnAccountLink("Ativos");
+		FormNewAccountPage newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
+		
+		final String newInvalidName = "";
+		final String newDescription = "Patrimonio em ações";
+		newAccountForm.fillNewAccount(newInvalidName, newDescription).submitForm();
+		//error occurred on first attempt.
+		
+		newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
+		newAccountForm.assertHasErrors();
+		
+		newAccountForm = PageFactory.initElements(driver, FormNewAccountPage.class);
+		
+		final String newName = "Imoveis";
+		newAccountForm.fillNewAccount(newName, newDescription).submitForm();
+		
+		accountHomePage = PageFactory.initElements(driver, AccountHomePage.class);
+		accountHomePage.checkAccountsArePresent(newName);
 	}
 }

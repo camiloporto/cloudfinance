@@ -89,6 +89,13 @@ public class StaticAccountSystemController {
 			mav.setViewName("redirect:/account/tree/" + activeAccountSystem.getRootAccount().getId());
 		} else {
 			mav = new ModelAndView("mobile-newAccountForm");
+			//redraw account form with needed information
+			if(account.getParentAccount() != null && account.getParentAccount().getId() != null) {
+				Account parent = accountManager.findAccount(account.getParentAccount().getId());
+				if(parent != null) {
+					response.setAccount(parent);
+				}
+			}
 		}
 		mav.getModelMap().addAttribute("response", response);
 		return mav;
