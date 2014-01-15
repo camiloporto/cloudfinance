@@ -63,9 +63,6 @@ public class AccountPageWUITest extends AbstractWUITest {
 	
 	@Test
 	public void shouldShowErrorsIfAddAccountFails() {
-//		MobileHomePage mhp = PageFactory.initElements(driver,
-//				MobileHomePage.class);
-//		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
 		final String userName = generateSampleUserLogin();
 		final String password = generateSampleUserPass();
 		createNewTestUser(userName, password);
@@ -86,9 +83,6 @@ public class AccountPageWUITest extends AbstractWUITest {
 	
 	@Test
 	public void shouldAddAccountAfterErrorsOn1stAttemptS() {
-//		MobileHomePage mhp = PageFactory.initElements(driver,
-//				MobileHomePage.class);
-//		mhp.login(NEWUSER_GMAIL_COM, NEWUSER_PASS);
 		final String userName = generateSampleUserLogin();
 		final String password = generateSampleUserPass();
 		createNewTestUser(userName, password);
