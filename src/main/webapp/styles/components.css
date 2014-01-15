@@ -63,6 +63,7 @@
 	border: solid 1px #ccc;
 	border-radius: 4px;
 	padding: 10px;
+	margin-bottom: 10px;
 }
 
 .transactionInnerMenu {
@@ -72,7 +73,7 @@
 }
 
 .transactionList {
-	margin-top: 10px;
+	margin: 0;
 }
 
 .transactionList p {
@@ -86,6 +87,11 @@
 }
 
 .transactionList .transaction-comment {
+	font-weight: bold;
+	overflow : hidden;
+	text-overflow : ellipsis;
+	white-space : nowrap; 
+	width : 100%; 
 }
 
 .transactionList .transaction-date {
@@ -94,12 +100,10 @@
 }
 
 .transactionList .transaction-from {
-	display: inline-block;
 	margin-right: 5px;
 }
 
 .transactionList .transaction-to {
-	display: inline-block;
 	margin-left: 5px;
 }
 

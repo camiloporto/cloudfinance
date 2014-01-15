@@ -16,7 +16,7 @@ public class TransactionHomePage extends TemplatePage {
 	private static final String NAV_LINK_NOVA = "Nova";
 
 	@FindAll({
-		@FindBy(how=How.CSS, css = "ul li")
+		@FindBy(how=How.CSS, css = ".transactionList")
 	})
 	private List<WebElement> transactionList;
 	
