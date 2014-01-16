@@ -25,7 +25,7 @@ import br.com.camiloporto.cloudfinance.web.TransactionOperationResponse;
 
 @RequestMapping("/transaction")
 @Controller
-@SessionAttributes(value = {"logged", "activeAccountSystem"})
+@SessionAttributes(value = {"logged", "activeAccountSystem", "beginDateFilter", "endDateFilter"})
 public class StaticTransactionController {
 	
 	@Autowired

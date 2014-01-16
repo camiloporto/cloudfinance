@@ -46,6 +46,8 @@ public class TransactionWUITest extends AbstractWUITest {
 		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
 
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.fillTransactionDateFilter("28/08/2013", "28/08/2013").submitDateFilter();
+		transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
 		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
 	}
 	
@@ -77,8 +79,12 @@ public class TransactionWUITest extends AbstractWUITest {
 		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
 		transactionHomePage.fillTransactionDateFilter("26/08/2013", "30/08/2013").submitDateFilter();
 		
+		transactionHomePage.setWebDriver(driver);
+		transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.assertTransactionDateFilterEquals("26/08/2013", "30/08/2013");
 		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "319,09", "Feira de Supermercado");
 		transactionHomePage.assertTransactionsIsNotPresent("Receitas", "Despesas", "25/08/2013", "149,90", "pagamento de INSS");
+		
 	}
 	
 	@Test

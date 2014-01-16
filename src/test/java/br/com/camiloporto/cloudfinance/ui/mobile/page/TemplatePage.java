@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
@@ -34,6 +35,12 @@ public abstract class TemplatePage {
 		@FindBy(how = How.CSS, css = "#nav li a")
 	})
 	private List<WebElement> mainNavLinks;
+	
+	protected WebDriver webDriver;
+	
+	public void setWebDriver(WebDriver webDriver) {
+		this.webDriver = webDriver;
+	}
 	
 	public void assertPageTitle(String expectedPageTitle) {
 		Assert.assertEquals(pageTitle.getText(), expectedPageTitle, "page title did not match");

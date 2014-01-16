@@ -105,6 +105,8 @@ public class TransactionController {
 			List<AccountTransaction> result = 
 					transactionManager.findAccountTransactionByDateBetween(logged, activeAccountSystem.getRootAccount().getId(), begin, end);
 			response = new TransactionOperationResponse(true, result);
+			response.setBeginDateFilter(begin);
+			response.setEndDateFilter(end);
 		} catch(ConstraintViolationException e) {
 			response = new TransactionOperationResponse(e);
 		}

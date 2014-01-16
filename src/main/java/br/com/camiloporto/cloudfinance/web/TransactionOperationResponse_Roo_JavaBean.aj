@@ -6,6 +6,7 @@ package br.com.camiloporto.cloudfinance.web;
 import br.com.camiloporto.cloudfinance.model.AccountTransaction;
 import br.com.camiloporto.cloudfinance.model.Account;
 import br.com.camiloporto.cloudfinance.web.TransactionOperationResponse;
+import java.util.Date;
 import java.util.List;
 
 privileged aspect TransactionOperationResponse_Roo_JavaBean {
@@ -24,6 +25,22 @@ privileged aspect TransactionOperationResponse_Roo_JavaBean {
     
     public void TransactionOperationResponse.setTransactions(List<AccountTransaction> transactions) {
         this.transactions = transactions;
+    }
+    
+    public Date TransactionOperationResponse.getBeginDateFilter() {
+        return this.beginDateFilter;
+    }
+    
+    public void TransactionOperationResponse.setBeginDateFilter(Date beginDateFilter) {
+        this.beginDateFilter = beginDateFilter;
+    }
+    
+    public Date TransactionOperationResponse.getEndDateFilter() {
+        return this.endDateFilter;
+    }
+    
+    public void TransactionOperationResponse.setEndDateFilter(Date endDateFilter) {
+        this.endDateFilter = endDateFilter;
     }
     
     public Account[] TransactionOperationResponse.getOriginAccountList() {

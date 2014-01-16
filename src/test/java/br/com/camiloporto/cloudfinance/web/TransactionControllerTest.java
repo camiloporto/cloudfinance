@@ -295,6 +295,7 @@ public class TransactionControllerTest extends AbstractWebMvcCloudFinanceTest {
 		Assert.assertEquals(transactionDescs.size(), expectedResultCount, "result count did not match");
 	}
 	
+	
 	//request by static html, with No JavaScript enabled (no json, so)
 	@Test
 	public void shouldGetTransactionsByTimeInterval_NoJS() throws Exception {
