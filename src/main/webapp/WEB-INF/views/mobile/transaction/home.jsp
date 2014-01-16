@@ -6,27 +6,31 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:url var="transactionUrl" value="/transaction"></c:url>
-<section>
+<section class="content-inner">
 	<h2>Transações</h2>
-	<ul id="menu">
-		<li><a href="${transactionUrl}/newForm">Nova</a></li>
+	<ul id="menu" class="transactionInnerMenu">
+		<li><a class="btn btn-primary btn-lg" href="${transactionUrl}/newForm">Nova</a></li>
 	</ul>
-	<form id="filterForm" action="${transactionUrl}" method="GET">
-		<input type="text" placeholder="Data Inicial" name="begin">
-		<input type="text" placeholder="Data Final" name="end">
-		<input type="submit" value="Pesquisar">
+	<!-- TODO return date value submitted or save search intervalo on session -->
+	<fmt:formatDate value="${beginDateFilter}" pattern="dd/MM/yyyy" var="beginDateFilterFormatted"/>
+	<fmt:formatDate value="${endDateFilter}" pattern="dd/MM/yyyy" var="endDateFilterFormatted"/>
+	<form class="searchFilterForm" id="filterForm" action="${transactionUrl}" method="GET">
+		<input class="form-control form-group" type="text" placeholder="Data Inicial" name="begin" value="${beginDateFilterFormatted}">
+		<input class="form-control form-group" type="text" placeholder="Data Final" name="end" value="${endDateFilterFormatted}">
+		<input class="btn btn-default" type="submit" value="Filtrar">
 	</form>
-	<ul>
-		<c:forEach var="t" items="${response.transactions}">
-			<li> 
-				<a href="${transactionUrl}/${t.id}">
-					<p><fmt:formatDate value="${t.origin.transactionDate}" pattern="dd/MM/yyyy"/> </p>
-					<p>De: <spring:message code="${t.origin.account.name}"  text="${t.origin.account.name}"></spring:message></p>
-					<p>Para: <spring:message code="${t.destin.account.name}"  text="${t.destin.account.name}"></spring:message></p>
-					<p><fmt:formatNumber value="${t.destin.entryValue}" type="currency" pattern="#,#00.00#"/> </p>
-					<p>${t.destin.comment}</p>
-				</a>
-			</li>
-		</c:forEach>
-	</ul>
+	<c:forEach var="t" items="${response.transactions}">
+		<div class="list-group transactionList"> 
+			<a href="${transactionUrl}/${t.id}" class="list-group-item">
+				<p class="transaction-value pull-right"><fmt:formatNumber value="${t.destin.entryValue}" type="currency" pattern="#,#00.00#"/> </p>
+				<p class="transaction-date"><fmt:formatDate value="${t.origin.transactionDate}" pattern="dd/MM/yyyy"/> </p>
+				<p>
+					<span class="transaction-from"><spring:message code="${t.origin.account.name}"  text="${t.origin.account.name}"></spring:message></span>
+					<span class="glyphicon glyphicon-arrow-right"></span>
+					<span class="transaction-to"><spring:message code="${t.destin.account.name}"  text="${t.destin.account.name}"></spring:message></span>
+				</p>
+				<p class="transaction-comment">${t.destin.comment}</p>
+			</a>
+		</div>
+	</c:forEach>
 </section>

@@ -10,6 +10,8 @@ import java.util.Locale;
 
 import net.minidev.json.JSONArray;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -21,6 +23,7 @@ import org.testng.annotations.Test;
 import br.com.camiloporto.cloudfinance.AbstractWebMvcCloudFinanceTest;
 import br.com.camiloporto.cloudfinance.builders.TransactionControllerTestHelper;
 import br.com.camiloporto.cloudfinance.builders.WebUserManagerOperationBuilder;
+import br.com.camiloporto.cloudfinance.checkers.CustomMockMvcResultMatchers;
 import br.com.camiloporto.cloudfinance.checkers.WebResponseChecker;
 import br.com.camiloporto.cloudfinance.i18n.ValidationMessages;
 import br.com.camiloporto.cloudfinance.model.Account;
@@ -135,7 +138,7 @@ public class TransactionControllerTest extends AbstractWebMvcCloudFinanceTest {
 		
 		ModelAndView mav = response
 			.andExpect(status().isMovedTemporarily())
-			.andExpect(redirectedUrl(expectedUrl))
+			.andExpect(CustomMockMvcResultMatchers.redirectUrlStartsWith(expectedUrl))
 			.andReturn().getModelAndView();
 		
 		TransactionOperationResponse res = (TransactionOperationResponse) mav.getModelMap().get("response");
@@ -295,6 +298,7 @@ public class TransactionControllerTest extends AbstractWebMvcCloudFinanceTest {
 		Assert.assertEquals(transactionDescs.size(), expectedResultCount, "result count did not match");
 	}
 	
+	
 	//request by static html, with No JavaScript enabled (no json, so)
 	@Test
 	public void shouldGetTransactionsByTimeInterval_NoJS() throws Exception {
@@ -426,7 +430,7 @@ public class TransactionControllerTest extends AbstractWebMvcCloudFinanceTest {
 		String expectedUrl = "/transaction";
 		ModelAndView mav = response
 			.andExpect(status().isMovedTemporarily())
-			.andExpect(redirectedUrl(expectedUrl))
+			.andExpect(CustomMockMvcResultMatchers.redirectUrlStartsWith(expectedUrl))
 			.andReturn().getModelAndView();
 		
 		Assert.assertNull(transactionManager.findAccountTransaction(new Long(txId)), "transaction '" + txId + "' was not deleted");

@@ -1,5 +1,6 @@
 package br.com.camiloporto.cloudfinance.web;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -16,6 +17,8 @@ public class TransactionOperationResponse extends AbstractOperationResponse {
 	private AccountTransaction transaction;
 	
 	private List<AccountTransaction> transactions;
+	private Date beginDateFilter;
+	private Date endDateFilter;
 	
 	private Account[] originAccountList;
 	private Account[] destAccountList;

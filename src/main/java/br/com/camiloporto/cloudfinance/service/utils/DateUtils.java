@@ -29,4 +29,16 @@ public class DateUtils {
 	public Date today() {
 		return Calendar.getInstance().getTime();
 	}
+
+	public Date firstDayOfCurrentMonth() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+		return cal.getTime();
+	}
+
+	public Date lastDayOfCurrentMonth() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return cal.getTime();
+	}
 }

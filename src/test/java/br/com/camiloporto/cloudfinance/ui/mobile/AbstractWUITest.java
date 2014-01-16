@@ -22,7 +22,7 @@ public class AbstractWUITest {
 	
 	protected WebDriver driver;
 	private boolean userCreated = false;
-	protected String rootApplicationContextPath = "http://localhost:8080/";
+	protected String rootApplicationContextPath = "http://localhost:8080";
 	
 	protected void goToPath(String path) {
 		driver.get(rootApplicationContextPath + path);

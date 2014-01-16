@@ -16,7 +16,7 @@ public class TransactionHomePage extends TemplatePage {
 	private static final String NAV_LINK_NOVA = "Nova";
 
 	@FindAll({
-		@FindBy(how=How.CSS, css = "ul li")
+		@FindBy(how=How.CSS, css = "section div")
 	})
 	private List<WebElement> transactionList;
 	
@@ -33,7 +33,7 @@ public class TransactionHomePage extends TemplatePage {
 		@FindBy(how = How.CSS, css = "#menu li a")
 	})
 	private List<WebElement> navigationLinks;
-	
+
 	private WebElement findnavigationItem(String name) {
 		for (WebElement link : navigationLinks) {
 			if(link.getText().contains(name)) {
@@ -46,7 +46,7 @@ public class TransactionHomePage extends TemplatePage {
 	public void assertTransactionsIsPresent(String originAccount, String destAccount,
 			String date, String amount, String desc) {
 		boolean found = false;
-		fillTransactionDateFilter(date, date).submitDateFilter();
+//		fillTransactionDateFilter(date, date).submitDateFilter();
 		for (WebElement transactionLi : transactionList) {
 			if(isTransaction(transactionLi, date, originAccount, destAccount, amount, desc)) {
 				found = true;
@@ -69,7 +69,9 @@ public class TransactionHomePage extends TemplatePage {
 	}
 
 	public TransactionHomePage fillTransactionDateFilter(String beginDate, String endDate) {
+		beginDateField.clear();
 		beginDateField.sendKeys(beginDate);
+		endDateField.clear();
 		endDateField.sendKeys(endDate);
 		return this;
 	}
@@ -115,6 +117,11 @@ public class TransactionHomePage extends TemplatePage {
 	@Override
 	protected String getPageTitle() {
 		return "Transações";
+	}
+
+	public void assertTransactionDateFilterEquals(String expectedBeginDate, String expectedEndDate) {
+		Assert.assertEquals(beginDateField.getAttribute("value"), expectedBeginDate, "begin date of filter did not match expected value");
+		Assert.assertEquals(endDateField.getAttribute("value"), expectedEndDate, "begin date of filter did not match expected value");
 	}
 
 }
