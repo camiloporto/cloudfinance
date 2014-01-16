@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -98,7 +99,8 @@ public class TransactionController {
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
-			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
+			@DateTimeFormat(pattern="dd/MM/yyyy") Date end,
+			ModelMap map) {
 		
 		TransactionOperationResponse response = new TransactionOperationResponse(false);
 		try {
@@ -107,6 +109,7 @@ public class TransactionController {
 			response = new TransactionOperationResponse(true, result);
 			response.setBeginDateFilter(begin);
 			response.setEndDateFilter(end);
+			
 		} catch(ConstraintViolationException e) {
 			response = new TransactionOperationResponse(e);
 		}

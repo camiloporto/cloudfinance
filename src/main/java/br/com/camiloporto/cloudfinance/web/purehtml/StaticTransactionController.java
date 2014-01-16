@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.camiloporto.cloudfinance.model.AccountSystem;
 import br.com.camiloporto.cloudfinance.model.Profile;
+import br.com.camiloporto.cloudfinance.service.utils.DateUtils;
 import br.com.camiloporto.cloudfinance.web.AccountOperationResponse;
 import br.com.camiloporto.cloudfinance.web.AccountSystemController;
 import br.com.camiloporto.cloudfinance.web.TransactionController;
@@ -39,11 +41,18 @@ public class StaticTransactionController {
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@DateTimeFormat(pattern="dd/MM/yyyy") Date begin,
-			@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
+			@DateTimeFormat(pattern="dd/MM/yyyy") Date end,
+			@ModelAttribute(value="beginDateFilter") @DateTimeFormat(pattern="dd/MM/yyyy") Date beginDateFilter,
+			@ModelAttribute(value="endDateFilter") @DateTimeFormat(pattern="dd/MM/yyyy") Date endDateFilter,
+			ModelMap map) {
 
-		TransactionOperationResponse response = jsonController.getTransactions(logged, activeAccountSystem, begin, end);
+		begin = begin == null ? beginDateFilter : begin;
+		end = end == null ? endDateFilter : end;
+		TransactionOperationResponse response = jsonController.getTransactions(logged, activeAccountSystem, begin, end, map);
 		ModelAndView mav = new ModelAndView("mobile-transaction");
 		mav.getModelMap().addAttribute("response", response);
+		mav.getModelMap().addAttribute("beginDateFilter", begin);
+		mav.getModelMap().addAttribute("endDateFilter", end);
 		return mav;
 	}
 	
@@ -108,6 +117,16 @@ public class StaticTransactionController {
 		mav.getModelMap().addAttribute("response", tor);
 		return mav;
 		
+	}
+
+	@ModelAttribute("beginDateFilter")
+	public Date defaultBeginDateFilterDate(@DateTimeFormat(pattern="dd/MM/yyyy") Date begin) {
+		return new DateUtils().firstDayOfCurrentMonth();
+	}
+	
+	@ModelAttribute("endDateFilter")
+	public Date defaultEndDateFilterDate(@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
+		return new DateUtils().lastDayOfCurrentMonth();
 	}
 
 }
