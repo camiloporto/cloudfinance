@@ -52,6 +52,26 @@ public class TransactionWUITest extends AbstractWUITest {
 	}
 	
 	@Test
+	public void shouldAddNewTransactionAfterErrorOn1stAttempt() {
+		loginExistentUser();
+		goToPath("/transaction/newForm?lang=pt_BR");
+		TransactionFormPage transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		
+		//try to submit empty form. all required field are empty
+		transactionFormPage.submit();
+		
+		transactionFormPage = PageFactory.initElements(driver, TransactionFormPage.class);
+		transactionFormPage.assertHasErrorMessages();
+		
+		transactionFormPage.fillNewTransaction("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS").submit();
+
+		TransactionHomePage transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.fillTransactionDateFilter("28/08/2013", "28/08/2013").submitDateFilter();
+		transactionHomePage = PageFactory.initElements(driver, TransactionHomePage.class);
+		transactionHomePage.assertTransactionsIsPresent("Receitas", "Despesas", "28/08/2013", "149,90", "pagamento de INSS");
+	}
+	
+	@Test
 	public void shouldShowErrorsOnAddingNewTransaction() {
 		loginExistentUser();
 		goToPath("/transaction/newForm?lang=pt_BR");
