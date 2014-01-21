@@ -25,6 +25,10 @@ body {
 	background-color: #234214;
 }
 
+.nav>li>a:hover {
+	background-color: #A6CE95;
+}
+
 .navbar-default {
 	background-color: #A6CE95;
 	border-color: #234214;

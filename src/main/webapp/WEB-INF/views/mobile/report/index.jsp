@@ -6,10 +6,10 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:url var="reportUrl" value="/report"></c:url>
 
-<section>
+<section class="content-inner">
 	<h2>Relatórios</h2>
 	<nav>
-		<ul id="subnav">
+		<ul id="subnav" class="nav nav-pills">
 			<li><a href="${reportUrl}/statement">Extrato de Conta</a></li>
 			<li><a href="${reportUrl}/balanceSheet">Balanço Patrimonial</a></li>
 		</ul>
