@@ -7,10 +7,20 @@ body {
 	background-color: #EEFAA8;
 }
 
+.btn-primary {
+	background-color: #35794B;
+	border-color: #A6CE95;
+}
+
+.btn-primary:hover {
+	background-color: #234214;
+}
+
 .btn-success {
 	background-color: #35794B;
 	border-color: #A6CE95;
 }
+
 .btn-success:hover {
 	background-color: #234214;
 }

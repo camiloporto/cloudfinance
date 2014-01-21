@@ -89,6 +89,7 @@ public class StaticTransactionController {
 	public ModelAndView createTransaction(
 			HttpServletRequest request,
 			@ModelAttribute(value="logged") Profile logged, 
+			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
 			@ModelAttribute(value="transactionForm") TransactionForm form,
 			BindingResult errors) {
 		
@@ -98,6 +99,9 @@ public class StaticTransactionController {
 			mav.setViewName("redirect:/transaction");
 		} else {
 			mav.setViewName("mobile-transactionNewForm");
+			AccountOperationResponse aor = accountController.getLeavesAccounts(logged, activeAccountSystem.getRootAccount().getId());
+			response.setDestAccountList(aor.getLeafAccounts());
+			response.setOriginAccountList(aor.getLeafAccounts());
 		}
 		
 		mav.getModelMap().addAttribute("response", response);
