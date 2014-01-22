@@ -3,6 +3,35 @@
 	Collors inspired on quiet, calm.. http://www.colourlovers.com/palette/2040/quiet_mind
 */
 
+.accountStatement.table>tbody>tr>td:first-child {
+	width: 15%;
+}
+
+.accountStatement.table>tbody>tr>td:last-child, .accountStatement.table>thead>tr>th:last-child, .accountStatement.table>tfoot>tr>th:last-child {
+	text-align : right;
+	width: 10%;
+}
+
+.accountStatement.table>tbody>tr>td .glyphicon-arrow-up {
+/* 	color: #A6CE95; */
+}
+
+.accountStatement.table>tbody>tr>td .glyphicon-arrow-down {
+/* 	color: red; */
+}
+
+.accountStatement.table>tbody>tr>td div.entry-description {
+	margin-left: 17px;
+}
+
+.accountStatement.table>tbody>tr>td span.entry-involvedAccount {
+/* 	font-weight: bolder; */
+}
+
+.accountStatement.table>thead>tr>th, .accountStatement.table>tfoot>tr>th {
+	font-size: 16px;
+}
+
 body {
 	background-color: #EEFAA8;
 }
