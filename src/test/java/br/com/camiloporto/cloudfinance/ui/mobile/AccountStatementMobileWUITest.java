@@ -51,4 +51,20 @@ public class AccountStatementMobileWUITest extends AbstractWUITest {
 			.assertEndBalanceIs("350,00")
 			.assertStatementEntryIsPresent("02/09/2013", "Receitas", "Ativos", "Recebimento de salario", "850,00");
 	}
+	
+	@Test
+	public void shouldPersistUserFormInputsAmongAccountStatementsRequests() {
+		//given a logged user and some transactions saved...
+		loginTestUser(TEST_USER_LOGIN, TEST_USER_PASS);
+		goToPath("/report/statement");
+		AccountStatementPage statementPage = PageFactory.initElements(driver, AccountStatementPage.class);
+		statementPage
+			.selectAccount("Passivos")
+			.requestStatement("01/09/2013", "30/09/2013");
+		
+		statementPage = PageFactory.initElements(driver, AccountStatementPage.class);
+		statementPage.assertIsOnPage();
+		statementPage
+			.assertInputFormContains("Passivos", "01/09/2013", "30/09/2013");
+	}
 }

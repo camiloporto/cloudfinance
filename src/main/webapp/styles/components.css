@@ -59,11 +59,27 @@
 	margin-bottom: 10px;
 }
 
-.searchFilterForm {
+.searchFilterForm, .statementForm {
 	border: solid 1px #ccc;
 	border-radius: 4px;
 	padding: 10px;
 	margin-bottom: 10px;
+}
+
+.statementForm {
+	border: 0;
+}
+
+.statementList .glyphicon-arrow-up {
+	color: #A6CE95;
+}
+
+.statementList .glyphicon-arrow-down {
+	color: red;
+}
+
+.statementList .statement-entry-value {
+	font-weight: bold;
 }
 
 .transactionInnerMenu {
@@ -72,21 +88,52 @@
 	padding: 0;
 }
 
-.transactionList {
+.transactionList, .statementList {
 	margin: 0;
 }
 
-.transactionList p {
+.transactionList p, .statementList p {
 	color: #333;
 	margin: 0;
 	
+}
+
+.statementList .panel-body {
+	padding: 0;
+}
+
+.statementList .panel-heading {
+	background-color: #f5f5f5;
+}
+
+
+.statementList .credit-color {
+	color: #35794B;
+}
+
+.statementList .debit-color {
+	color: red;
 }
 
 .transactionList .glyphicon {
 	color: #35794B;
 }
 
-.transactionList .transaction-comment {
+.statementList .statement-entry-date{
+	font-weight: bold;
+}
+
+.statementList-balance-panel h4 {
+	display: inline-block;
+	margin: 0;
+}
+
+.statementList-balance-panel span {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.transactionList .transaction-comment, .statementList .statement-comment {
 	font-weight: bold;
 	overflow : hidden;
 	text-overflow : ellipsis;
@@ -112,3 +159,4 @@
 	font-weight: bold;
 	font-size: 18px;
 }
+
