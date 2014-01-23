@@ -51,6 +51,8 @@ public class StaticTransactionController {
 		TransactionOperationResponse response = jsonController.getTransactions(logged, activeAccountSystem, begin, end, map);
 		ModelAndView mav = new ModelAndView("mobile-transaction");
 		mav.getModelMap().addAttribute("response", response);
+		
+		//save form input on session
 		mav.getModelMap().addAttribute("beginDateFilter", begin);
 		mav.getModelMap().addAttribute("endDateFilter", end);
 		return mav;

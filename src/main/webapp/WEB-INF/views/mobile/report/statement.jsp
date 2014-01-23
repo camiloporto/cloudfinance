@@ -8,17 +8,21 @@
 <c:url var="statementUrl" value="/report/statement"></c:url>
 <section class="content-inner">
 	<h2>Extrato de Conta</h2>
+	
+	<fmt:formatDate value="${statementBeginDate}" pattern="dd/MM/yyyy" var="beginDateFilterFormatted"/>
+	<fmt:formatDate value="${statementEndDate}" pattern="dd/MM/yyyy" var="endDateFilterFormatted"/>
+	
 	<form class="statementForm" id="statementForm" action="${statementUrl}" method="GET">
 		<div class="form-group">
 			<label>
 				Conta:
 				<select name="accountId" class="form-control">
-					<cf:accountOptionList accounts="${response.accountList}"></cf:accountOptionList>
+					<cf:accountOptionList accounts="${response.accountList}" accountSelected="${formAccountId}"></cf:accountOptionList>
 				</select>
 			</label>
 		</div>
-		<input class="form-control form-group" type="text" placeholder="Data Inicial" name="begin">
-		<input class="form-control form-group" type="text" placeholder="Data Final" name="end">
+		<input class="form-control form-group" type="text" placeholder="Data Inicial" name="begin" value="${beginDateFilterFormatted}">
+		<input class="form-control form-group" type="text" placeholder="Data Final" name="end" value="${endDateFilterFormatted}">
 		<input class="btn btn-primary" type="submit" value="Extrato">
 	</form>
 	<c:if test="${not empty response.accountStatement}">

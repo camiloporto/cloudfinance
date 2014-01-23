@@ -23,10 +23,10 @@ public class AccountStatementPage extends TemplatePage {
 	@FindBy(how=How.CSS, css="#statementForm input[type=submit]")
 	private WebElement submitBtn;
 	
-	@FindBy(how = How.XPATH, xpath = "//table[@id='statementTable']/thead/tr/th[last()]")
+	@FindBy(how = How.XPATH, xpath = "//div[@class='panel-heading statementList-balance-panel']/span")
 	private WebElement previousBalanceEl;
 	
-	@FindBy(how = How.XPATH, xpath = "//table[@id='statementTable']/tfoot/tr/th[last()]")
+	@FindBy(how = How.XPATH, xpath = "//div[@class='panel-footer statementList-balance-panel']/span")
 	private WebElement finalBalanceEl;
 	
 	@FindAll({
@@ -41,8 +41,12 @@ public class AccountStatementPage extends TemplatePage {
 	}
 
 	public AccountStatementPage requestStatement(String begin, String end) {
+		beginDateField.clear();
 		beginDateField.sendKeys(begin);
+		
+		endDateField.clear();
 		endDateField.sendKeys(end);
+		
 		submitBtn.submit();
 		return this;
 	}
@@ -74,6 +78,18 @@ public class AccountStatementPage extends TemplatePage {
 		}
 		Assert.assertTrue(found, "expected transaction not found " + date +" ; " + from + " ; " + to + " ; " + desc + " ; " + value);
 		return this;
+	}
+
+	public void assertInputFormContains(String selectedAccount, String beginDate,
+			String endDate) {
+		String actualBeginDate = beginDateField.getAttribute("value");
+		String actualEndDate = endDateField.getAttribute("value");
+		Select accountSelect = new Select(accountListElement);
+		String actualSelectedAccount = accountSelect.getFirstSelectedOption().getText();
+		
+		Assert.assertEquals(actualBeginDate, beginDate, "begin date input did not match");
+		Assert.assertEquals(actualEndDate, endDate, "end date input did not match");
+		Assert.assertEquals(actualSelectedAccount, selectedAccount, "select account input did not match");
 	}
 
 }
