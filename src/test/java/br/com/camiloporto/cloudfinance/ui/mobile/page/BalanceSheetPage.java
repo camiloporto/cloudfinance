@@ -31,6 +31,7 @@ public class BalanceSheetPage extends TemplatePage {
 	}
 
 	public BalanceSheetPage fillBalanceDate(String date) {
+		balanceDate.clear();
 		balanceDate.sendKeys(date);
 		return this;
 	}
@@ -97,6 +98,11 @@ public class BalanceSheetPage extends TemplatePage {
 		public String toString() {
 			return "[" + account + " : " + balance + "]";
 		}
+	}
+
+	public void assertBalanceDateEquals(String expectedBalanceDate) {
+		String actualDate = balanceDate.getAttribute("value");
+		Assert.assertEquals(actualDate, expectedBalanceDate, "expected balance date did not match");
 	}
 
 }
