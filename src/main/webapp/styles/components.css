@@ -10,9 +10,51 @@
 
 /* adiciona uma linha vertical para identificar o nivel das contas */
 /* verificar essa construcao somente em CSS http://cssdeck.com/labs/pure-css-tree-menu-framework */
-.accountTree ul {
+.accountTree ul, .balanceSheetTree ul {
 	list-style-type: none;
 	background: url(/resources/images/vline.png) repeat-y;
+}
+
+.accountTree, .balanceSheetTree{
+	list-style-type: none;
+}
+
+#balanceForm {
+	margin-bottom: 15px;
+}
+
+#balanceForm .form-group {
+	margin-bottom: 5px;
+}
+
+.balanceSheetTree.list-group {
+	margin-bottom: 5px;
+}
+
+/* first level balance accounts' */
+.balanceSheetTree>li>span {
+	font-size: 18px;
+	color: #35794B;
+	font-weight: bold;
+}
+
+.balanceSheetTree ul>li:hover{
+	background-color: #A6CE95;
+}
+
+/* second level balance accounts' styles */
+.balanceSheetTree>li>ul>li>span {
+	font-size: 16px;
+	color: #35794B;
+}
+
+/* hides 3rd levels (and deeper) information of balance tree
+ * on small screens 
+ */
+@media screen and (max-width: 480px) {
+	.balanceSheetTree>li>ul>ul {
+		display: none;
+	}
 }
 
 .benefit-list {
@@ -59,7 +101,7 @@
 	margin-bottom: 10px;
 }
 
-.searchFilterForm, .statementForm {
+.searchFilterForm, .statementForm{
 	border: solid 1px #ccc;
 	border-radius: 4px;
 	padding: 10px;
@@ -107,11 +149,11 @@
 }
 
 
-.statementList .credit-color {
+.statementList .credit-color, .balanceSheetTree .credit-color {
 	color: #35794B;
 }
 
-.statementList .debit-color {
+.statementList .debit-color, .balanceSheetTree .debit-color {
 	color: red;
 }
 
