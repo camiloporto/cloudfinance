@@ -6,16 +6,20 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:url var="balanceUrl" value="/report/balanceSheet"></c:url>
-<section>
+<section class="content-inner">
 	<h2>Balanço</h2>
+	
+	<fmt:formatDate value="${sessionBalanceDate}" pattern="dd/MM/yyyy" var="sessionBalanceDateFormatted"/>
 	<form id="balanceForm" action="${balanceUrl}" method="GET">
-		<ul id="errors">
-			<c:forEach var="error" items="${response.errors}">
-				<li>${error}</li>
-			</c:forEach>
-		</ul>
-		<input name="balanceDate" placeholder="Data do Balanço" type="text">
-		<input type="submit" value="Balanço">
+		<c:if test="${not empty response.errors}">
+			<ul id="errors" class="error-list">
+				<c:forEach var="error" items="${response.errors}">
+					<li>${error}</li>
+				</c:forEach>
+			</ul>
+		</c:if>
+		<input class="form-control form-group" name="balanceDate" placeholder="Data do Balanço" type="text" value="${sessionBalanceDateFormatted}">
+		<input class="btn btn-primary" type="submit" value="Balanço">
 	</form>
 	<c:if test="${not empty response.balanceSheet}">
 		<div id="balanceSheetDiv">

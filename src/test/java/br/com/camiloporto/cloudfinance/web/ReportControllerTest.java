@@ -204,7 +204,7 @@ public class ReportControllerTest extends AbstractWebMvcCloudFinanceTest {
 	@Test
 	public void shouldGetBalanceSheet_NoJs() throws Exception {
 		ResultActions response = mockMvc.perform(prepareHtmlGetRequest("/report/balanceSheet", (MockHttpSession) authenticatedSession)
-				.param("date", "20/09/2013")
+				.param("balanceDate", "20/09/2013")
 			);
 		
 		ModelAndView modelAndView = response

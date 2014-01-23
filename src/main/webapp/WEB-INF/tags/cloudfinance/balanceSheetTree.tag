@@ -4,12 +4,16 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<ul>
-	<li>
+<ul class="balanceSheetTree list-group">
+	<li class="list-group-item">
 		<span>
 			<spring:message code="${topNode.account.name}"  text="${topNode.account.name}"></spring:message>
 		</span>
-		<span>
+		
+		<c:if test="${topNode.balance < 0}">
+		 	<c:set var="valueColorClass" value="debit-color"></c:set>
+		</c:if>
+		<span class="pull-right ${valueColorClass}">
 			<fmt:formatNumber value="${topNode.balance}" type="currency" pattern="#,#00.00#"/>
 		</span>
 		<cf:balanceSheetTreeChildren children="${topNode.children}"></cf:balanceSheetTreeChildren>

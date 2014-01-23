@@ -80,6 +80,18 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 		BalanceSheetPage balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
 		balanceSheetPage.assertIsOnPage();
 	}
+	
+	@Test
+	public void shouldPersistUserFormInputsAmongAccountStatementsRequests() {
+		loginTestUser(sampleUserLogin, sampleUserPass);
+		goToPath("/report/balanceSheet");
+		BalanceSheetPage balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.fillBalanceDate("20/09/2013");
+		balanceSheetPage.submit();
+		
+		balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
+		balanceSheetPage.assertBalanceDateEquals("20/09/2013");
+	}
 
 	@Test
 	public void shouldDrawBalanceSheetOnScreen() {
@@ -109,7 +121,6 @@ public class BalanceSheetMobileWUITest extends AbstractWUITest {
 		balanceSheetPage.fillBalanceDate("invalidDate");
 		balanceSheetPage.submit();
 		
-		//FIXME fazer esse teste passar. capturar erro de binding do spring e converter em erro amigavel.
 		balanceSheetPage = PageFactory.initElements(driver, BalanceSheetPage.class);
 		balanceSheetPage.assertIsOnPage();
 		balanceSheetPage.assertHasErrorMessages();

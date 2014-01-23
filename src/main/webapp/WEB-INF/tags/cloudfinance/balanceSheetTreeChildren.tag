@@ -11,7 +11,11 @@
 				<span>
 					<spring:message code="${childNode.account.name}"  text="${childNode.account.name}"></spring:message>
 				</span>
-				<span>
+				
+				<c:if test="${childNode.balance < 0}">
+				 	<c:set var="valueColorClass" value="debit-color"></c:set>
+				</c:if>
+				<span class="pull-right ${valueColorClass}">
 					<fmt:formatNumber value="${childNode.balance}" type="currency" pattern="#,#00.00#"/>
 				</span>
 			</li>

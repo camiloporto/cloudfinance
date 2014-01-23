@@ -25,7 +25,8 @@ import br.com.camiloporto.cloudfinance.web.ReportOperationResponse;
 
 @RequestMapping("/report")
 @Controller
-@SessionAttributes(value = {"logged", "activeAccountSystem", "statementBeginDate", "statementEndDate", "formAccountId"})
+@SessionAttributes(value = {"logged", "activeAccountSystem", "statementBeginDate", "statementEndDate", "formAccountId", 
+		"sessionBalanceDate"})
 public class StaticReportController {
 	
 	@Autowired
@@ -44,10 +45,16 @@ public class StaticReportController {
 			HttpServletRequest request,
 			@ModelAttribute(value="logged") Profile logged, 
 			@ModelAttribute(value="activeAccountSystem") AccountSystem activeAccountSystem,
+			@ModelAttribute(value="sessionBalanceDate") @DateTimeFormat(pattern="dd/MM/yyyy") Date sessionBalanceDate,
 			@ModelAttribute(value = "balanceSheetForm") BalanceSheetForm form, BindingResult errors) {
 		ModelAndView mav = new ModelAndView("mobile-balanceSheet");
+		Date balanceDate = form.getBalanceDate() == null ? sessionBalanceDate : form.getBalanceDate();
+		form.setBalanceDate(balanceDate);
 		ReportOperationResponse response = jsonController.getBalanceSheet(request, logged, activeAccountSystem, form, errors);
 		mav.getModelMap().addAttribute("response", response);
+		
+		//save form input on session
+		mav.getModelMap().addAttribute("sessionBalanceDate", balanceDate);
 		return mav;
 	}
 	
@@ -101,6 +108,11 @@ public class StaticReportController {
 	@ModelAttribute("statementEndDate")
 	public Date defaultEndDateFilterDate(@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
 		return new DateUtils().lastDayOfCurrentMonth();
+	}
+	
+	@ModelAttribute("sessionBalanceDate")
+	public Date defaultBalanceDate(@DateTimeFormat(pattern="dd/MM/yyyy") Date end) {
+		return new DateUtils().today();
 	}
 	
 	@ModelAttribute("statementAccountId")
