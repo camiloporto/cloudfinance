@@ -8,12 +8,12 @@
 	<ul>
 		<c:forEach var="childNode" items="${children}">
 			<li>
-				<h3>
+				<span>
 					<a href="${showFormNewAccount}/${childNode.account.id}">
 						<spring:message code="${childNode.account.name}" text="${childNode.account.name}"></spring:message>
 					</a>
 					
-				</h3>
+				</span>
 				<p>${childNode.account.description}</p>
 			</li>
 			<c:if test="${not empty childNode.children}">
