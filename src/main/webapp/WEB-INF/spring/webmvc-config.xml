@@ -25,7 +25,10 @@
     </mvc:interceptors>
 
     <!-- Selects a static view for rendering without the need for an explicit controller -->
-    <mvc:view-controller path="/" view-name="index"/>
+    <mvc:view-controller path="/mobile/status" view-name="mobile-status"/>
+    <mvc:view-controller path="/mobile/newUser" view-name="mobile-newUser"/>
+<!--     <mvc:view-controller path="/mobile" view-name="mobile-index"/> -->
+    <mvc:view-controller path="/" view-name="home"/>
     <mvc:view-controller path="/uncaughtException"/>
     <mvc:view-controller path="/resourceNotFound"/>
     <mvc:view-controller path="/dataAccessFailure"/>
@@ -36,7 +39,9 @@
     <bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource" id="messageSource" p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application" p:fallbackToSystemLocale="false"/>
 
     <!-- Store preferred language configuration in a cookie -->
-    <bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver" id="localeResolver" p:cookieName="locale"/>
+    <bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver" id="localeResolver" p:cookieName="locale">
+    	<property name="defaultLocale" value="pt_BR" />
+    </bean>
 
     <!-- Resolves localized <theme_name>.properties files in the classpath to allow for theme support -->
     <bean class="org.springframework.ui.context.support.ResourceBundleThemeSource" id="themeSource"/>

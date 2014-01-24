@@ -1,0 +1,58 @@
+/*
+	Color Pallete of green based on: http://www.colourlovers.com/palette/59642/Color_of_Money
+	Collors inspired on quiet, calm.. http://www.colourlovers.com/palette/2040/quiet_mind
+*/
+
+body {
+	background-color: #EEFAA8;
+}
+
+.btn-primary {
+	background-color: #35794B;
+	border-color: #A6CE95;
+}
+
+.btn-primary:hover {
+	background-color: #234214;
+}
+
+.btn-success {
+	background-color: #35794B;
+	border-color: #A6CE95;
+}
+
+.btn-success:hover {
+	background-color: #234214;
+}
+
+.nav>li>a:hover {
+	background-color: #A6CE95;
+}
+
+.navbar-default {
+	background-color: #A6CE95;
+	border-color: #234214;
+}
+
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+	background-color: #35794B;
+}
+
+.navbar-default .navbar-toggle {
+	border-color: #35794B;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+	background-color: #EEFAA8;
+}
+
+.content-inner {
+	padding : 40px 0 20px 0;
+	
+}
+
+.newAccountForm {
+	padding-left: 10px;
+	border-left: solid 1px;
+	margin-left: 10px;
+}

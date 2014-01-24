@@ -1,0 +1,208 @@
+.accountSystem-list li a {
+	border-bottom :solid 1px #CCC;
+	cursor:pointer;
+	display:block;
+	line-height : 50px;
+}
+
+.accountSystem-list li a:hover {
+}
+
+/* adiciona uma linha vertical para identificar o nivel das contas */
+/* verificar essa construcao somente em CSS http://cssdeck.com/labs/pure-css-tree-menu-framework */
+.accountTree ul, .balanceSheetTree ul {
+	list-style-type: none;
+	background: url(/resources/images/vline.png) repeat-y;
+}
+
+.accountTree, .balanceSheetTree{
+	list-style-type: none;
+}
+
+.accountTree ul {
+	padding-left: 15px;
+}
+
+#balanceForm {
+	margin-bottom: 15px;
+}
+
+#balanceForm .form-group {
+	margin-bottom: 5px;
+}
+
+.balanceSheetTree.list-group {
+	margin-bottom: 5px;
+}
+
+/* first level balance accounts' */
+.balanceSheetTree>li>span {
+	font-size: 18px;
+	color: #35794B;
+	font-weight: bold;
+}
+
+.balanceSheetTree ul>li:hover{
+	background-color: #A6CE95;
+}
+
+/* second level balance accounts' styles */
+.balanceSheetTree>li>ul>li>span {
+	font-size: 16px;
+	color: #35794B;
+}
+
+/* hides 3rd levels (and deeper) information of balance tree
+ * on small screens 
+ */
+@media screen and (max-width: 480px) {
+	.balanceSheetTree>li>ul>ul {
+		display: none;
+	}
+}
+
+.benefit-list {
+	padding-left: 1.3em;
+}
+
+.btn-convert {
+	margin: 0 0 1em 0;
+}
+
+.copyright {
+	
+}
+
+.error-list {
+	background:#ffecec;
+	border:1px solid #f5aca6;
+	border-radius:10px;
+    color: #8a1f11;
+    padding:1em;
+}
+.error-list li {
+	margin-left: 1em;
+}
+
+
+.logo {
+	background: url("/resources/images/logo-bufunfa.png") no-repeat;
+	border : 0;
+	display : inline-block;
+	height : 60px;
+	margin: 10 0;
+	text-indent: -1000em;
+	width : 240px; 		/*		adapt size of image logo to this sizes */
+	 
+	
+}
+
+.headline {
+	margin :0;
+}
+
+.lead {
+	margin-bottom: 10px;
+}
+
+.searchFilterForm, .statementForm{
+	border: solid 1px #ccc;
+	border-radius: 4px;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+.statementForm {
+	border: 0;
+}
+
+.statementList .glyphicon-arrow-up {
+	color: #A6CE95;
+}
+
+.statementList .glyphicon-arrow-down {
+	color: red;
+}
+
+.statementList .statement-entry-value {
+	font-weight: bold;
+}
+
+.transactionInnerMenu {
+	list-style-type: none;
+	margin: 15px 0 30px;
+	padding: 0;
+}
+
+.transactionList, .statementList {
+	margin: 0;
+}
+
+.transactionList p, .statementList p {
+	color: #333;
+	margin: 0;
+	
+}
+
+.statementList .panel-body {
+	padding: 0;
+}
+
+.statementList .panel-heading {
+	background-color: #f5f5f5;
+}
+
+
+.statementList .credit-color, .balanceSheetTree .credit-color {
+	color: #35794B;
+}
+
+.statementList .debit-color, .balanceSheetTree .debit-color {
+	color: red;
+}
+
+.transactionList .glyphicon {
+	color: #35794B;
+}
+
+.statementList .statement-entry-date{
+	font-weight: bold;
+}
+
+.statementList-balance-panel h4 {
+	display: inline-block;
+	margin: 0;
+}
+
+.statementList-balance-panel span {
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.transactionList .transaction-comment, .statementList .statement-comment {
+	font-weight: bold;
+	overflow : hidden;
+	text-overflow : ellipsis;
+	white-space : nowrap; 
+	width : 100%; 
+}
+
+.transactionList .transaction-date {
+	color: #35794B;
+	font-weight: bold;
+}
+
+.transactionList .transaction-from {
+	margin-right: 5px;
+}
+
+.transactionList .transaction-to {
+	margin-left: 5px;
+}
+
+.transactionList .transaction-value {
+	color: #35794B;
+	font-weight: bold;
+	font-size: 18px;
+}
+

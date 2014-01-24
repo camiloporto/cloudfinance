@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+	"http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+	
+	<definition name="mobile-transaction" extends="mobile-logged-template-navigation">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/home.jsp" />
+	</definition>
+	
+	<definition name="mobile-transactionNewForm" extends="mobile-logged-template-navigation">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/newForm.jsp" />
+	</definition>
+	
+	<definition name="mobile-transactionDetail" extends="mobile-logged-template-navigation">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/transaction/detail.jsp" />
+	</definition>
+	
+
+</tiles-definitions>
