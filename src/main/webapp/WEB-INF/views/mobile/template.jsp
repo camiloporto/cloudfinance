@@ -10,11 +10,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<title>Bufunfa - Tranquilidade para sua vida e suas financas</title>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-<%-- 		<link rel="stylesheet" type="text/css" media="screen" href="${css_resource_url}/reset.css" /> --%>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+		<!-- 
 		<link rel="stylesheet" type="text/css" media="screen" href="${css_resource_url}/copy.css" />
 		<link rel="stylesheet" type="text/css" media="screen" href="${css_resource_url}/mobile-layout.css" />
 		<link rel="stylesheet" type="text/css" media="screen" href="${css_resource_url}/components.css" />
+		 -->
+		 <link rel="stylesheet" type="text/css" media="screen" href="${css_resource_url}/bufunfa-min.css" />
 		
 	</head>
 	<body>
@@ -23,7 +25,7 @@
 			<tiles:insertAttribute name="body"/> 
 		   	<tiles:insertAttribute name="footer" ignore="true"/>
 	   </div>
-	   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 	</body>
 </html>
