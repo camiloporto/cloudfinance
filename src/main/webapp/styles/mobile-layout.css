@@ -34,6 +34,18 @@ body {
 	border-color: #234214;
 }
 
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+	background-color: #35794B;
+}
+
+.navbar-default .navbar-toggle {
+	border-color: #35794B;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+	background-color: #EEFAA8;
+}
+
 .content-inner {
 	padding : 40px 0 20px 0;
 	
