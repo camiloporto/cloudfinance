@@ -21,4 +21,15 @@ public class TransactionTestChecker {
 		}
 	}
 
+	public void assertThatTransactionsAreInOrder(
+			List<AccountTransaction> actualTransactionsOrder, String... expectedTransactionsOrder) {
+		Assert.assertEquals(actualTransactionsOrder.size(), expectedTransactionsOrder.length, "transactions lists must be equals in size");
+		int i = 0;
+		for (String transaction : expectedTransactionsOrder) {
+			AccountTransaction nextTransaction = actualTransactionsOrder.get(i);
+			Assert.assertEquals(nextTransaction.getDestin().getComment(), transaction, "transaction [" + i +"] is out of order");
+			i++;
+		}
+	}
+
 }
