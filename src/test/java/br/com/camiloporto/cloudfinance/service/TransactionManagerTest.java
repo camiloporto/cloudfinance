@@ -189,6 +189,51 @@ public class TransactionManagerTest extends AbstractCloudFinanceDatabaseTest {
 	}
 	
 	@Test
+	public void shouldGetTransactionInDateAscendingOrder() {
+		Calendar d1 = new GregorianCalendar(2013, Calendar.JUNE, 10);
+		Calendar d2 = new GregorianCalendar(2013, Calendar.JUNE, 12);
+		Calendar d3 = new GregorianCalendar(2013, Calendar.JUNE, 14);
+		Calendar d4 = new GregorianCalendar(2013, Calendar.JUNE, 16);
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d4.getTime(), new BigDecimal("1234.50"), 
+				"t1");
+		
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d3.getTime(), new BigDecimal("1234.50"), 
+				"t2");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d2.getTime(), new BigDecimal("1234.50"), 
+				"t3");
+		transactionManager.saveAccountTransaction(
+				profile,
+				origin.getId(), 
+				dest.getId(), 
+				d1.getTime(), new BigDecimal("1234.50"), 
+				"t4");
+		
+		List<AccountTransaction> result = 
+				transactionManager.findAccountTransactionByDateBetween(
+						profile, 
+						root.getId(), 
+						d1.getTime(), d4.getTime());
+		
+		int expectedResultCount = 4;
+		Assert.assertEquals(result.size(), expectedResultCount, "result count did not match");
+		new TransactionTestChecker()
+			.assertThatTransactionsAreInOrder(result, "t4", "t3", "t2", "t1");
+	}
+	
+	@Test
 	public void shouldSetDefaultBeginDateWhenItNotInformed() {
 		Calendar d1 = new GregorianCalendar(2013, Calendar.JUNE, 10);
 		Calendar d2 = new GregorianCalendar(2013, Calendar.JUNE, 12);

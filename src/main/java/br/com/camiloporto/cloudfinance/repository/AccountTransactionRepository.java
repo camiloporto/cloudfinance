@@ -15,7 +15,8 @@ public interface AccountTransactionRepository {
 	@Query("SELECT t FROM AccountTransaction t WHERE " +
 			"t.origin.account.rootAccount.id = ?1 AND " +
 			"t.destin.account.rootAccount.id = ?1 AND " +
-			"t.origin.transactionDate between ?2 AND ?3")
+			"t.origin.transactionDate between ?2 AND ?3 " +
+			"ORDER BY t.origin.transactionDate ASC")
 	List<AccountTransaction> findByDateBetween(Long rootAccountId, Date begin, Date end);
 
 	@Query("SELECT t FROM AccountTransaction t WHERE " +
